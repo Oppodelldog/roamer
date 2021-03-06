@@ -20,6 +20,12 @@ type KeyUp struct {
 	Key int
 }
 
+type LeftMouseButtonDown struct {
+}
+
+type LeftMouseButtonUp struct {
+}
+
 type Loop struct {
 	Elem
 }

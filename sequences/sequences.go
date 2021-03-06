@@ -20,6 +20,12 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 	return func() []sequencer.Elem {
 		var sequences = map[string][]sequencer.Elem{
 			"none": {},
+			"click-left": {
+				sequencer.LeftMouseButtonDown{},
+				sequencer.LeftMouseButtonUp{},
+				sequencer.Wait{Duration: humanizedMillis(300)},
+				sequencer.Loop{},
+			},
 			"run-forward": {
 				sequencer.KeyDown{Key: key.VK_LSHIFT},
 				sequencer.KeyDown{Key: key.VK_W},

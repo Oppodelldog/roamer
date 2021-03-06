@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"rust-roamer/key"
+	"rust-roamer/mouse"
 	"time"
 )
 
@@ -104,6 +105,10 @@ func (s *Sequencer) playElement() {
 			case KeyUp:
 				fmt.Println("up ", v.Key)
 				key.Up(v.Key)
+			case LeftMouseButtonDown:
+				mouse.LeftDown()
+			case LeftMouseButtonUp:
+				mouse.LeftUp()
 			}
 		}
 	}
