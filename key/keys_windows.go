@@ -1,6 +1,8 @@
 package key
 
 import (
+	"fmt"
+	"strings"
 	"syscall"
 )
 
@@ -15,7 +17,10 @@ func Down(key int) {
 		key -= 0xFFF
 	}
 	vkey := key + 0x80
-	procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
+	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
+	if err != nil && strings.Contains(err.Error(), "success") {
+		fmt.Printf("error Down: %v", err)
+	}
 }
 
 func Up(key int) {
@@ -26,7 +31,10 @@ func Up(key int) {
 		key -= 0xFFF
 	}
 	vkey := key + 0x80
-	procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
+	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
+	if err != nil && strings.Contains(err.Error(), "success") {
+		fmt.Printf("error Up: %v", err)
+	}
 }
 
 const (

@@ -67,8 +67,10 @@ waitForNext:
 	newSequence := <-s.sequence
 
 loop:
-	fmt.Println("play sequence")
-	for _, e := range newSequence() {
+
+	newSeq := newSequence()
+	fmt.Println("play sequence length: ", len(newSeq))
+	for _, e := range newSeq {
 		s.seq <- e
 	}
 
@@ -106,9 +108,23 @@ func (s *Sequencer) playElement() {
 				fmt.Println("up ", v.Key)
 				key.Up(v.Key)
 			case LeftMouseButtonDown:
+				fmt.Println("lmb-down")
 				mouse.LeftDown()
 			case LeftMouseButtonUp:
+				fmt.Println("lmb-up")
 				mouse.LeftUp()
+			case RightMouseButtonDown:
+				fmt.Println("rmb-down")
+				mouse.RightDown()
+			case RightMouseButtonUp:
+				fmt.Println("rmb-up")
+				mouse.RightUp()
+			case LookupMousePos:
+				pos := mouse.GetCursorPos()
+				fmt.Printf("current mouse pos: %#v\n", pos)
+			case SetMousePos:
+				mouse.SetPosition(v.Pos)
+				fmt.Printf("set mouse pos to: %#v\n", v.Pos)
 			}
 		}
 	}
