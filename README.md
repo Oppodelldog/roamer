@@ -9,3 +9,6 @@ Demo Project how to automate keyboard interactions through a web frontend.
 * mouse pos investigation
 * arm first inventory row
 * unarm items
+
+**Screenshot**
+![Rust Roamer](screenshot.png)
