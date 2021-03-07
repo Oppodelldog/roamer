@@ -15,9 +15,9 @@ func init() {
 
 const paddleTime = 1200
 const paddleWait = 400
-const inventoryMoveWait = 130
-const mouseMoveWait = 60
 const inventoryOpenWait = 600
+const inventoryMoveWait = 60
+const mouseMoveWait = 60
 const mouseClickWait = 0
 
 func GetSequenceFunc(name string) func() []sequencer.Elem {
@@ -36,6 +36,8 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 			"run-forward": {
 				sequencer.KeyDown{Key: key.VK_LSHIFT},
 				sequencer.KeyDown{Key: key.VK_W},
+				sequencer.Wait{Duration: humanizedMillis(3000)},
+				sequencer.KeyUp{Key: key.VK_LSHIFT},
 			},
 			"run-forward-stop": {
 				sequencer.KeyUp{Key: key.VK_LSHIFT},
@@ -116,8 +118,7 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 				sequencer.RightMouseButtonDown{},
 				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
 				sequencer.RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait * 10)},
 
 				sequencer.KeyDown{Key: key.VK_TAB},
 				sequencer.KeyUp{Key: key.VK_TAB},
@@ -166,8 +167,7 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 				sequencer.RightMouseButtonDown{},
 				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
 				sequencer.RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait * 10)},
 
 				sequencer.KeyDown{Key: key.VK_TAB},
 				sequencer.KeyUp{Key: key.VK_TAB},
