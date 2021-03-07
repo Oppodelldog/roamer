@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"net/http"
+	"path"
 	"rust-roamer/sequencer"
 	"strconv"
 )
@@ -11,12 +12,20 @@ import (
 //go:embed html/index.html
 var content embed.FS
 
+//go:embed img
+var img embed.FS
+
+//go:embed root/favicon.ico
+var root embed.FS
+
 var seq *sequencer.Sequencer
 
 const port = 10982
 
 func Start() {
 	http.Handle("/html/", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
+	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
+	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
 	http.Handle("/set/", restrictMethod(http.HandlerFunc(hSet), http.MethodPost))
 	http.Handle("/pause", restrictMethod(http.HandlerFunc(hStop), http.MethodPost))
 	http.Handle("/state", restrictMethod(http.HandlerFunc(hState), http.MethodGet))
@@ -27,6 +36,13 @@ func Start() {
 	log.Printf("http://127.0.0.1:%v/html/", port)
 
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
+}
+
+func addPrefix(s string, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		request.URL.Path = path.Join(s, request.URL.Path)
+		h.ServeHTTP(writer, request)
+	})
 }
 
 func restrictMethod(h http.Handler, allowedMethods ...string) http.Handler {

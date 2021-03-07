@@ -4,17 +4,18 @@
     <title>Rust-Roamer</title>
 
     <style>
-        *{
-            color:white;
-            font-family: Arial,serif;
+        * {
+            color: white;
+            font-family: Arial, serif;
         }
+
         body {
             text-align: center;
             background-color: #262521;
         }
 
         .content * + * {
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         .sequences {
@@ -44,10 +45,16 @@
             border-radius: 10px;
             background-color: #728e41;
             text-transform: uppercase;
-            font-size:20px;
-            font-weight:bold;
-            padding:20px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 20px 20px 20px 50px;
+
+            background-size: 32px;
+            background-repeat: no-repeat;
+            background-position-y: center;
+            background-position-x: 10px;
         }
+
         button::-moz-focus-inner {
             border: 0;
             padding: 0;
@@ -59,6 +66,50 @@
             right: 0;
             padding-right: 10px;
             padding-bottom: 10px;
+        }
+
+        #none {
+            background-image: url("/img/none.png");
+        }
+
+        #get-mouse-pos {
+            background-image: url("/img/mousepos.png");
+        }
+
+        #unarm {
+            background-image: url("/img/unarmed.png");
+        }
+
+        #arm {
+            background-image: url("/img/armed.png");
+        }
+
+        #click-left {
+            background-image: url("/img/lmb.png");
+        }
+
+        #duck-gather-tree {
+            background-image: url("/img/hatchet.png");
+        }
+
+        #run {
+            background-image: url("/img/run.png");
+        }
+
+        #run-stop {
+            background-image: url("/img/run-stop.png");
+        }
+
+        #kayak-forward {
+            background-image: url("/img/paddle.png");
+        }
+
+        #kayak-backward {
+            background-image: url("/img/paddle-back.png");
+        }
+
+        #pause-button{
+            background-image: url("/img/pause.png");
         }
     </style>
 </head>
@@ -144,24 +195,23 @@
     <div id="active-sequence" class="active-sequence">???</div>
 
     <div class="sequences">
-        <button onclick="set('none')">NONE</button>
-        <button onclick="set('get-mouse-pos')">GET-MOUSE-POS</button>
-        <button onclick="set('unarm')">UNARM</button>
-        <button onclick="set('arm')">ARM</button>
+        <button id="get-mouse-pos" onclick="set('get-mouse-pos')"><span class="caption">GET-MOUSE-POS</span></button>
+        <button id="click-left" onclick="set('click-left')"><span class="caption">LEFT-CLICK</span></button>
+        <button id="arm" onclick="set('arm')"><span class="caption">ARM</span></button>
+        <button id="unarm" onclick="set('unarm')"><span class="caption">UNARM</span></button>
     </div>
     <div class="sequences">
-        <button onclick="set('click-left')">LEFT-CLICK</button>
-        <button onclick="set('duck-gather-tree')">DUCK-GATHER</button>
+        <button id="run" onclick="set('run-forward')"><span class="caption">RUN</span></button>
+        <button id="run-stop" onclick="set('run-forward-stop')"><span class="caption">RUN-STOP</span></button>
+        <button id="duck-gather-tree" onclick="set('duck-gather-tree')"><span class="caption">DUCK-GATHER</span>
+        </button>
     </div>
     <div class="sequences">
-        <button onclick="set('run-forward')">RUN-FORWARD</button>
-        <button onclick="set('run-forward-stop')">RUN-FORWARD-STOP</button>
+        <button id="kayak-forward" onclick="set('kayak-forward')"><span class="caption">KAYAK-FORWARD</span></button>
+        <button id="kayak-backward" onclick="set('kayak-backward')"><span class="caption">KAYAK-BACKWARD</span></button>
     </div>
     <div class="sequences">
-        <button onclick="set('kayak-forward')">KAYAK-FORWARD</button>
-        <button onclick="set('kayak-backward')">KAYAK-BACKWARD</button>
-    </div>
-    <div class="sequences">
+        <button id="none" onclick="set('none')"><span class="caption">NONE</span></button>
         <button id="pause-button" onclick="togglePause()">???</button>
     </div>
 
