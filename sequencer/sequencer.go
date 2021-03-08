@@ -9,10 +9,11 @@ import (
 )
 
 type Sequencer struct {
-	sequence chan func() []Elem
-	seq      chan Elem
-	pause    chan struct{}
-	paused   bool
+	sequence    chan func() []Elem
+	seq         chan Elem
+	pause       chan struct{}
+	paused      bool
+	hasSequence bool
 }
 
 func New(queueSize int) *Sequencer {
@@ -31,6 +32,10 @@ func New(queueSize int) *Sequencer {
 
 func (s *Sequencer) IsPaused() bool {
 	return s.paused
+}
+
+func (s *Sequencer) HasSequence() bool {
+	return s.hasSequence
 }
 
 func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
@@ -64,10 +69,11 @@ func (s *Sequencer) WaitForResume() {
 func (s *Sequencer) playSequence() {
 
 waitForNext:
+	s.hasSequence = false
 	newSequence := <-s.sequence
+	s.hasSequence = true
 
 loop:
-
 	newSeq := newSequence()
 	fmt.Println("play sequence length: ", len(newSeq))
 	for _, e := range newSeq {
@@ -77,6 +83,7 @@ loop:
 	select {
 	case newSequence = <-s.sequence:
 		fmt.Println("got a new sequence")
+		goto loop
 	default:
 		fmt.Println("got no new sequence")
 		var newSeq = newSequence()

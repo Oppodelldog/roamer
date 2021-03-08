@@ -26,11 +26,13 @@ func hStop(w http.ResponseWriter, _ *http.Request) {
 
 func hState(w http.ResponseWriter, _ *http.Request) {
 	var state = struct {
-		Sequence string
-		IsPaused bool
+		Sequence    string
+		IsPaused    bool
+		HasSequence bool
 	}{
-		Sequence: Sequence,
-		IsPaused: seq.IsPaused()}
+		Sequence:    Sequence,
+		IsPaused:    seq.IsPaused(),
+		HasSequence: seq.HasSequence()}
 
 	jsonBytes, err := json.Marshal(state)
 	if err != nil {

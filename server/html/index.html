@@ -112,7 +112,7 @@
             background-image: url("/img/pause.png");
         }
 
-        #active-sequence {
+        #active-sequence.isActive {
             animation: blinker 2s linear infinite;
         }
 
@@ -126,7 +126,8 @@
 
 <body>
 <script>
-    var isPaused = false;
+    let isPaused = false;
+    let hasSequence = false;
 
     function updateState() {
         clearError();
@@ -138,9 +139,14 @@
             .then((state) => {
                 let sequenceName = state.Sequence;
                 isPaused = state.IsPaused;
+                hasSequence = state.HasSequence;
                 updatePauseButtonLabel();
                 let pausedInfo = (state.IsPaused) ? " - (paused)" : "";
                 let content = sequenceName + pausedInfo;
+                document.getElementById("active-sequence").classList.remove("isActive");
+                if (hasSequence) {
+                    document.getElementById("active-sequence").classList.add("isActive");
+                }
 
                 document.getElementById("active-sequence").innerHTML = content;
             })
