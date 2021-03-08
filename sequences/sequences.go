@@ -70,7 +70,7 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 			"duck-gather-tree": {
 				sequencer.KeyDown{Key: key.VK_LCONTROL},
 				sequencer.LeftMouseButtonDown{},
-				sequencer.Wait{Duration: 7600 * time.Millisecond},
+				sequencer.Wait{Duration: humanizedMillis(7400) * time.Millisecond},
 				sequencer.LeftMouseButtonUp{},
 				sequencer.KeyUp{Key: key.VK_LCONTROL},
 			},
