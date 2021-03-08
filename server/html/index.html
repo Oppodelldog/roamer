@@ -108,8 +108,18 @@
             background-image: url("/img/paddle-back.png");
         }
 
-        #pause-button{
+        #pause-button {
             background-image: url("/img/pause.png");
+        }
+
+        #active-sequence {
+            animation: blinker 2s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 35%;
+            }
         }
     </style>
 </head>
