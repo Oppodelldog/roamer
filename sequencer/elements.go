@@ -1,53 +1,19 @@
 package sequencer
 
-import (
-	"rust-roamer/mouse"
-	"time"
-)
+import "time"
 
+// Elem is part of a sequence of elements. As processing sequencer calls the Do method.
 type Elem interface {
+	Do() error
 }
 
+// Wait lets the sequence sleep for the given amount of time.
 type Wait struct {
 	Elem
 	Duration time.Duration
 }
 
-type KeyDown struct {
-	Elem
-	Key int
-}
-
-type KeyUp struct {
-	Elem
-	Key int
-}
-
-type LeftMouseButtonDown struct {
-	Elem
-}
-
-type RightMouseButtonDown struct {
-	Elem
-}
-
-type SetMousePos struct {
-	Elem
-	Pos mouse.Pos
-}
-
-type LeftMouseButtonUp struct {
-	Elem
-}
-
-type RightMouseButtonUp struct {
-	Elem
-}
-
-type LookupMousePos struct {
-	Elem
-}
-
+// Loop placed at the last element of a sequence indicated sequencer may loop the whole sequence.
 type Loop struct {
 	Elem
 }

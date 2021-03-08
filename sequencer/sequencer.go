@@ -3,11 +3,11 @@ package sequencer
 import (
 	"errors"
 	"fmt"
-	"rust-roamer/key"
-	"rust-roamer/mouse"
 	"time"
 )
 
+// Sequencer plays sequences of Elem by calling their Do method.
+// It runs as a detached worker using go routines to playback sequences.
 type Sequencer struct {
 	sequence    chan func() []Elem
 	seq         chan Elem
@@ -16,6 +16,8 @@ type Sequencer struct {
 	hasSequence bool
 }
 
+// New creates a new sequencer.
+// Parameter queueSize defines how many Sequences may be queued before blocking.
 func New(queueSize int) *Sequencer {
 	s := &Sequencer{
 		sequence: make(chan func() []Elem, queueSize),
@@ -30,14 +32,18 @@ func New(queueSize int) *Sequencer {
 	return s
 }
 
+// IsPaused indicated if playback is paused or not.
 func (s *Sequencer) IsPaused() bool {
 	return s.paused
 }
 
+// HasSequences indicates if sequencer has a sequence for playback or not.
 func (s *Sequencer) HasSequence() bool {
 	return s.hasSequence
 }
 
+// Enqueue adds a new sequence to the sequence queue.
+// This method blocks by the queueSize defined in New.
 func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 	var newSequence = newSeq
 	select {
@@ -50,6 +56,7 @@ func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 	}
 }
 
+// Pause toggles playback (pause, resume).
 func (s *Sequencer) Pause() error {
 	select {
 	case s.pause <- struct{}{}:
@@ -60,7 +67,7 @@ func (s *Sequencer) Pause() error {
 	}
 }
 
-func (s *Sequencer) WaitForResume() {
+func (s *Sequencer) waitForResume() {
 	fmt.Println("pausing")
 	<-s.pause
 	fmt.Println("resuming")
@@ -102,36 +109,19 @@ func (s *Sequencer) playElement() {
 	for {
 		select {
 		case <-s.pause:
-			s.WaitForResume()
+			s.waitForResume()
 		case el := <-s.seq:
+
 			switch v := el.(type) {
 			case Wait:
 				fmt.Println("wait ", v.Duration)
 				s.sleep(v.Duration)
-			case KeyDown:
-				fmt.Println("down ", v.Key)
-				key.Down(v.Key)
-			case KeyUp:
-				fmt.Println("up ", v.Key)
-				key.Up(v.Key)
-			case LeftMouseButtonDown:
-				fmt.Println("lmb-down")
-				mouse.LeftDown()
-			case LeftMouseButtonUp:
-				fmt.Println("lmb-up")
-				mouse.LeftUp()
-			case RightMouseButtonDown:
-				fmt.Println("rmb-down")
-				mouse.RightDown()
-			case RightMouseButtonUp:
-				fmt.Println("rmb-up")
-				mouse.RightUp()
-			case LookupMousePos:
-				pos := mouse.GetCursorPos()
-				fmt.Printf("current mouse pos: %#v\n", pos)
-			case SetMousePos:
-				mouse.SetPosition(v.Pos)
-				fmt.Printf("set mouse pos to: %#v\n", v.Pos)
+			case Loop:
+			default:
+				err := el.Do()
+				if err != nil {
+					fmt.Printf("error in %T.Do: %v\n", el, err)
+				}
 			}
 		}
 	}
@@ -142,7 +132,7 @@ func (s *Sequencer) sleep(d time.Duration) {
 	select {
 	case <-t.C:
 	case <-s.pause:
-		s.WaitForResume()
+		s.waitForResume()
 		<-t.C
 	}
 }

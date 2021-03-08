@@ -9,7 +9,7 @@ import (
 var dll = syscall.NewLazyDLL("user32.dll")
 var procKeyBd = dll.NewProc("keybd_event")
 
-func Down(key int) {
+func Down(key int) error {
 	flag := 0
 	if key < 0xFFF {
 		flag |= keyeventfScancode
@@ -18,12 +18,14 @@ func Down(key int) {
 	}
 	vkey := key + 0x80
 	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
-	if err != nil && strings.Contains(err.Error(), "success") {
-		fmt.Printf("error Down: %v", err)
+	if err != nil && isNotSuccess(err) {
+		return fmt.Errorf("error Down: %w", err)
 	}
+
+	return nil
 }
 
-func Up(key int) {
+func Up(key int) error {
 	flag := keyEventFKeyUp
 	if key < 0xFFF {
 		flag |= keyeventfScancode
@@ -32,9 +34,15 @@ func Up(key int) {
 	}
 	vkey := key + 0x80
 	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
-	if err != nil && strings.Contains(err.Error(), "success") {
-		fmt.Printf("error Up: %v", err)
+	if err != nil && isNotSuccess(err) {
+		return fmt.Errorf("error Up: %w", err)
 	}
+
+	return nil
+}
+
+func isNotSuccess(err error) bool {
+	return !strings.Contains(err.Error(), "success")
 }
 
 const (
