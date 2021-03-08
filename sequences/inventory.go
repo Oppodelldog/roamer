@@ -24,6 +24,26 @@ func ItemSlotPos(i int) mouse.Pos {
 	panic(fmt.Sprintf("invalid item slot: %v", i))
 }
 
+func clothingSlotPos(i int) mouse.Pos {
+	switch i {
+	case 1:
+		return mouse.Pos{X: 112, Y: 861}
+	case 2:
+		return mouse.Pos{X: 194, Y: 861}
+	case 3:
+		return mouse.Pos{X: 274, Y: 861}
+	case 4:
+		return mouse.Pos{X: 361, Y: 861}
+	case 5:
+		return mouse.Pos{X: 435, Y: 861}
+	case 6:
+		return mouse.Pos{X: 518, Y: 861}
+	case 7:
+		return mouse.Pos{X: 596, Y: 861}
+	}
+
+	panic(fmt.Sprintf("invalid clothing slot: %v", i))
+}
 func InventorySlotPos(i int) mouse.Pos {
 	switch i {
 	case 1:

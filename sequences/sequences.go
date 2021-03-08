@@ -16,9 +16,11 @@ func init() {
 const paddleTime = 1200
 const paddleWait = 400
 const inventoryOpenWait = 600
+const inventoryOpenWaitShort = 200
 const inventoryMoveWait = 60
 const mouseMoveWait = 60
 const mouseClickWait = 0
+const mouseDragWait = 160
 
 func GetSequenceFunc(name string) func() []sequencer.Elem {
 	return func() []sequencer.Elem {
@@ -70,7 +72,7 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 			"duck-gather-tree": {
 				KeyDown{Key: key.VK_LCONTROL},
 				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(7400) * time.Millisecond},
+				sequencer.Wait{Duration: humanizedMillis(7000)},
 				LeftMouseButtonUp{},
 				KeyUp{Key: key.VK_LCONTROL},
 			},
@@ -169,6 +171,34 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 				RightMouseButtonUp{},
 				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait * 10)},
 
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+			},
+			"diving-tank-on": {
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				SetMousePos{Pos: InventorySlotPos(19)},
+				LeftMouseButtonDown{},
+				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+				SetMousePos{Pos: clothingSlotPos(7)},
+				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+				LeftMouseButtonUp{},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+			},
+			"diving-tank-off": {
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				SetMousePos{Pos: clothingSlotPos(7)},
+				LeftMouseButtonDown{},
+				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+				SetMousePos{Pos: InventorySlotPos(19)},
+				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+				LeftMouseButtonUp{},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
 				KeyDown{Key: key.VK_TAB},
 				KeyUp{Key: key.VK_TAB},
 			},
