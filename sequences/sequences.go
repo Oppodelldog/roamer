@@ -15,7 +15,7 @@ func init() {
 
 const paddleTime = 1200
 const paddleWait = 400
-const inventoryOpenWait = 600
+const inventoryOpenWait = 1000
 const inventoryOpenWaitShort = 200
 const inventoryMoveWait = 60
 const mouseMoveWait = 60
@@ -201,6 +201,37 @@ func GetSequenceFunc(name string) func() []sequencer.Elem {
 				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
 				KeyDown{Key: key.VK_TAB},
 				KeyUp{Key: key.VK_TAB},
+			},
+			"smart-breath": {
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				SetMousePos{Pos: InventorySlotPos(19)},
+				LeftMouseButtonDown{},
+				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+				SetMousePos{Pos: clothingSlotPos(7)},
+				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+				LeftMouseButtonUp{},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+
+				sequencer.Wait{Duration: humanizedMillis(6000)},
+
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				SetMousePos{Pos: clothingSlotPos(7)},
+				LeftMouseButtonDown{},
+				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+				SetMousePos{Pos: InventorySlotPos(19)},
+				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+				LeftMouseButtonUp{},
+				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+				KeyDown{Key: key.VK_TAB},
+				KeyUp{Key: key.VK_TAB},
+				sequencer.Wait{Duration: humanizedMillis(2000)},
+				sequencer.Loop{},
 			},
 		}
 
