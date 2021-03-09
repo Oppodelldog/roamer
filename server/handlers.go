@@ -13,7 +13,7 @@ var Sequence string
 func hSet(_ http.ResponseWriter, r *http.Request) {
 	Sequence = path.Base(r.URL.Path)
 
-	seq.EnqueueSequence(sequences.GetSequenceFunc(Sequence))
+	seq.EnqueueSequence(sequences.NewSequenceFunc(Sequence))
 }
 
 func hStop(w http.ResponseWriter, _ *http.Request) {

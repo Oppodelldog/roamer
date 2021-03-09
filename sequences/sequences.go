@@ -3,6 +3,7 @@ package sequences
 import (
 	"math/rand"
 	"rust-roamer/key"
+	"rust-roamer/mouse"
 	"rust-roamer/sequencer"
 	"time"
 )
@@ -15,239 +16,226 @@ func init() {
 
 const paddleTime = 1200
 const paddleWait = 400
-const inventoryOpenWait = 1000
 const inventoryOpenWaitShort = 200
 const inventoryMoveWait = 60
 const mouseMoveWait = 60
 const mouseClickWait = 0
 const mouseDragWait = 160
 
-func GetSequenceFunc(name string) func() []sequencer.Elem {
-	return func() []sequencer.Elem {
-		var sequences = map[string][]sequencer.Elem{
-			"none": {},
-			"get-mouse-pos": {
-				LookupMousePos{},
-			},
-			"click-left": {
-				LeftMouseButtonDown{},
-				LeftMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(300)},
-				sequencer.Loop{},
-			},
-			"run-forward": {
-				KeyDown{Key: key.VK_LSHIFT},
-				KeyDown{Key: key.VK_W},
-				sequencer.Wait{Duration: humanizedMillis(3000)},
-				KeyUp{Key: key.VK_LSHIFT},
-			},
-			"run-forward-stop": {
-				KeyUp{Key: key.VK_LSHIFT},
-				KeyUp{Key: key.VK_W},
-			},
-			"kayak-forward": {
-				KeyDown{Key: key.VK_A},
-				sequencer.Wait{Duration: humanizedMillis(paddleTime + 240)},
-				KeyUp{Key: key.VK_A},
-				sequencer.Wait{Duration: humanizedMillis(paddleWait + 240)},
-				KeyDown{Key: key.VK_D},
-				sequencer.Wait{Duration: humanizedMillis(paddleTime)},
-				KeyUp{Key: key.VK_D},
-				sequencer.Wait{Duration: humanizedMillis(paddleWait)},
-				sequencer.Loop{},
-			},
-			"kayak-backward": {
-				KeyDown{Key: key.VK_S},
-				KeyDown{Key: key.VK_A},
-				sequencer.Wait{Duration: humanizedMillis(paddleTime + 240)},
-				KeyUp{Key: key.VK_A},
-				sequencer.Wait{Duration: humanizedMillis(paddleWait + 240)},
-				KeyDown{Key: key.VK_D},
-				sequencer.Wait{Duration: humanizedMillis(paddleTime)},
-				KeyUp{Key: key.VK_D},
-				sequencer.Wait{Duration: humanizedMillis(paddleWait)},
-				KeyUp{Key: key.VK_S},
-				sequencer.Loop{},
-			},
-			"duck-gather-tree": {
-				KeyDown{Key: key.VK_LCONTROL},
-				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(7000)},
-				LeftMouseButtonUp{},
-				KeyUp{Key: key.VK_LCONTROL},
-			},
-			"unarm": {
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWait)},
-				SetMousePos{Pos: ItemSlotPos(1)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+func divingTankOff() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			openInventory(),
+			dragClothingToInventory(7, 19),
+			closeInventory(),
+		},
+	)
+}
 
-				SetMousePos{Pos: ItemSlotPos(2)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+func divingTankOn() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			openInventory(),
+			dragInventoryToClothing(19, 7),
+			closeInventory(),
+		},
+	)
+}
 
-				SetMousePos{Pos: ItemSlotPos(3)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+func smartBreath() []sequencer.Elem {
+	var s = [][]sequencer.Elem{
+		divingTankOn(),
+		{
+			sequencer.Wait{Duration: humanizedMillis(6000)},
+		},
+		divingTankOff(),
+		{
+			sequencer.Wait{Duration: humanizedMillis(2000)},
+		},
+		{
+			sequencer.Loop{},
+		},
+	}
 
-				SetMousePos{Pos: ItemSlotPos(4)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+	return flatten(s)
+}
 
-				SetMousePos{Pos: ItemSlotPos(5)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+func dragInventoryToClothing(inventorySlot, clothingSlot int) []sequencer.Elem {
+	return dragInventory(InventorySlotPos(inventorySlot), clothingSlotPos(clothingSlot))
+}
 
-				SetMousePos{Pos: ItemSlotPos(6)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait * 10)},
+func dragClothingToInventory(clothingSlot, inventorySlot int) []sequencer.Elem {
+	return dragInventory(clothingSlotPos(clothingSlot), InventorySlotPos(inventorySlot))
+}
 
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-			},
-			"arm": {
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWait)},
-				SetMousePos{Pos: InventorySlotPos(1)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-
-				SetMousePos{Pos: InventorySlotPos(2)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-
-				SetMousePos{Pos: InventorySlotPos(3)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-
-				SetMousePos{Pos: InventorySlotPos(4)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-
-				SetMousePos{Pos: InventorySlotPos(5)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-
-				SetMousePos{Pos: InventorySlotPos(6)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				RightMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-				RightMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait * 10)},
-
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-			},
-			"diving-tank-on": {
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				SetMousePos{Pos: InventorySlotPos(19)},
-				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
-				SetMousePos{Pos: clothingSlotPos(7)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				LeftMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-			},
-			"diving-tank-off": {
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				SetMousePos{Pos: clothingSlotPos(7)},
-				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
-				SetMousePos{Pos: InventorySlotPos(19)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				LeftMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-			},
-			"smart-breath": {
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				SetMousePos{Pos: InventorySlotPos(19)},
-				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
-				SetMousePos{Pos: clothingSlotPos(7)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				LeftMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-
-				sequencer.Wait{Duration: humanizedMillis(6000)},
-
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				SetMousePos{Pos: clothingSlotPos(7)},
-				LeftMouseButtonDown{},
-				sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
-				SetMousePos{Pos: InventorySlotPos(19)},
-				sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-				LeftMouseButtonUp{},
-				sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
-				KeyDown{Key: key.VK_TAB},
-				KeyUp{Key: key.VK_TAB},
-				sequencer.Wait{Duration: humanizedMillis(2000)},
-				sequencer.Loop{},
-			},
-		}
-
-		return sequences[name]
+func toggleInventory() []sequencer.Elem {
+	return []sequencer.Elem{
+		KeyDown{Key: key.VK_TAB},
+		KeyUp{Key: key.VK_TAB},
 	}
 }
 
-func humanizedMillis(v int) time.Duration {
-	if v == 0 {
-		return 0
+func openInventory() []sequencer.Elem {
+	return flatten([][]sequencer.Elem{
+		toggleInventory(),
+		{
+			sequencer.Wait{Duration: humanizedMillis(inventoryOpenWaitShort)},
+		},
+	})
+}
+
+func closeInventory() []sequencer.Elem {
+	return flatten([][]sequencer.Elem{
+		toggleInventory(),
+	})
+}
+
+func dragInventory(from mouse.Pos, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: from},
+		LeftMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+		SetMousePos{Pos: to},
+		sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+		LeftMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(mouseDragWait)},
+	}
+}
+
+func clickingLeft() []sequencer.Elem {
+	return []sequencer.Elem{
+		LeftMouseButtonDown{},
+		LeftMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(300)},
+		sequencer.Loop{},
+	}
+}
+
+func runForward() []sequencer.Elem {
+	return []sequencer.Elem{
+		KeyDown{Key: key.VK_LSHIFT},
+		KeyDown{Key: key.VK_W},
+		sequencer.Wait{Duration: humanizedMillis(3000)},
+		KeyUp{Key: key.VK_LSHIFT},
+	}
+}
+
+func runForwardStop() []sequencer.Elem {
+	return []sequencer.Elem{
+		KeyUp{Key: key.VK_LSHIFT},
+		KeyUp{Key: key.VK_W},
+	}
+}
+
+func arm() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			openInventory(),
+			detachInventoryItem(1),
+			detachInventoryItem(2),
+			detachInventoryItem(3),
+			detachInventoryItem(4),
+			detachInventoryItem(5),
+			detachInventoryItem(6),
+			{sequencer.Wait{Duration: humanizedMillis(600)}},
+			closeInventory(),
+		},
+	)
+}
+
+func unarm() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			openInventory(),
+			detachItem(1),
+			detachItem(2),
+			detachItem(3),
+			detachItem(4),
+			detachItem(5),
+			detachItem(6),
+			{sequencer.Wait{Duration: humanizedMillis(600)}},
+			closeInventory(),
+		},
+	)
+}
+
+func detachInventoryItem(inventorySlot int) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: InventorySlotPos(inventorySlot)},
+		sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+		RightMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
+		RightMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+	}
+}
+
+func detachItem(itemSlot int) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: ItemSlotPos(itemSlot)},
+		sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
+		RightMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
+		RightMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
+	}
+}
+
+func duckGatherTree() []sequencer.Elem {
+	return []sequencer.Elem{
+		KeyDown{Key: key.VK_LCONTROL},
+		LeftMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(7000)},
+		LeftMouseButtonUp{},
+		KeyUp{Key: key.VK_LCONTROL},
+	}
+}
+
+func kayakBackward() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			{KeyDown{Key: key.VK_S}},
+			kayakPaddle(),
+			{KeyUp{Key: key.VK_S}},
+			{sequencer.Loop{}},
+		},
+	)
+}
+
+func kayakForward() []sequencer.Elem {
+	return flatten(
+		[][]sequencer.Elem{
+			kayakPaddle(),
+			{sequencer.Loop{}},
+		},
+	)
+}
+
+func kayakPaddle() []sequencer.Elem {
+	return []sequencer.Elem{
+		KeyDown{Key: key.VK_A},
+		sequencer.Wait{Duration: humanizedMillis(paddleTime + 240)},
+		KeyUp{Key: key.VK_A},
+		sequencer.Wait{Duration: humanizedMillis(paddleWait + 240)},
+		KeyDown{Key: key.VK_D},
+		sequencer.Wait{Duration: humanizedMillis(paddleTime)},
+		KeyUp{Key: key.VK_D},
+		sequencer.Wait{Duration: humanizedMillis(paddleWait)},
+	}
+}
+
+func getMousePos() []sequencer.Elem {
+	return []sequencer.Elem{
+		LookupMousePos{},
+	}
+}
+
+func flatten(seqList [][]sequencer.Elem) []sequencer.Elem {
+	var s []sequencer.Elem
+
+	for _, elements := range seqList {
+		s = append(s, elements...)
 	}
 
-	var d = v / 10
-	var v1 = v - d
-
-	var v2 = v1 + r.Intn(d)*2
-
-	return time.Millisecond * time.Duration(v2)
+	return s
 }
