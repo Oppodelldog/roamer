@@ -24,21 +24,40 @@ const mouseDragWait = 16
 const itemFieldMargin = 3
 const itemFieldSize = 92
 
-func transferInventoryRow() []sequencer.Elem {
+func moveInventoryRow(verticalFieldOffset int32) []sequencer.Elem {
 	pos := mouse.GetCursorPos()
 	var seqs [][]sequencer.Elem
 
 	for i := int32(0); i < 6; i++ {
+		from := relativeHorizontalFieldPos(pos, i)
+		to := relativeVerticalFieldPos(from, verticalFieldOffset)
 		seqs = append(seqs, [][]sequencer.Elem{
-			collect(relativeFieldPos(pos, i)),
+			drag(from, to),
 			{sequencer.Wait{Duration: humanizedMillis(80)}}}...)
 	}
 
 	return flatten(seqs)
 }
 
-func relativeFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
+func transferInventoryRow() []sequencer.Elem {
+	pos := mouse.GetCursorPos()
+	var seqs [][]sequencer.Elem
+
+	for i := int32(0); i < 6; i++ {
+		seqs = append(seqs, [][]sequencer.Elem{
+			collect(relativeHorizontalFieldPos(pos, i)),
+			{sequencer.Wait{Duration: humanizedMillis(80)}}}...)
+	}
+
+	return flatten(seqs)
+}
+
+func relativeHorizontalFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
 	return mouse.Pos{X: from.X + (fieldNo * (itemFieldSize + itemFieldMargin)), Y: from.Y}
+}
+
+func relativeVerticalFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
+	return mouse.Pos{X: from.X, Y: from.Y + (fieldNo * (itemFieldSize + itemFieldMargin))}
 }
 
 func fillInventoryRow() []sequencer.Elem {
@@ -48,7 +67,7 @@ func fillInventoryRow() []sequencer.Elem {
 
 	for i := int32(1); i < 6; i++ {
 		seqs = append(seqs, [][]sequencer.Elem{
-			unstack(pos, relativeFieldPos(pos, i)),
+			unstack(pos, relativeHorizontalFieldPos(pos, i)),
 			{sequencer.Wait{Duration: humanizedMillis(80)}}}...)
 	}
 
@@ -59,9 +78,9 @@ func collect(from mouse.Pos) []sequencer.Elem {
 	return []sequencer.Elem{
 		SetMousePos{Pos: from},
 		RightMouseButtonDown{},
-		sequencer.Wait{Duration: humanizedMillis(60)},
+		sequencer.Wait{Duration: humanizedMillis(80)},
 		RightMouseButtonUp{},
-		sequencer.Wait{Duration: humanizedMillis(60)},
+		sequencer.Wait{Duration: humanizedMillis(80)},
 	}
 }
 
@@ -69,11 +88,23 @@ func unstack(from, to mouse.Pos) []sequencer.Elem {
 	return []sequencer.Elem{
 		SetMousePos{Pos: from},
 		RightMouseButtonDown{},
-		sequencer.Wait{Duration: humanizedMillis(60)},
+		sequencer.Wait{Duration: humanizedMillis(80)},
 		SetMousePos{Pos: to},
-		sequencer.Wait{Duration: humanizedMillis(60)},
+		sequencer.Wait{Duration: humanizedMillis(80)},
 		RightMouseButtonUp{},
-		sequencer.Wait{Duration: humanizedMillis(60)},
+		sequencer.Wait{Duration: humanizedMillis(80)},
+	}
+}
+
+func drag(from, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: from},
+		LeftMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(80)},
+		SetMousePos{Pos: to},
+		sequencer.Wait{Duration: humanizedMillis(80)},
+		LeftMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(80)},
 	}
 }
 
