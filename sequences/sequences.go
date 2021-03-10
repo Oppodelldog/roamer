@@ -20,8 +20,71 @@ const inventoryOpenWaitShort = 200
 const inventoryMoveWait = 60
 const mouseMoveWait = 60
 const mouseClickWait = 0
-const mouseDragWait = 160
+const mouseDragWait = 16
+const itemFieldMargin = 3
+const itemFieldSize = 92
 
+func transferInventoryRow() []sequencer.Elem {
+	pos := mouse.GetCursorPos()
+	var seqs [][]sequencer.Elem
+
+	for i := int32(0); i < 6; i++ {
+		seqs = append(seqs, [][]sequencer.Elem{
+			collect(relativeFieldPos(pos, i)),
+			{sequencer.Wait{Duration: humanizedMillis(80)}}}...)
+	}
+
+	return flatten(seqs)
+}
+
+func relativeFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
+	return mouse.Pos{X: from.X + (fieldNo * (itemFieldSize + itemFieldMargin)), Y: from.Y}
+}
+
+func fillInventoryRow() []sequencer.Elem {
+	pos := mouse.GetCursorPos()
+
+	var seqs [][]sequencer.Elem
+
+	for i := int32(1); i < 6; i++ {
+		seqs = append(seqs, [][]sequencer.Elem{
+			unstack(pos, relativeFieldPos(pos, i)),
+			{sequencer.Wait{Duration: humanizedMillis(80)}}}...)
+	}
+
+	return flatten(seqs)
+}
+
+func collect(from mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: from},
+		RightMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(60)},
+		RightMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(60)},
+	}
+}
+
+func unstack(from, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		SetMousePos{Pos: from},
+		RightMouseButtonDown{},
+		sequencer.Wait{Duration: humanizedMillis(60)},
+		SetMousePos{Pos: to},
+		sequencer.Wait{Duration: humanizedMillis(60)},
+		RightMouseButtonUp{},
+		sequencer.Wait{Duration: humanizedMillis(60)},
+	}
+}
+
+func fromCurrent(x, y int32) mouse.Pos {
+	pos := mouse.GetCursorPos()
+
+	return mouse.Pos{
+		X: pos.X + x,
+		Y: pos.Y + y,
+	}
+}
 func divingTankOff() []sequencer.Elem {
 	return flatten(
 		[][]sequencer.Elem{
