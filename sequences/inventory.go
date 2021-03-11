@@ -90,7 +90,7 @@ func InventorySlotPos(i int) mouse.Pos {
 		return mouse.Pos{X: 901, Y: 899}
 	case 22:
 		return mouse.Pos{X: 992, Y: 899}
-	case 32:
+	case 23:
 		return mouse.Pos{X: 1082, Y: 899}
 	case 24:
 		return mouse.Pos{X: 1178, Y: 899}

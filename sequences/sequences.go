@@ -225,13 +225,13 @@ func arm() []sequencer.Elem {
 	return flatten(
 		[][]sequencer.Elem{
 			openInventory(),
-			detachInventoryItem(1),
-			detachInventoryItem(2),
-			detachInventoryItem(3),
-			detachInventoryItem(4),
-			detachInventoryItem(5),
-			detachInventoryItem(6),
-			{sequencer.Wait{Duration: humanizedMillis(600)}},
+			drag(InventorySlotPos(19), ItemSlotPos(1)),
+			drag(InventorySlotPos(20), ItemSlotPos(2)),
+			drag(InventorySlotPos(21), ItemSlotPos(3)),
+			drag(InventorySlotPos(22), ItemSlotPos(4)),
+			drag(InventorySlotPos(23), ItemSlotPos(5)),
+			drag(InventorySlotPos(24), ItemSlotPos(6)),
+			{sequencer.Wait{Duration: humanizedMillis(300)}},
 			closeInventory(),
 		},
 	)
@@ -241,38 +241,16 @@ func unarm() []sequencer.Elem {
 	return flatten(
 		[][]sequencer.Elem{
 			openInventory(),
-			detachItem(1),
-			detachItem(2),
-			detachItem(3),
-			detachItem(4),
-			detachItem(5),
-			detachItem(6),
-			{sequencer.Wait{Duration: humanizedMillis(600)}},
+			drag(ItemSlotPos(1), InventorySlotPos(19)),
+			drag(ItemSlotPos(2), InventorySlotPos(20)),
+			drag(ItemSlotPos(3), InventorySlotPos(21)),
+			drag(ItemSlotPos(4), InventorySlotPos(22)),
+			drag(ItemSlotPos(5), InventorySlotPos(23)),
+			drag(ItemSlotPos(6), InventorySlotPos(24)),
+			{sequencer.Wait{Duration: humanizedMillis(300)}},
 			closeInventory(),
 		},
 	)
-}
-
-func detachInventoryItem(inventorySlot int) []sequencer.Elem {
-	return []sequencer.Elem{
-		SetMousePos{Pos: InventorySlotPos(inventorySlot)},
-		sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-		RightMouseButtonDown{},
-		sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-		RightMouseButtonUp{},
-		sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-	}
-}
-
-func detachItem(itemSlot int) []sequencer.Elem {
-	return []sequencer.Elem{
-		SetMousePos{Pos: ItemSlotPos(itemSlot)},
-		sequencer.Wait{Duration: humanizedMillis(mouseMoveWait)},
-		RightMouseButtonDown{},
-		sequencer.Wait{Duration: humanizedMillis(mouseClickWait)},
-		RightMouseButtonUp{},
-		sequencer.Wait{Duration: humanizedMillis(inventoryMoveWait)},
-	}
 }
 
 func duckGatherTree() []sequencer.Elem {
