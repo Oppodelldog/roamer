@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-//go:embed html/index.html
+//go:embed html
 var content embed.FS
 
 //go:embed img
@@ -24,6 +24,8 @@ const port = 10982
 
 func Start() {
 	http.Handle("/html/", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
+	http.Handle("/html/rust.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
+	http.Handle("/html/7d2d.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
 	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
 	http.Handle("/set/", restrictMethod(http.HandlerFunc(hSet), http.MethodPost))

@@ -1,4 +1,4 @@
-package sequences
+package general
 
 import (
 	"fmt"
@@ -45,7 +45,10 @@ type SetMousePos struct {
 }
 
 func (e SetMousePos) Do() error {
-	mouse.SetPosition(e.Pos)
+	err := mouse.SetPosition(e.Pos)
+	if err != nil {
+		fmt.Printf("error SetMousePos: %v\n", err)
+	}
 	fmt.Printf("set mouse pos to: %#v\n", e.Pos)
 
 	return nil

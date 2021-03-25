@@ -1,6 +1,7 @@
 package mouse
 
 import (
+	"strings"
 	"syscall"
 	"unsafe"
 )
@@ -25,27 +26,36 @@ const (
 
 func LeftDown() error {
 	_, _, err := procMouseBd.Call(uintptr(flagLeftDown), uintptr(0), uintptr(0), uintptr(0), 0)
-	return err
+	return normalizeErr(err)
+}
+
+func normalizeErr(err error) error {
+	if isNotSuccess(err) {
+		return err
+	}
+
+	return nil
 }
 
 func LeftUp() error {
 	_, _, err := procMouseBd.Call(uintptr(flagLeftUp), uintptr(0), uintptr(0), uintptr(0), 0)
-	return err
+	return normalizeErr(err)
 }
 
 func RightDown() error {
 	_, _, err := procMouseBd.Call(uintptr(flagRightDown), uintptr(0), uintptr(0), uintptr(0), 0)
-	return err
+	return normalizeErr(err)
 }
 
 func RightUp() error {
 	_, _, err := procMouseBd.Call(uintptr(flagRightUp), uintptr(0), uintptr(0), uintptr(0), 0)
-	return err
+	return normalizeErr(err)
 }
 
 func SetPosition(pos Pos) error {
 	_, _, err := procSetCursorPos.Call(uintptr(pos.X), uintptr(pos.Y))
-	return err
+
+	return normalizeErr(err)
 }
 
 func GetCursorPos() Pos {
@@ -58,4 +68,8 @@ func GetCursorPos() Pos {
 type Pos struct {
 	X int32
 	Y int32
+}
+
+func isNotSuccess(err error) bool {
+	return !strings.Contains(err.Error(), "success")
 }
