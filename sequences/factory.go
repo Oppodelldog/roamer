@@ -39,6 +39,7 @@ func NewSequenceFunc(name string) func() []sequencer.Elem {
 			"7d2d_walk":               sevendaystodie.Walk(),
 			"7d2d_run":                sevendaystodie.Run(),
 			"7d2d_walk_run_stop":      sevendaystodie.WalkRunStop(),
+			"7d2d_click_left_fast":    sevendaystodie.ClickingLeft(30),
 			"7d2d_click_left":         sevendaystodie.ClickingLeft(200),
 			"7d2d_click_left_slow":    sevendaystodie.ClickingLeft(1000),
 		}
