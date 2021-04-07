@@ -7,6 +7,7 @@ import (
 	"rust-roamer/sequencer"
 	"rust-roamer/sequences/general"
 	"rust-roamer/sequences/version"
+	"time"
 )
 
 const game = "7d2d"
@@ -53,6 +54,15 @@ func Repair(slotNo int) []sequencer.Elem {
 			general.KeyUp{key.VK_TAB},
 		},
 	})
+}
+
+func ClickingLeft(delay int) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.LeftMouseButtonDown{},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: time.Millisecond * time.Duration(delay)},
+		sequencer.Loop{},
+	}
 }
 
 func getSlots(kind string) config.Slots {
