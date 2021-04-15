@@ -9,7 +9,10 @@ import (
 var dll = syscall.NewLazyDLL("user32.dll")
 var procKeyBd = dll.NewProc("keybd_event")
 
+var states = map[int]bool{}
+
 func Down(key int) error {
+	states[key] = true
 	flag := 0
 	if key < 0xFFF {
 		flag |= keyeventfScancode
@@ -26,6 +29,7 @@ func Down(key int) error {
 }
 
 func Up(key int) error {
+	states[key] = false
 	flag := keyEventFKeyUp
 	if key < 0xFFF {
 		flag |= keyeventfScancode
@@ -242,3 +246,14 @@ const (
 	VK_PA1                 = 0xFD + 0xFFF
 	VK_OEM_CLEAR           = 0xFE + 0xFFF
 )
+
+func ResetPressed() {
+	for key, pressed := range states {
+		if pressed {
+			err := Up(key)
+			if err != nil && isNotSuccess(err) {
+				fmt.Printf("error when ressetting pressed state for key %v: %v", key, err)
+			}
+		}
+	}
+}

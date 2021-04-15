@@ -79,3 +79,15 @@ func (e LookupMousePos) Do() error {
 
 	return nil
 }
+
+type MouseMove struct {
+	X int32
+	Y int32
+}
+
+func (e MouseMove) Do() error {
+	fmt.Println("move ", e.X, e.Y)
+	err := mouse.Move(e.X, e.Y)
+
+	return err
+}

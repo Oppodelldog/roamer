@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"rust-roamer/key"
 	"rust-roamer/sequencer"
 	"strconv"
 )
@@ -29,10 +30,14 @@ func Start() {
 	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
 	http.Handle("/set/", restrictMethod(http.HandlerFunc(hSet), http.MethodPost))
-	http.Handle("/pause", restrictMethod(http.HandlerFunc(hStop), http.MethodPost))
+	http.Handle("/pause", restrictMethod(http.HandlerFunc(hPause), http.MethodPost))
+	http.Handle("/abort", restrictMethod(http.HandlerFunc(hAbort), http.MethodPost))
 	http.Handle("/state", restrictMethod(http.HandlerFunc(hState), http.MethodGet))
 
 	seq = sequencer.New(1)
+	seq.BeforeSequence(func() {
+		key.ResetPressed()
+	})
 
 	log.Printf("Starting Rust-Roamer")
 	log.Printf("http://127.0.0.1:%v/html/", port)

@@ -16,12 +16,17 @@ func hSet(_ http.ResponseWriter, r *http.Request) {
 	seq.EnqueueSequence(sequences.NewSequenceFunc(Sequence))
 }
 
-func hStop(w http.ResponseWriter, _ *http.Request) {
+func hPause(w http.ResponseWriter, _ *http.Request) {
 	err := seq.Pause()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("Server Error: %v", err.Error())))
 	}
+}
+
+func hAbort(w http.ResponseWriter, _ *http.Request) {
+	seq.Abort()
+	Sequence = ""
 }
 
 func hState(w http.ResponseWriter, _ *http.Request) {

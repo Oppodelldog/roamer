@@ -2,6 +2,7 @@ package sequences
 
 import (
 	"rust-roamer/sequencer"
+	"rust-roamer/sequences/altf4"
 	"rust-roamer/sequences/rust"
 	"rust-roamer/sequences/sevendaystodie"
 )
@@ -42,6 +43,13 @@ func NewSequenceFunc(name string) func() []sequencer.Elem {
 			"7d2d_click_left_fast":    sevendaystodie.ClickingLeft(30),
 			"7d2d_click_left":         sevendaystodie.ClickingLeft(200),
 			"7d2d_click_left_slow":    sevendaystodie.ClickingLeft(1000),
+			"altf4-run-all":           altf4.RunAll(),
+			"altf4-run-0":             altf4.Run0(),
+			"altf4-run-1":             altf4.Run1(),
+			"altf4-run-2":             altf4.Run2(),
+			"altf4-run-3":             altf4.Run3(),
+			"altf4-run-4":             altf4.Run4(),
+			"altf4-run-5":             altf4.Run5(),
 		}
 
 		return sequences[name]

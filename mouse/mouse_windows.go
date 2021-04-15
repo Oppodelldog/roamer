@@ -22,6 +22,7 @@ const (
 	flagLeftUp    = 0x0004
 	flagRightDown = 0x0008
 	flagRightUp   = 0x0010
+	flagMove      = 0x0001
 )
 
 func LeftDown() error {
@@ -63,6 +64,11 @@ func GetCursorPos() Pos {
 	procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos)))
 
 	return pos
+}
+
+func Move(x, y int32) error {
+	_, _, err := procMouseBd.Call(uintptr(flagMove), uintptr(x), uintptr(y), uintptr(0), 0)
+	return normalizeErr(err)
 }
 
 type Pos struct {

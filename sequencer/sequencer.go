@@ -9,11 +9,13 @@ import (
 // Sequencer plays sequences of Elem by calling their Do method.
 // It runs as a detached worker using go routines to playback sequences.
 type Sequencer struct {
-	sequence    chan func() []Elem
-	seq         chan Elem
-	pause       chan struct{}
-	paused      bool
-	hasSequence bool
+	sequence       chan func() []Elem
+	seq            chan Elem
+	pause          chan struct{}
+	paused         bool
+	aborted        bool
+	hasSequence    bool
+	beforeSequence func()
 }
 
 // New creates a new sequencer.
@@ -30,6 +32,10 @@ func New(queueSize int) *Sequencer {
 	go s.playElement()
 
 	return s
+}
+
+func (s *Sequencer) BeforeSequence(f func()) {
+	s.beforeSequence = f
 }
 
 // IsPaused indicated if playback is paused or not.
@@ -76,7 +82,12 @@ func (s *Sequencer) waitForResume() {
 func (s *Sequencer) playSequence() {
 
 waitForNext:
+	if s.beforeSequence != nil {
+		s.beforeSequence()
+	}
+
 	s.hasSequence = false
+	s.aborted = false
 	newSequence := <-s.sequence
 	s.hasSequence = true
 
@@ -85,6 +96,10 @@ loop:
 	fmt.Println("play sequence length: ", len(newSeq))
 	for _, e := range newSeq {
 		s.seq <- e
+		if s.aborted {
+			fmt.Println("aborted sequence")
+			goto waitForNext
+		}
 	}
 
 	select {
@@ -133,6 +148,19 @@ func (s *Sequencer) sleep(d time.Duration) {
 	case <-t.C:
 	case <-s.pause:
 		s.waitForResume()
+		if s.aborted {
+			return
+		}
 		<-t.C
 	}
+}
+
+func (s *Sequencer) Abort() {
+	if s.paused {
+		err := s.Pause()
+		if err != nil {
+			panic(fmt.Sprintf("error while aborting pause: %v", err))
+		}
+	}
+	s.aborted = true
 }
