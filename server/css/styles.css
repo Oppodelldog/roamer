@@ -36,13 +36,6 @@ button {
     -webkit-appearance: button;
     border-style: none;
 
-    border-radius: 10px;
-    background-color: #728e41;
-    text-transform: uppercase;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 20px 20px 20px 50px;
-
     background-size: 32px;
     background-repeat: no-repeat;
     background-position-y: center;
@@ -70,4 +63,13 @@ button::-moz-focus-inner {
     50% {
         opacity: 35%;
     }
+}
+
+.buttonlist {
+    display: flex;
+    flex-direction: column;
+}
+
+.attributions{
+    margin-top:60px;
 }

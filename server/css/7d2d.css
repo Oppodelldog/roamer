@@ -1,0 +1,16 @@
+body{
+    background-color: #131311;
+    background-image: url(/img/background/forest.jpg);
+    background-size: cover;
+}
+button {
+    background-color: #28343b;
+    border-radius: 10px;
+    border-color: darkred;
+    border-width: 1px;
+    border-style: solid;
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 20px 20px 20px 50px;
+}

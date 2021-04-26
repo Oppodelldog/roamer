@@ -1,0 +1,7 @@
+* {
+    font-size: 34px;
+}
+
+ul li + li {
+    margin-top: 20px;
+}
