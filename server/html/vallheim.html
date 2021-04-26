@@ -2,227 +2,12 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
     <title>VALLHEIM - Roamer</title>
-
-    <style>
-        * {
-            color: white;
-            font-family: Arial, serif;
-        }
-
-        body {
-            text-align: center;
-            background-color: #262521;
-        }
-
-        .content * + * {
-            margin-top: 20px;
-        }
-
-        .sequences {
-            display: block;
-        }
-
-        .active-sequence {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .latest-error {
-            font-weight: bold;
-            font-size: 26px;
-            color: red;
-        }
-
-        h1 {
-            margin-bottom: 50px;
-            text-transform: uppercase;
-        }
-
-        button {
-            -webkit-appearance: button;
-            border-style: none;
-
-            border-radius: 10px;
-            background-color: #728e41;
-            text-transform: uppercase;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 20px 20px 20px 50px;
-
-            background-size: 32px;
-            background-repeat: no-repeat;
-            background-position-y: center;
-            background-position-x: 10px;
-        }
-
-        button::-moz-focus-inner {
-            border: 0;
-            padding: 0;
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            padding-right: 10px;
-            padding-bottom: 10px;
-        }
-
-        #none {
-            background-image: url("/img/none.png");
-        }
-
-        #get-mouse-pos {
-            background-image: url("/img/mousepos.png");
-        }
-
-        #unarm {
-            background-image: url("/img/unarmed.png");
-        }
-
-        #arm {
-            background-image: url("/img/armed.png");
-        }
-
-        #click-left,#click-left-fast ,#click-left-slow {
-            background-image: url("/img/lmb.png");
-        }
-
-        #duck-gather-tree {
-            background-image: url("/img/hatchet.png");
-        }
-        #walk {
-            background-image: url("/img/walk.png");
-        }
-        #run {
-            background-image: url("/img/run.png");
-        }
-
-        #grill{
-            background-image: url("/img/grill.png");
-        }
-
-        #run-stop {
-            background-image: url("/img/run-stop.png");
-        }
-
-        #kayak-forward {
-            background-image: url("/img/paddle.png");
-        }
-
-        #kayak-backward {
-            background-image: url("/img/paddle-back.png");
-        }
-
-        #pause-button {
-            background-image: url("/img/pause.png");
-        }
-
-        #active-sequence.isActive {
-            animation: blinker 2s linear infinite;
-        }
-
-        .icon-repair {
-            background-image: url("/img/repair.png");
-        }
-
-        @keyframes blinker {
-            50% {
-                opacity: 35%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/icons.css">
 </head>
 
 <body>
-<script>
-    let isPaused = false;
-    let hasSequence = false;
-
-    function updateState() {
-        clearError();
-        fetch('/state')
-            .then(handleErrors)
-            .then(function (response) {
-                return response.json();
-            })
-            .then((state) => {
-                let sequenceName = state.Sequence;
-                isPaused = state.IsPaused;
-                hasSequence = state.HasSequence;
-                updatePauseButtonLabel();
-                let pausedInfo = (state.IsPaused) ? " - (paused)" : "";
-                let content = sequenceName + pausedInfo;
-                document.getElementById("active-sequence").classList.remove("isActive");
-                if (hasSequence) {
-                    document.getElementById("active-sequence").classList.add("isActive");
-                }
-
-                document.getElementById("active-sequence").innerHTML = content;
-            })
-            .catch((err) => {
-                    console.error(err)
-                }
-            );
-    }
-
-    function updatePauseButtonLabel() {
-        document.getElementById("pause-button").innerHTML = (isPaused) ? "RESUME" : "PAUSE";
-    }
-
-    function set(sequence) {
-        clearError();
-        fetch('/set/' + sequence, {method: 'POST'})
-            .then(handleErrors)
-            .then(updateState)
-            .catch((err) => {
-                    console.error(err)
-                }
-            )
-    }
-
-    function pause() {
-        clearError();
-        fetch('/pause', {method: 'POST'})
-            .then(handleErrors)
-            .then(updateState)
-            .catch((err) => {
-                    console.error(err)
-                }
-            )
-    }
-
-    function togglePause() {
-        pause()
-    }
-
-    function abort() {
-        fetch('/abort', {method: 'POST'})
-            .then(handleErrors)
-            .then(updateState)
-            .catch((err) => {
-                    console.error(err)
-                }
-            )
-    }
-    function handleErrors(response) {
-        if (!response.ok) {
-            response.text().then(function (text) {
-                document.getElementById("latest-error").innerHTML = text;
-            });
-            throw Error(response.statusText);
-        }
-        return response;
-    }
-
-    function clearError() {
-        document.getElementById("latest-error").innerHTML = "";
-    }
-
-    window.addEventListener("load", function (event) {
-        updateState();
-    });
-</script>
+<script type="text/javascript" src="/js/api.js"></script>
 
 <h1>VALLHEIM - Roamer</h1>
 <div class="content">
@@ -230,13 +15,13 @@
     <div id="active-sequence" class="active-sequence">???</div>
 
     <div class="sequences">
-        <button id="run" onclick="set('vallheim-run')"><span class="caption">RUN</span></button>
-        <button id="walk" onclick="set('vallheim-walk')"><span class="caption">WALK</span></button>
-        <button id="grill" onclick="set('vallheim-grillmaster')"><span class="caption">GRILLMASTER</span></button>
+        <button class="ico-run" onclick="setSequence('vallheim-run')"><span class="caption">RUN</span></button>
+        <button class="ico-walk" onclick="setSequence('vallheim-walk')"><span class="caption">WALK</span></button>
+        <button class="ico-grill" onclick="setSequence('vallheim-grillmaster')"><span class="caption">GRILLMASTER</span></button>
     </div>
     <div class="sequences">
-        <button id="none" onclick="set('none')"><span class="caption">NONE</span></button>
-        <button id="pause-button" onclick="togglePause()">???</button>
+        <button class="ico-none"  onclick="setSequence('none')"><span class="caption">NONE</span></button>
+        <button class="ico-pause-button" onclick="togglePause()">???</button>
         <button id="abort-button" onclick="abort()">Abort</button>
     </div>
 

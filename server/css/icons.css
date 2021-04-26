@@ -1,0 +1,56 @@
+
+.ico-none {
+    background-image: url("/img/none.png");
+}
+
+.ico-get-mouse-pos {
+    background-image: url("/img/mousepos.png");
+}
+
+.ico-unarm {
+    background-image: url("/img/unarmed.png");
+}
+
+.ico-arm {
+    background-image: url("/img/armed.png");
+}
+
+.ico-click-left {
+    background-image: url("/img/lmb.png");
+}
+
+.ico-gather-tree {
+    background-image: url("/img/hatchet.png");
+}
+
+.ico-walk {
+    background-image: url("/img/walk.png");
+}
+
+.ico-run {
+    background-image: url("/img/run.png");
+}
+
+.ico-grill {
+    background-image: url("/img/grill.png");
+}
+
+.ico-run-stop {
+    background-image: url("/img/run-stop.png");
+}
+
+.ido-kayak-forward {
+    background-image: url("/img/paddle.png");
+}
+
+.ico-kayak-backward {
+    background-image: url("/img/paddle-back.png");
+}
+
+.ico-pause-button {
+    background-image: url("/img/pause.png");
+}
+
+.icon-repair {
+    background-image: url("/img/repair.png");
+}

@@ -16,6 +16,12 @@ var content embed.FS
 //go:embed img
 var img embed.FS
 
+//go:embed js
+var js embed.FS
+
+//go:embed css
+var css embed.FS
+
 //go:embed root/favicon.ico
 var root embed.FS
 
@@ -28,6 +34,8 @@ func Start() {
 	http.Handle("/html/rust.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
 	http.Handle("/html/7d2d.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
 	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
+	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(js)), http.MethodGet))
+	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(css)), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
 	http.Handle("/set/", restrictMethod(http.HandlerFunc(hSet), http.MethodPost))
 	http.Handle("/pause", restrictMethod(http.HandlerFunc(hPause), http.MethodPost))

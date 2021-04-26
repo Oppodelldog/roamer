@@ -22,12 +22,12 @@ func Walk() []sequencer.Elem {
 func Grillmaster() []sequencer.Elem {
 	return []sequencer.Elem{
 		general.KeyDown{Key: key.VK_E},
-		sequencer.Wait{Duration: general.HumanizedMillis(200)},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 		general.KeyUp{Key: key.VK_E},
 		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 
 		general.KeyDown{Key: key.VK_E},
-		sequencer.Wait{Duration: general.HumanizedMillis(200)},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 		general.KeyUp{Key: key.VK_E},
 		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 
