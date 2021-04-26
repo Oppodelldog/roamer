@@ -5,6 +5,7 @@ import (
 	"rust-roamer/sequences/altf4"
 	"rust-roamer/sequences/rust"
 	"rust-roamer/sequences/sevendaystodie"
+	"rust-roamer/sequences/vallheim"
 )
 
 func NewSequenceFunc(name string) func() []sequencer.Elem {
@@ -50,6 +51,9 @@ func NewSequenceFunc(name string) func() []sequencer.Elem {
 			"altf4-run-3":             altf4.Run3(),
 			"altf4-run-4":             altf4.Run4(),
 			"altf4-run-5":             altf4.Run5(),
+			"vallheim-run":            vallheim.Run(),
+			"vallheim-walk":           vallheim.Walk(),
+			"vallheim-grillmaster":    vallheim.Grillmaster(),
 		}
 
 		return sequences[name]

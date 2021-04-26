@@ -121,7 +121,7 @@ func Run1() []sequencer.Elem {
 		// turn camera left for a good straight run and a bit up so player can time 2nd step
 		general.MouseMove{Y: -140},
 		sequencer.Wait{Duration: 100 * time.Millisecond},
-		general.MouseMove{X: -100},
+		general.MouseMove{X: -120},
 		sequencer.Wait{Duration: 200 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
 	}
@@ -138,10 +138,8 @@ func Run2() []sequencer.Elem {
 		sequencer.Wait{Duration: 2200 * time.Millisecond},
 		general.MouseMove{Y: -100},
 		sequencer.Wait{Duration: 100 * time.Millisecond},
-		general.MouseMove{X: -40},
-		sequencer.Wait{Duration: 50 * time.Millisecond},
-		general.MouseMove{X: -40},
-		sequencer.Wait{Duration: 50 * time.Millisecond},
+		general.MouseMove{X: -80},
+		sequencer.Wait{Duration: 100 * time.Millisecond},
 		sequencer.Wait{Duration: 1600 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
 	}
@@ -152,7 +150,7 @@ func Run3() []sequencer.Elem {
 
 		general.KeyDown{Key: key.VK_W},
 		//general.KeyDown{Key: key.VK_D},
-		sequencer.Wait{Duration: 800 * time.Millisecond},
+		sequencer.Wait{Duration: 600 * time.Millisecond},
 		//general.KeyUp{Key: key.VK_D},
 		general.MouseMove{X: -50, Y: 0},
 		sequencer.Wait{Duration: 800 * time.Millisecond},
