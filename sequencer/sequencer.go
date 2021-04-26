@@ -82,14 +82,13 @@ func (s *Sequencer) waitForResume() {
 func (s *Sequencer) playSequence() {
 
 waitForNext:
-	if s.beforeSequence != nil {
-		s.beforeSequence()
-	}
-
 	s.hasSequence = false
 	s.aborted = false
 	newSequence := <-s.sequence
 	s.hasSequence = true
+	if s.beforeSequence != nil {
+		s.beforeSequence()
+	}
 
 loop:
 	newSeq := newSequence()

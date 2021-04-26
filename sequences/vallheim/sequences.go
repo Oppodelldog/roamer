@@ -10,8 +10,6 @@ func Run() []sequencer.Elem {
 	return []sequencer.Elem{
 		general.KeyDown{Key: key.VK_W},
 		general.KeyDown{Key: key.VK_LSHIFT},
-		sequencer.Wait{Duration: general.HumanizedMillis(500)},
-		sequencer.Loop{},
 	}
 }
 
