@@ -2,6 +2,8 @@ package server
 
 import (
 	"embed"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"path"
@@ -50,7 +52,10 @@ func Start() {
 	log.Printf("Starting Rust-Roamer")
 	log.Printf("http://127.0.0.1:%v/html/", port)
 
-	http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		fmt.Printf("error running http server: %v", err)
+	}
 }
 
 func addPrefix(s string, h http.Handler) http.Handler {
