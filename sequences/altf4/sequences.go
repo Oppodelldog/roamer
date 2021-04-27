@@ -12,7 +12,7 @@ const keyReleaseDelay = 60
 
 func RunAll() []sequencer.Elem {
 	return general.Flatten([][]sequencer.Elem{
-		Run0(),
+		Reset(),
 		{sequencer.Wait{Duration: 2000 * time.Millisecond}},
 		Run1(),
 		{sequencer.Wait{Duration: 0 * time.Millisecond}},
@@ -24,7 +24,40 @@ func RunAll() []sequencer.Elem {
 	})
 }
 
-func Run0() []sequencer.Elem {
+func RunAll2() []sequencer.Elem {
+	return general.Flatten([][]sequencer.Elem{
+		Reset(),
+		{sequencer.Wait{Duration: 1600 * time.Millisecond}},
+		RunDownToPathBranch1(),
+		{
+			general.MouseMove{X: -127},
+			//sequencer.Wait{Duration:2700 * time.Millisecond},
+			general.KeyDown{Key: key.VK_W},
+			sequencer.Wait{Duration: 800 * time.Millisecond},
+			general.KeyDown{Key: key.VK_SPACE},
+			sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
+			sequencer.Wait{Duration: 800 * time.Millisecond},
+			general.KeyUp{Key: key.VK_SPACE},
+			sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
+			general.KeyUp{Key: key.VK_W},
+			sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
+
+			sequencer.Wait{Duration: 1200 * time.Millisecond},
+
+			general.KeyDown{Key: key.VK_W},
+			sequencer.Wait{Duration: 1000 * time.Millisecond},
+			general.KeyDown{Key: key.VK_SPACE},
+			sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
+			general.KeyUp{Key: key.VK_SPACE},
+
+			sequencer.Wait{Duration: 1800 * time.Millisecond},
+			general.KeyUp{Key: key.VK_W},
+		},
+		{sequencer.Wait{Duration: 0 * time.Millisecond}},
+	})
+}
+
+func Reset() []sequencer.Elem {
 	return []sequencer.Elem{
 		general.KeyDown{Key: key.VK_ESC},
 		sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
@@ -39,7 +72,7 @@ func Run0() []sequencer.Elem {
 	}
 }
 
-func Run1() []sequencer.Elem {
+func RunDownToPathBranch1() []sequencer.Elem {
 	return []sequencer.Elem{
 		//Turn towards edge and walk to branch
 		general.MouseMove{X: 115, Y: 200},
@@ -105,26 +138,33 @@ func Run1() []sequencer.Elem {
 		general.KeyUp{Key: key.VK_SPACE},
 		sequencer.Wait{Duration: 1650 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
-
-		// Turn 90 right towards 2nd square spikes
-		general.MouseMove{X: 535, Y: 0},
-		sequencer.Wait{Duration: 50 * time.Millisecond},
-
-		// Jump next to 2nd square spikes
-		general.KeyDown{Key: key.VK_W},
-		sequencer.Wait{Duration: 300 * time.Millisecond},
-		general.KeyDown{Key: key.VK_SPACE},
-		sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
-		general.KeyUp{Key: key.VK_SPACE},
-		sequencer.Wait{Duration: 1300 * time.Millisecond},
-
-		// turn camera left for a good straight run and a bit up so player can time 2nd step
-		general.MouseMove{Y: -140},
-		sequencer.Wait{Duration: 100 * time.Millisecond},
-		general.MouseMove{X: -120},
-		sequencer.Wait{Duration: 200 * time.Millisecond},
-		general.KeyUp{Key: key.VK_W},
 	}
+}
+
+func Run1() []sequencer.Elem {
+	return general.Flatten([][]sequencer.Elem{
+		RunDownToPathBranch1(),
+		{
+			// Turn 90 right towards 2nd square spikes
+			general.MouseMove{X: 535, Y: 0},
+			sequencer.Wait{Duration: 50 * time.Millisecond},
+
+			// Jump next to 2nd square spikes
+			general.KeyDown{Key: key.VK_W},
+			sequencer.Wait{Duration: 300 * time.Millisecond},
+			general.KeyDown{Key: key.VK_SPACE},
+			sequencer.Wait{Duration: keyReleaseDelay * time.Millisecond},
+			general.KeyUp{Key: key.VK_SPACE},
+			sequencer.Wait{Duration: 1300 * time.Millisecond},
+
+			// turn camera left for a good straight run and a bit up so player can time 2nd step
+			general.MouseMove{Y: -140},
+			sequencer.Wait{Duration: 100 * time.Millisecond},
+			general.MouseMove{X: -120},
+			sequencer.Wait{Duration: 200 * time.Millisecond},
+			general.KeyUp{Key: key.VK_W},
+		},
+	})
 }
 
 func Run2() []sequencer.Elem {
@@ -138,7 +178,7 @@ func Run2() []sequencer.Elem {
 		sequencer.Wait{Duration: 2200 * time.Millisecond},
 		general.MouseMove{Y: -100},
 		sequencer.Wait{Duration: 100 * time.Millisecond},
-		general.MouseMove{X: -80},
+		general.MouseMove{X: -60},
 		sequencer.Wait{Duration: 100 * time.Millisecond},
 		sequencer.Wait{Duration: 1600 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
@@ -155,9 +195,12 @@ func Run3() []sequencer.Elem {
 		general.MouseMove{X: -50, Y: 0},
 		sequencer.Wait{Duration: 800 * time.Millisecond},
 		general.MouseMove{X: -60, Y: 0},
-		sequencer.Wait{Duration: 1000 * time.Millisecond},
+		sequencer.Wait{Duration: 800 * time.Millisecond},
 		general.MouseMove{X: -40, Y: 100},
-		sequencer.Wait{Duration: 600 * time.Millisecond},
+		general.KeyUp{Key: key.VK_W},
+		sequencer.Wait{Duration: 800 * time.Millisecond},
+		general.KeyDown{Key: key.VK_W},
+		sequencer.Wait{Duration: 700 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
 	}
 }
@@ -185,11 +228,11 @@ func Run4() []sequencer.Elem {
 		general.KeyUp{Key: key.VK_W},
 
 		sequencer.Wait{Duration: 7000 * time.Millisecond},
-		general.MouseMove{X: -240, Y: 0},
+		general.MouseMove{X: -250, Y: 0},
 		general.KeyDown{Key: key.VK_W},
 		sequencer.Wait{Duration: 2200 * time.Millisecond},
 		general.KeyUp{Key: key.VK_W},
-		general.MouseMove{X: -340, Y: 0},
+		general.MouseMove{X: -350, Y: 0},
 	}
 }
 
