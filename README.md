@@ -1,4 +1,4 @@
-# rust-roamer
+# roamer
 
 Demo Project how to automate windows keyboard/mouse interactions through a web frontend.
 
@@ -29,6 +29,18 @@ This Currently automates boring tasks like
 * walk
 * run
 * repair slot (1-10)
+
+### altf4
+
+* attempt for a full run
+* several sequences to jump the first hurdles
+
+###vallheim
+
+* walk
+* run
+* grillmaster
+
 
 **Screenshots**
 
