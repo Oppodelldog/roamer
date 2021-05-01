@@ -2,8 +2,8 @@ package general
 
 import (
 	"fmt"
-	"rust-roamer/key"
-	"rust-roamer/mouse"
+	key2 "github.com/Oppodelldog/roamer/internal/key"
+	mouse2 "github.com/Oppodelldog/roamer/internal/mouse"
 )
 
 type KeyDown struct {
@@ -12,7 +12,7 @@ type KeyDown struct {
 
 func (e KeyDown) Do() error {
 	fmt.Println("down ", e.Key)
-	return key.Down(e.Key)
+	return key2.Down(e.Key)
 }
 
 type KeyUp struct {
@@ -21,7 +21,7 @@ type KeyUp struct {
 
 func (e KeyUp) Do() error {
 	fmt.Println("up ", e.Key)
-	return key.Up(e.Key)
+	return key2.Up(e.Key)
 }
 
 type LeftMouseButtonDown struct {
@@ -29,7 +29,7 @@ type LeftMouseButtonDown struct {
 
 func (e LeftMouseButtonDown) Do() error {
 	fmt.Println("lmb-down")
-	return mouse.LeftDown()
+	return mouse2.LeftDown()
 }
 
 type RightMouseButtonDown struct {
@@ -37,15 +37,15 @@ type RightMouseButtonDown struct {
 
 func (e RightMouseButtonDown) Do() error {
 	fmt.Println("rmb-down")
-	return mouse.RightDown()
+	return mouse2.RightDown()
 }
 
 type SetMousePos struct {
-	Pos mouse.Pos
+	Pos mouse2.Pos
 }
 
 func (e SetMousePos) Do() error {
-	err := mouse.SetPosition(e.Pos)
+	err := mouse2.SetPosition(e.Pos)
 	if err != nil {
 		fmt.Printf("error SetMousePos: %v\n", err)
 	}
@@ -59,7 +59,7 @@ type LeftMouseButtonUp struct {
 
 func (e LeftMouseButtonUp) Do() error {
 	fmt.Println("lmb-up")
-	return mouse.LeftUp()
+	return mouse2.LeftUp()
 }
 
 type RightMouseButtonUp struct {
@@ -67,14 +67,14 @@ type RightMouseButtonUp struct {
 
 func (e RightMouseButtonUp) Do() error {
 	fmt.Println("rmb-up")
-	return mouse.RightUp()
+	return mouse2.RightUp()
 }
 
 type LookupMousePos struct {
 }
 
 func (e LookupMousePos) Do() error {
-	pos := mouse.GetCursorPos()
+	pos := mouse2.GetCursorPos()
 	fmt.Printf("current mouse pos: %#v\n", pos)
 
 	return nil
@@ -87,7 +87,7 @@ type MouseMove struct {
 
 func (e MouseMove) Do() error {
 	fmt.Println("move ", e.X, e.Y)
-	err := mouse.Move(e.X, e.Y)
+	err := mouse2.Move(e.X, e.Y)
 
 	return err
 }

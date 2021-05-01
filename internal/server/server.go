@@ -4,11 +4,11 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	key2 "github.com/Oppodelldog/roamer/internal/key"
+	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
 	"log"
 	"net/http"
 	"path"
-	"rust-roamer/key"
-	"rust-roamer/sequencer"
 	"strconv"
 )
 
@@ -27,7 +27,7 @@ var css embed.FS
 //go:embed root/favicon.ico
 var root embed.FS
 
-var seq *sequencer.Sequencer
+var seq *sequencer2.Sequencer
 
 const port = 10982
 
@@ -44,9 +44,9 @@ func Start() {
 	http.Handle("/abort", restrictMethod(http.HandlerFunc(hAbort), http.MethodPost))
 	http.Handle("/state", restrictMethod(http.HandlerFunc(hState), http.MethodGet))
 
-	seq = sequencer.New(1)
+	seq = sequencer2.New(1)
 	seq.BeforeSequence(func() {
-		key.ResetPressed()
+		key2.ResetPressed()
 	})
 
 	log.Printf("Starting Rust-Roamer")

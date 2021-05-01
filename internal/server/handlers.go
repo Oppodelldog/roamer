@@ -3,9 +3,9 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	sequences2 "github.com/Oppodelldog/roamer/internal/sequences"
 	"net/http"
 	"path"
-	"rust-roamer/sequences"
 )
 
 var Sequence string
@@ -13,7 +13,7 @@ var Sequence string
 func hSet(_ http.ResponseWriter, r *http.Request) {
 	Sequence = path.Base(r.URL.Path)
 
-	seq.EnqueueSequence(sequences.NewSequenceFunc(Sequence))
+	seq.EnqueueSequence(sequences2.NewSequenceFunc(Sequence))
 }
 
 func hPause(w http.ResponseWriter, _ *http.Request) {

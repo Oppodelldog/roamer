@@ -1,14 +1,14 @@
 package main
 
 import (
-	"rust-roamer/config"
-	"rust-roamer/server"
+	config2 "github.com/Oppodelldog/roamer/internal/config"
+	server2 "github.com/Oppodelldog/roamer/internal/server"
 )
 
 func main() {
-	if err := config.Load(); err != nil {
+	if err := config2.Load(); err != nil {
 		panic(err)
 	}
 
-	server.Start()
+	server2.Start()
 }

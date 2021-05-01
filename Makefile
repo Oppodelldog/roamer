@@ -1,4 +1,4 @@
-BINARY_NAME=rust-roamer
+BINARY_NAME=roamer
 BINARY_FILE_PATH=".build-artifacts/$(BINARY_NAME)"
 MAIN_FILE="cmd/main.go"
 
