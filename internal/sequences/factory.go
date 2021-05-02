@@ -3,6 +3,7 @@ package sequences
 import (
 	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
 	altf42 "github.com/Oppodelldog/roamer/internal/sequences/altf4"
+	"github.com/Oppodelldog/roamer/internal/sequences/remnant"
 	rust2 "github.com/Oppodelldog/roamer/internal/sequences/rust"
 	sevendaystodie2 "github.com/Oppodelldog/roamer/internal/sequences/sevendaystodie"
 	vallheim2 "github.com/Oppodelldog/roamer/internal/sequences/vallheim"
@@ -55,6 +56,8 @@ func NewSequenceFunc(name string) func() []sequencer2.Elem {
 			"vallheim-run":            vallheim2.Run(),
 			"vallheim-walk":           vallheim2.Walk(),
 			"vallheim-grillmaster":    vallheim2.Grillmaster(),
+			"remnant-equip-hunter":    remnant.Hunter(),
+			"remnant-equip-radiant":   remnant.Radiant(),
 		}
 
 		return sequences[name]

@@ -1,0 +1,13 @@
+git clone git@gitlab.com:Oppodelldog/ts-content-producer-editor.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-api.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-data.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-build.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-router.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-parser.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-website.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-producer.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-vpl-store.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-vpldocument.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-component-parser.git
+git clone git@gitlab.com:Oppodelldog/go-content-producer-debug-store.git
+git clone git@gitlab.com:Oppodelldog/ts-content-producer-settings.git
