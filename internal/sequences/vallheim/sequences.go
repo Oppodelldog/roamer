@@ -1,50 +1,59 @@
 package vallheim
 
 import (
-	key2 "github.com/Oppodelldog/roamer/internal/key"
-	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
-	general2 "github.com/Oppodelldog/roamer/internal/sequences/general"
+	"github.com/Oppodelldog/roamer/internal/key"
+	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
 )
 
-func Run() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_W},
-		general2.KeyDown{Key: key2.VK_LSHIFT},
+func Run() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_W},
+		general.KeyDown{Key: key.VK_LSHIFT},
 	}
 }
 
-func Walk() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_W},
+func Walk() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_W},
 	}
 }
 
-func Grillmaster() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-		general2.KeyUp{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
+func Jump() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_SPACE},
+		sequencer.Wait{Duration: general.HumanizedMillis(30)},
+		general.KeyUp{Key: key.VK_SPACE},
+		sequencer.Wait{Duration: general.HumanizedMillis(800)},
+		sequencer.Loop{},
+	}
+}
+func Grillmaster() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
+		general.KeyUp{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 
-		general2.KeyDown{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-		general2.KeyUp{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
+		general.KeyDown{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
+		general.KeyUp{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 
-		sequencer2.Wait{Duration: general2.HumanizedMillis(26000)},
+		sequencer.Wait{Duration: general.HumanizedMillis(26000)},
 
-		general2.KeyDown{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(200)},
-		general2.KeyUp{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
+		general.KeyDown{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(200)},
+		general.KeyUp{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
 
-		sequencer2.Wait{Duration: general2.HumanizedMillis(200)},
-		general2.KeyDown{Key: key2.VK_E},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-		general2.KeyUp{Key: key2.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(200)},
+		general.KeyDown{Key: key.VK_E},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
+		general.KeyUp{Key: key.VK_E},
 
-		sequencer2.Wait{Duration: general2.HumanizedMillis(600)},
+		sequencer.Wait{Duration: general.HumanizedMillis(600)},
 
-		sequencer2.Loop{},
+		sequencer.Loop{},
 	}
 }

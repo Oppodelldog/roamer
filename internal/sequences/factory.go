@@ -56,6 +56,7 @@ func NewSequenceFunc(name string) func() []sequencer2.Elem {
 			"vallheim-run":            vallheim2.Run(),
 			"vallheim-walk":           vallheim2.Walk(),
 			"vallheim-grillmaster":    vallheim2.Grillmaster(),
+			"vallheim-jump":           vallheim2.Jump(),
 			"remnant-equip-hunter":    remnant.Hunter(),
 			"remnant-equip-radiant":   remnant.Radiant(),
 		}
