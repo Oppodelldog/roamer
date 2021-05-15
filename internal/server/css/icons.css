@@ -3,6 +3,10 @@
     background-image: url("/img/none.png");
 }
 
+.ico-abort {
+    background-image: url("/img/abort.png");
+}
+
 .ico-get-mouse-pos {
     background-image: url("/img/mousepos.png");
 }
