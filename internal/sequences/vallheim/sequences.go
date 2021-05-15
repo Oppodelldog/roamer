@@ -28,6 +28,17 @@ func Jump() []sequencer.Elem {
 		sequencer.Loop{},
 	}
 }
+
+func Gather() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.LeftMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(60)},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(800)},
+		sequencer.Loop{},
+	}
+}
+
 func Grillmaster() []sequencer.Elem {
 	return []sequencer.Elem{
 		general.KeyDown{Key: key.VK_E},
