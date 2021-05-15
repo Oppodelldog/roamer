@@ -18,12 +18,12 @@ type Config struct {
 }
 type Root map[string]Config
 
-const fileName = "roamer-config.json"
+const fileName = "roamer-default-ui-coords.json"
 const filePerm = 0600
 const appDataFolderName = "roamer"
 
-//go:embed default.json
-var defaultConfig []byte
+//go:embed default-ui-coords.json
+var uiCoords []byte
 
 var conf Root
 
@@ -59,7 +59,7 @@ func ensureConfig() {
 
 	configFilePath := getConfigFilePath()
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		err := ioutil.WriteFile(configFilePath, defaultConfig, filePerm)
+		err := ioutil.WriteFile(configFilePath, uiCoords, filePerm)
 		if err != nil {
 			fmt.Printf("cannot write default config: %v", err)
 		}
