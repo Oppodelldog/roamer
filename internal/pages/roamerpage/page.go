@@ -9,6 +9,7 @@ import (
 )
 
 type Data struct {
+	PageId     string
 	Title      string
 	CssFile    string
 	ActionRows ActionRows
@@ -16,9 +17,10 @@ type Data struct {
 type ActionRows []Actions
 type Actions []Action
 type Action struct {
-	Icon    string
-	Action  string
-	Caption string
+	Icon        string
+	Action      string
+	Caption     string
+	HasSequence bool
 }
 
 func Render(pageId string, fs fs.FS, writer io.Writer) error {
@@ -38,6 +40,7 @@ func Render(pageId string, fs fs.FS, writer io.Writer) error {
 	var actionRows = actionRows(roamerPage)
 
 	return tpl.Execute(writer, Data{
+		PageId:     pageId,
 		Title:      roamerPage.Title,
 		CssFile:    roamerPage.CSSFile,
 		ActionRows: actionRows,
@@ -53,9 +56,10 @@ func actionRows(roamerPage config.Page) ActionRows {
 
 	for _, action := range roamerPage.Actions {
 		actions = append(actions, Action{
-			Icon:    action.Icon,
-			Action:  action.Action,
-			Caption: action.Caption,
+			Icon:        action.Icon,
+			Action:      action.Action,
+			Caption:     action.Caption,
+			HasSequence: len(action.Sequence) > 0,
 		})
 
 		no++

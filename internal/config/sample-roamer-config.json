@@ -6,7 +6,9 @@
       "TitleShort": "SEVEN DAYS TO DIE",
       "Title": "7 days to die - Roamer",
       "CssFile": "7d2d.css",
-      "Columns": [7],
+      "Columns": [
+        7
+      ],
       "Actions": [
         {
           "Icon": "ico-get-mouse-pos",
@@ -259,27 +261,32 @@
         {
           "Icon": "ico-run",
           "Action": "vallheim-run",
-          "Caption": "RUN"
+          "Caption": "RUN",
+          "Sequence": "KD W; KD LSHIFT"
         },
         {
           "Icon": "ico-walk",
           "Action": "vallheim-walk",
-          "Caption": "WALK"
+          "Caption": "WALK",
+          "Sequence": "KD W"
         },
         {
           "Icon": "ico-grill",
           "Action": "vallheim-grillmaster",
-          "Caption": "GRILLMASTER"
+          "Caption": "GRILLMASTER",
+          "Sequence": "KD E;W 300ms; KU E;W 300ms;KD E;W 300ms; KU E;W 300ms;W 26000ms;KD E;W 300ms; KU E; W 300ms;KD E;W 300ms; KU E; W 300ms;W 600ms;L"
         },
         {
           "Icon": "ico-click-left",
           "Action": "vallheim-gather",
-          "Caption": "GAHTER"
+          "Caption": "GAHTER",
+          "Sequence": "LD;W 60ms;LU;W 800ms;L"
         },
         {
           "Icon": "ico-jump",
           "Action": "vallheim-jump",
-          "Caption": "JUMP"
+          "Caption": "JUMP",
+          "Sequence": "KD SPACE;W 30ms;KU SPACE;W 800ms;L"
         }
       ]
     }

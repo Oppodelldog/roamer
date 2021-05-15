@@ -3,10 +3,13 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	sequences2 "github.com/Oppodelldog/roamer/internal/sequences"
+	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/sequences"
 	"log"
 	"net/http"
 	"path"
+	"strconv"
+	"strings"
 )
 
 var Sequence string
@@ -14,7 +17,30 @@ var Sequence string
 func hSet(_ http.ResponseWriter, r *http.Request) {
 	Sequence = path.Base(r.URL.Path)
 
-	seq.EnqueueSequence(sequences2.NewSequenceFunc(Sequence))
+	seq.EnqueueSequence(sequences.NewBuildInSequenceFunc(Sequence))
+}
+
+func hSetConfigSeq(w http.ResponseWriter, r *http.Request) {
+	urlPath := strings.Split(r.URL.Path, "/")
+	pageId := urlPath[len(urlPath)-2]
+	actionIdx, err := strconv.Atoi(urlPath[len(urlPath)-1])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error parsing action index: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	page, ok := config.RoamerPage(pageId)
+	if !ok {
+		http.Error(w, fmt.Sprintf("roamer-page '%s' not found", pageId), http.StatusNotFound)
+		return
+	}
+
+	if len(page.Actions) <= actionIdx {
+		http.Error(w, fmt.Sprintf("roamer-page '%s' not found", pageId), http.StatusNotFound)
+		return
+	}
+
+	seq.EnqueueSequence(sequences.NewCustomSequenceFunc(page.Actions[actionIdx].Sequence))
 }
 
 func hPause(w http.ResponseWriter, _ *http.Request) {

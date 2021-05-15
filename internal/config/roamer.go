@@ -24,9 +24,10 @@ type (
 		Actions    []Action `json:"Actions"`
 	}
 	Action struct {
-		Icon    string `json:"Icon"`
-		Action  string `json:"Action"`
-		Caption string `json:"Caption"`
+		Icon     string `json:"Icon"`
+		Action   string `json:"Action"`
+		Caption  string `json:"Caption"`
+		Sequence string `json:"Sequence"`
 	}
 )
 
@@ -34,9 +35,9 @@ func Roamer() Config {
 	return config
 }
 
-func RoamerPage(basePath string) (Page, bool) {
+func RoamerPage(pageId string) (Page, bool) {
 	for id, page := range config.Pages {
-		if id != basePath {
+		if id != pageId {
 			continue
 		}
 		return page, true

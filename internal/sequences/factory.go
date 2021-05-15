@@ -6,10 +6,9 @@ import (
 	"github.com/Oppodelldog/roamer/internal/sequences/remnant"
 	"github.com/Oppodelldog/roamer/internal/sequences/rust"
 	"github.com/Oppodelldog/roamer/internal/sequences/sevendaystodie"
-	"github.com/Oppodelldog/roamer/internal/sequences/vallheim"
 )
 
-func NewSequenceFunc(name string) func() []sequencer.Elem {
+func NewBuildInSequenceFunc(name string) func() []sequencer.Elem {
 	return func() []sequencer.Elem {
 		var sequences = map[string][]sequencer.Elem{
 			"none":                    {},
@@ -53,11 +52,6 @@ func NewSequenceFunc(name string) func() []sequencer.Elem {
 			"altf4-run-3":             altf4.Run3(),
 			"altf4-run-4":             altf4.Run4(),
 			"altf4-run-5":             altf4.Run5(),
-			"vallheim-run":            vallheim.Run(),
-			"vallheim-walk":           vallheim.Walk(),
-			"vallheim-grillmaster":    vallheim.Grillmaster(),
-			"vallheim-jump":           vallheim.Jump(),
-			"vallheim-gather":         vallheim.Gather(),
 			"remnant-equip-hunter":    remnant.Hunter(),
 			"remnant-equip-radiant":   remnant.Radiant(),
 		}

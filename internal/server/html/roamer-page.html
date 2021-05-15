@@ -16,11 +16,18 @@
     <div id="active-sequence" class="active-sequence">???</div>
 
     <div id="actions" class="sequences">
+        {{$page := .}}
         {{ range .ActionRows }}
-        {{ range . }}
+        {{ range $key,$value := . }}
+        {{ if .HasSequence }}
+        <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{$key}})">
+            <span class="caption">{{.Caption}}</span>
+        </button>
+        {{else}}
         <button class="{{.Icon}}" onclick="setSequence('{{.Action}}')">
             <span class="caption">{{.Caption}}</span>
         </button>
+        {{ end }}
         {{ end }}
         <br/>
         {{ end }}

@@ -43,6 +43,17 @@ function setSequence(sequence) {
         )
 }
 
+function setConfigSequence(pageId,sequence) {
+    clearError();
+    fetch('/setconfigseq/' + pageId + "/" + sequence, {method: 'POST'})
+        .then(handleErrors)
+        .then(updateState)
+        .catch((err) => {
+                console.error(err)
+            }
+        )
+}
+
 function pause() {
     clearError();
     fetch('/pause', {method: 'POST'})
