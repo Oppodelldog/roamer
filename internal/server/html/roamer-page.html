@@ -1,0 +1,40 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/icons.css">
+    <link rel="stylesheet" href="/css/{{.CssFile}}">
+</head>
+
+<body>
+<script type="text/javascript" src="/js/api.js"></script>
+
+<h1>{{.Title}}</h1>
+<div class="content">
+
+    <div id="active-sequence" class="active-sequence">???</div>
+
+    <div id="actions" class="sequences">
+        {{ range .ActionRows }}
+        {{ range . }}
+        <button class="{{.Icon}}" onclick="setSequence('{{.Action}}')">
+            <span class="caption">{{.Caption}}</span>
+        </button>
+        {{ end }}
+        <br/>
+        {{ end }}
+    </div>
+
+    <div class="sequences">
+        <button class="ico-none" onclick="setSequence('none')"><span class="caption">NONE</span></button>
+        <button class="ico-pause-button" onclick="togglePause()">???</button>
+        <button id="abort-button" onclick="abort()">Abort</button>
+    </div>
+
+    <div id="latest-error" class="latest-error"></div>
+
+    <div class="footer"><a href="/attributions.html">Attributions</a></div>
+</div>
+</body>
+</html>

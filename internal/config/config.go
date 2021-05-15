@@ -1,8 +1,6 @@
 package config
 
 import (
-	// embedding default config
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,65 +8,60 @@ import (
 	"path/filepath"
 )
 
-type Game struct {
-	Slots map[string]Slots
-}
-type Config struct {
-	Games map[string]Game
-}
-type Root map[string]Config
-
-const fileName = "roamer-default-ui-coords.json"
 const filePerm = 0600
 const appDataFolderName = "roamer"
 
-//go:embed default-ui-coords.json
-var uiCoords []byte
-
-var conf Root
-
 func Load() error {
-	ensureConfig()
-
-	f, err := os.Open(getConfigFilePath())
+	err := loadConfig(fileNameRoamerConfig, &config, sampleRoamerConfig)
 	if err != nil {
-		return fmt.Errorf("cannot load config: %w", err)
+		return err
+	}
+
+	return loadConfig(fileNameUICordsConfig, &uiConf, uiCoordsDefault)
+}
+
+func loadConfig(filename string, data interface{}, defaultData []byte) error {
+	ensureConfig(filename, defaultData)
+
+	f, err := os.Open(getConfigFilePath(filename))
+	if err != nil {
+		return fmt.Errorf("cannot load sampleRoamerConfig: %w", err)
 	}
 
 	defer func() {
 		err := f.Close()
 		if err != nil {
-			fmt.Printf("cannot close config: %v\n", err)
+			fmt.Printf("cannot close '%s': %v\n", filename, err)
 		}
 	}()
 
-	err = json.NewDecoder(f).Decode(&conf)
+	err = json.NewDecoder(f).Decode(&data)
 	if err != nil {
-		return fmt.Errorf("cannot decode config: %w", err)
+		return fmt.Errorf("cannot decode '%s': %w", filename, err)
 	}
 
 	return nil
 }
 
-func ensureConfig() {
+func ensureConfig(filename string, defaultData []byte) {
 	appDataFolder := getAppDataFolder()
 	err := os.MkdirAll(appDataFolder, filePerm)
 	if err != nil {
 		panic(fmt.Sprintf("unable to create app data folder '%s': %v", appDataFolder, err))
 	}
 
-	configFilePath := getConfigFilePath()
+	configFilePath := getConfigFilePath(filename)
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		err := ioutil.WriteFile(configFilePath, uiCoords, filePerm)
+		err := ioutil.WriteFile(configFilePath, defaultData, filePerm)
 		if err != nil {
-			fmt.Printf("cannot write default config: %v", err)
+			fmt.Printf("cannot write default '%s': %v", filename, err)
 		}
 	}
 }
 
-func getConfigFilePath() string {
+func getConfigFilePath(filename string) string {
 	appDataFolder := getAppDataFolder()
-	configFilePath := filepath.Join(appDataFolder, fileName)
+	configFilePath := filepath.Join(appDataFolder, filename)
 
 	return configFilePath
 }
@@ -82,30 +75,4 @@ func getAppDataFolder() string {
 	appDataFolder := filepath.Join(appDataDir, appDataFolderName)
 
 	return appDataFolder
-}
-
-func Save() {
-	appDataFolder := getAppDataFolder()
-	configFilePath := filepath.Join(appDataFolder, fileName)
-	f, err := os.OpenFile(configFilePath, os.O_TRUNC|os.O_CREATE, filePerm)
-	if err != nil {
-		fmt.Printf("cannot open config file for writing: %v", err)
-		return
-	}
-
-	defer func() {
-		err := f.Close()
-		if err != nil {
-			fmt.Printf("cannot close config: %v", err)
-		}
-	}()
-
-	err = json.NewEncoder(f).Encode(conf)
-	if err != nil {
-		fmt.Printf("cannot encode config: %v", err)
-	}
-}
-
-func GetSlots(version, game, kind string) Slots {
-	return conf[version].Games[game].Slots[kind]
 }

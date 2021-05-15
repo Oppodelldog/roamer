@@ -32,9 +32,9 @@ var seq *sequencer2.Sequencer
 const port = 10982
 
 func Start() {
-	http.Handle("/html/", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
-	http.Handle("/html/rust.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
-	http.Handle("/html/7d2d.html", restrictMethod(http.FileServer(http.FS(content)), http.MethodGet))
+	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
+	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(content))), http.MethodGet))
+	http.Handle("/roam/", restrictMethod(http.StripPrefix("/roam/", http.HandlerFunc(serveRoamerPage)), http.MethodGet))
 	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
 	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(js)), http.MethodGet))
 	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(css)), http.MethodGet))
@@ -50,7 +50,7 @@ func Start() {
 	})
 
 	log.Printf("Starting Rust-Roamer")
-	log.Printf("http://127.0.0.1:%v/html/", port)
+	log.Printf("http://127.0.0.1:%v", port)
 
 	err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {

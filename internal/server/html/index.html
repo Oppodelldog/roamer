@@ -1,26 +1,23 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
-    <title>Roamer</title>
+    <title>{{.Title}}</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/index.css">
 </head>
 
 <body>
-
-<h1>Roamer</h1>
+<h1>{{.Title}}</h1>
 <div class="content">
     <h2>
-        where would you like to roam around?
+        {{.WelcomeText}}
     </h2>
     <div class="buttonlist">
-        <button onclick="location.href='rust.html'">RUST</button>
-        <button onclick="location.href='7d2d.html'">SEVEN DAYS TO DIE</button>
-        <button onclick="location.href='altf4.html'">ALTF4</button>
-        <button onclick="location.href='vallheim.html'">VALLHEIM</button>
-        <button onclick="location.href='remnant.html'">REMNANT</button>
+        {{range $key,$value:=.Pages}}
+        <button onclick="location.href='/roam/{{$key}}'">{{$value.TitleShort}}</button>
+        {{end}}
     </div>
-    <div class="footer"><a href="/html/attributions.html">Attributions</a></div>
+    <div class="footer"><a href="/attributions.html">Attributions</a></div>
 </div>
 </body>
 </html>

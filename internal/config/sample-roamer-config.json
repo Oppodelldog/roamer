@@ -1,0 +1,287 @@
+{
+  "Title": "Roamer",
+  "WelcomeText": "where would you like to roam around?",
+  "Pages": {
+    "7d2d": {
+      "TitleShort": "SEVEN DAYS TO DIE",
+      "Title": "7 days to die - Roamer",
+      "CssFile": "7d2d.css",
+      "Columns": [7],
+      "Actions": [
+        {
+          "Icon": "ico-get-mouse-pos",
+          "Action": "get-mouse-pos",
+          "Caption": "GET-MOUSE-POS"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Action": "7d2d_click_left_fast",
+          "Caption": "LEFT-CLICK-FAST"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Action": "7d2d_click_left",
+          "Caption": "LEFT-CLICK"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Action": "7d2d_click_left_slow",
+          "Caption": "LEFT-CLICK-SLOW"
+        },
+        {
+          "Icon": "ico-walk",
+          "Action": "7d2d_walk",
+          "Caption": "WALK"
+        },
+        {
+          "Icon": "ico-run",
+          "Action": "7d2d_run",
+          "Caption": "RUN"
+        },
+        {
+          "Icon": "ico-run-stop",
+          "Action": "7d2d_walk_run_stop",
+          "Caption": "WALK-RUN-STOP"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-1",
+          "Caption": "1"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-2",
+          "Caption": "2"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-3",
+          "Caption": "3"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-4",
+          "Caption": "4"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-5",
+          "Caption": "5"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-6",
+          "Caption": "6"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-7",
+          "Caption": "7"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-8",
+          "Caption": "8"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-9",
+          "Caption": "9"
+        },
+        {
+          "Icon": "icon-repair",
+          "Action": "7d2d_repair-0",
+          "Caption": "0"
+        }
+      ]
+    },
+    "altf4": {
+      "Title": "ALTF4 - Roamer",
+      "TitleShort": "ALTF4",
+      "CssFile": "altf4.css",
+      "Actions": [
+        {
+          "Icon": "",
+          "Action": "altf4-run-0",
+          "Caption": "RESET"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-1",
+          "Caption": "RUN-1"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-2",
+          "Caption": "RUN-2"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-3",
+          "Caption": "RUN-3"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-4",
+          "Caption": "RUN-4"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-5",
+          "Caption": "RUN-5"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-all",
+          "Caption": "RUN-ALL"
+        },
+        {
+          "Icon": "",
+          "Action": "altf4-run-all-2",
+          "Caption": "RUN-ALL 2"
+        }
+      ]
+    },
+    "remnant": {
+      "Title": "REMNANT - Roamer",
+      "TitleShort": "REMNANT",
+      "CssFile": "remnant.css",
+      "Actions": [
+        {
+          "Icon": "ico-get-mouse-pos",
+          ",Action": "get-mouse-pos",
+          "Caption": "GET-MOUSE-POS"
+        },
+        {
+          "Icon": "",
+          "Action": "remnant-equip-hunter",
+          "Caption": "Hunter"
+        },
+        {
+          "Icon": "",
+          "Action": "remnant-equip-radiant",
+          "Caption": "Radiant"
+        }
+      ]
+    },
+    "rust": {
+      "Title": "Rust-Roamer",
+      "TitleShort": "RUST",
+      "CssFile": "rust.css",
+      "Actions": [
+        {
+          "Icon": "ico-get-mouse-pos",
+          "Action": "get-mouse-pos",
+          "Caption": "GET-MOUSE-POS"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Action": "click-left",
+          "Caption": "LEFT-CLICK"
+        },
+        {
+          "Icon": "ico-arm",
+          "Action": "arm",
+          "Caption": "ARM"
+        },
+        {
+          "Icon": "ico-unarm",
+          "Action": "unarm",
+          "Caption": "UNARM"
+        },
+        {
+          "Icon": "ico-run",
+          "Action": "run-forward",
+          "Caption": "RUN"
+        },
+        {
+          "Icon": "ico-run-stop",
+          "Action": "run-forward-stop",
+          "Caption": "RUN-STOP"
+        },
+        {
+          "Icon": "ico-gather-tree",
+          "Action": "duck-gather-tree",
+          "Caption": "DUCK-GATHER"
+        },
+        {
+          "Icon": "ico-kayak-forward",
+          "Action": "kayak-forward'",
+          "Caption": "KAYAK-FORWARD"
+        },
+        {
+          "Icon": "ico-kayak-backward",
+          "Action": "kayak-backward",
+          "Caption": "KAYAK-BACKWARD"
+        },
+        {
+          "Icon": "",
+          "Action": "diving-tank-on",
+          "Caption": "DIVE-TANK-ON"
+        },
+        {
+          "Icon": "",
+          "Action": "diving-tank-off",
+          "Caption": "DIVE-TANK-OFF"
+        },
+        {
+          "Icon": "",
+          "Action": "fill-inventory-row",
+          "Caption": "FILL-INV-ROW"
+        },
+        {
+          "Icon": "",
+          "Action": "transfer-inventory-row",
+          "Caption": "TRANSFER-INV-ROW"
+        },
+        {
+          "Icon": "",
+          "Action": "move-down-inventory-row",
+          "Caption": "MOVE-INV-ROW-DOWN"
+        },
+        {
+          "Icon": "",
+          "Action": "move-up-inventory-row",
+          "Caption": "MOVE-INV-ROW-UP"
+        },
+        {
+          "Icon": "",
+          "Action": "smart-breath",
+          "Caption": "SMART-BREATH"
+        }
+      ]
+    },
+    "vallheim": {
+      "Title": "VALLHEIM - Roamer",
+      "TitleShort": "VALLHEIM",
+      "CssFile": "vallheim.css",
+      "Actions": [
+        {
+          "Icon": "ico-run",
+          "Action": "vallheim-run",
+          "Caption": "RUN"
+        },
+        {
+          "Icon": "ico-walk",
+          "Action": "vallheim-walk",
+          "Caption": "WALK"
+        },
+        {
+          "Icon": "ico-grill",
+          "Action": "vallheim-grillmaster",
+          "Caption": "GRILLMASTER"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Action": "vallheim-gather",
+          "Caption": "GAHTER"
+        },
+        {
+          "Icon": "ico-jump",
+          "Action": "vallheim-jump",
+          "Caption": "JUMP"
+        }
+      ]
+    }
+  }
+}
