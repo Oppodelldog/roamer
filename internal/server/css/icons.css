@@ -31,6 +31,10 @@
     background-image: url("/img/walk.png");
 }
 
+.ico-jump {
+    background-image: url("/img/jump.png");
+}
+
 .ico-run {
     background-image: url("/img/run.png");
 }
