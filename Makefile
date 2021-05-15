@@ -1,5 +1,5 @@
-BINARY_NAME=roamer
-BINARY_FILE_PATH=".build-artifacts/$(BINARY_NAME)"
+BINARY_NAME=roamer.exe
+BINARY_FILE_PATH="/mnt/c/Users/nils/go/bin/$(BINARY_NAME)"
 MAIN_FILE="cmd/main.go"
 
 setup: ## Install tools
@@ -19,7 +19,7 @@ fmt: ## gofmt and goimports all go files
 
 build: ## build binary to .build folder
 	rm -f $(BINARY_FILE_PATH) 
-	go build -o $(BINARY_FILE_PATH) $(MAIN_FILE)
+	env GOOS=windows GOARCH=amd64 go build -o $(BINARY_FILE_PATH) $(MAIN_FILE)
 
 
 # Self-Documented Makefile see https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
