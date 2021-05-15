@@ -1,6 +1,7 @@
 package index
 
 import (
+	"fmt"
 	"github.com/Oppodelldog/roamer/internal/config"
 	"html/template"
 	"io"
@@ -20,7 +21,7 @@ type Page struct{ TitleShort string }
 func Render(fs fs.FS, writer io.Writer) error {
 	tpl, err := template.ParseFS(fs, "html/index.html")
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot parse index page template: %w", err)
 	}
 
 	var pages = Pages{}

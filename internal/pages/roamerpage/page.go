@@ -42,7 +42,6 @@ func Render(pageId string, fs fs.FS, writer io.Writer) error {
 		CssFile:    roamerPage.CSSFile,
 		ActionRows: actionRows,
 	})
-
 }
 
 func actionRows(roamerPage config.Page) ActionRows {

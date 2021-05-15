@@ -1,76 +1,76 @@
 package sevendaystodie
 
 import (
-	config2 "github.com/Oppodelldog/roamer/internal/config"
-	key2 "github.com/Oppodelldog/roamer/internal/key"
-	mouse2 "github.com/Oppodelldog/roamer/internal/mouse"
-	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
-	general2 "github.com/Oppodelldog/roamer/internal/sequences/general"
-	version2 "github.com/Oppodelldog/roamer/internal/sequences/version"
+	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/key"
+	"github.com/Oppodelldog/roamer/internal/mouse"
+	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
+	"github.com/Oppodelldog/roamer/internal/sequences/version"
 	"time"
 )
 
 const game = "7d2d"
 const slotsBelt = "belt"
 
-func Walk() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{key2.VK_W},
+func Walk() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{key.VK_W},
 	}
 }
 
-func Run() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{key2.VK_SHIFT},
-		general2.KeyDown{key2.VK_W},
+func Run() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{key.VK_SHIFT},
+		general.KeyDown{key.VK_W},
 	}
 }
 
-func WalkRunStop() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyUp{key2.VK_SHIFT},
-		general2.KeyUp{key2.VK_W},
+func WalkRunStop() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyUp{key.VK_SHIFT},
+		general.KeyUp{key.VK_W},
 	}
 }
 
-func Repair(slotNo int) []sequencer2.Elem {
+func Repair(slotNo int) []sequencer.Elem {
 	var slots = getSlots(slotsBelt)
 
-	return general2.Flatten([][]sequencer2.Elem{
+	return general.Flatten([][]sequencer.Elem{
 		{
-			general2.KeyDown{key2.VK_TAB},
-			general2.KeyUp{key2.VK_TAB},
-			sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-			general2.SetMousePos{mousePos(slots.Get(slotNo, 0))},
-			sequencer2.Wait{Duration: general2.HumanizedMillis(100)},
-			general2.LeftMouseButtonDown{},
-			sequencer2.Wait{Duration: general2.HumanizedMillis(100)},
-			general2.LeftMouseButtonUp{},
-			sequencer2.Wait{Duration: general2.HumanizedMillis(100)},
-			general2.KeyDown{key2.VK_A},
-			general2.KeyUp{key2.VK_A},
-			sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-			general2.KeyDown{key2.VK_TAB},
-			general2.KeyUp{key2.VK_TAB},
+			general.KeyDown{key.VK_TAB},
+			general.KeyUp{key.VK_TAB},
+			sequencer.Wait{Duration: general.HumanizedMillis(300)},
+			general.SetMousePos{mousePos(slots.Get(slotNo, 0))},
+			sequencer.Wait{Duration: general.HumanizedMillis(100)},
+			general.LeftMouseButtonDown{},
+			sequencer.Wait{Duration: general.HumanizedMillis(100)},
+			general.LeftMouseButtonUp{},
+			sequencer.Wait{Duration: general.HumanizedMillis(100)},
+			general.KeyDown{key.VK_A},
+			general.KeyUp{key.VK_A},
+			sequencer.Wait{Duration: general.HumanizedMillis(300)},
+			general.KeyDown{key.VK_TAB},
+			general.KeyUp{key.VK_TAB},
 		},
 	})
 }
 
-func ClickingLeft(delay int) []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.LeftMouseButtonDown{},
-		general2.LeftMouseButtonUp{},
-		sequencer2.Wait{Duration: time.Millisecond * time.Duration(delay)},
-		sequencer2.Loop{},
+func ClickingLeft(delay int) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.LeftMouseButtonDown{},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: time.Millisecond * time.Duration(delay)},
+		sequencer.Loop{},
 	}
 }
 
-func getSlots(kind string) config2.Slots {
-	return config2.GetSlots(version2.Get(), game, kind)
+func getSlots(kind string) config.Slots {
+	return config.GetSlots(version.Get(), game, kind)
 }
 
-func mousePos(pos config2.Pos) mouse2.Pos {
-	return mouse2.Pos{
+func mousePos(pos config.Pos) mouse.Pos {
+	return mouse.Pos{
 		X: int32(pos.X),
 		Y: int32(pos.Y),
 	}

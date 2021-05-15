@@ -67,6 +67,7 @@ func (s *Sequencer) Pause() error {
 	select {
 	case s.pause <- struct{}{}:
 		s.paused = !s.paused
+
 		return nil
 	default:
 		return errors.New("pause request is already in progress")
@@ -80,12 +81,12 @@ func (s *Sequencer) waitForResume() {
 }
 
 func (s *Sequencer) playSequence() {
-
 waitForNext:
 	s.hasSequence = false
 	s.aborted = false
 	newSequence := <-s.sequence
 	s.hasSequence = true
+
 	if s.beforeSequence != nil {
 		s.beforeSequence()
 	}
@@ -93,6 +94,7 @@ waitForNext:
 loop:
 	newSeq := newSequence()
 	fmt.Println("play sequence length: ", len(newSeq))
+
 	for _, e := range newSeq {
 		s.seq <- e
 		if s.aborted {
@@ -160,6 +162,7 @@ func (s *Sequencer) Abort() {
 		if err != nil {
 			panic(fmt.Sprintf("error while aborting pause: %v", err))
 		}
+
 	}
 	s.aborted = true
 }

@@ -44,8 +44,10 @@ func loadConfig(filename string, data interface{}, defaultData []byte) error {
 }
 
 func ensureConfig(filename string, defaultData []byte) {
-	appDataFolder := getAppDataFolder()
-	err := os.MkdirAll(appDataFolder, filePerm)
+	var (
+		appDataFolder = getAppDataFolder()
+		err           = os.MkdirAll(appDataFolder, filePerm)
+	)
 	if err != nil {
 		panic(fmt.Sprintf("unable to create app data folder '%s': %v", appDataFolder, err))
 	}

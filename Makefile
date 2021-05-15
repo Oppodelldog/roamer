@@ -1,6 +1,8 @@
 BINARY_NAME=roamer.exe
 BINARY_FILE_PATH="/mnt/c/Users/nils/go/bin/$(BINARY_NAME)"
 MAIN_FILE="cmd/main.go"
+GOOS=windows
+GOARCH=amd64
 
 setup: ## Install tools
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.33.0
@@ -18,8 +20,8 @@ fmt: ## gofmt and goimports all go files
 	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gofmt -w -s "$$file"; goimports -w "$$file"; done
 
 build: ## build binary to .build folder
-	rm -f $(BINARY_FILE_PATH) 
-	env GOOS=windows GOARCH=amd64 go build -o $(BINARY_FILE_PATH) $(MAIN_FILE)
+	rm -f $(BINARY_FILE_PATH)
+	env GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BINARY_FILE_PATH) $(MAIN_FILE)
 
 
 # Self-Documented Makefile see https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html

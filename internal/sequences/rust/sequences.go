@@ -1,12 +1,12 @@
 package rust
 
 import (
-	config2 "github.com/Oppodelldog/roamer/internal/config"
-	key2 "github.com/Oppodelldog/roamer/internal/key"
-	mouse2 "github.com/Oppodelldog/roamer/internal/mouse"
-	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
-	general2 "github.com/Oppodelldog/roamer/internal/sequences/general"
-	version2 "github.com/Oppodelldog/roamer/internal/sequences/version"
+	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/key"
+	"github.com/Oppodelldog/roamer/internal/mouse"
+	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
+	"github.com/Oppodelldog/roamer/internal/sequences/version"
 )
 
 const game = "rust"
@@ -24,92 +24,92 @@ const mouseDragWait = 16
 const itemFieldMargin = 3
 const itemFieldSize = 92
 
-func MoveInventoryRow(verticalFieldOffset int32) []sequencer2.Elem {
-	pos := mouse2.GetCursorPos()
-	var seqs [][]sequencer2.Elem
+func MoveInventoryRow(verticalFieldOffset int32) []sequencer.Elem {
+	pos := mouse.GetCursorPos()
+	var seqs [][]sequencer.Elem
 
 	for i := int32(0); i < 6; i++ {
 		from := relativeHorizontalFieldPos(pos, i)
 		to := relativeVerticalFieldPos(from, verticalFieldOffset)
-		seqs = append(seqs, [][]sequencer2.Elem{Drag(from, to),
-			{sequencer2.Wait{Duration: general2.HumanizedMillis(80)}}}...)
+		seqs = append(seqs, [][]sequencer.Elem{Drag(from, to),
+			{sequencer.Wait{Duration: general.HumanizedMillis(80)}}}...)
 	}
 
-	return general2.Flatten(seqs)
+	return general.Flatten(seqs)
 }
 
-func TransferInventoryRow() []sequencer2.Elem {
-	pos := mouse2.GetCursorPos()
-	var seqs [][]sequencer2.Elem
+func TransferInventoryRow() []sequencer.Elem {
+	pos := mouse.GetCursorPos()
+	var seqs [][]sequencer.Elem
 
 	for i := int32(0); i < 6; i++ {
-		seqs = append(seqs, [][]sequencer2.Elem{
+		seqs = append(seqs, [][]sequencer.Elem{
 			collect(relativeHorizontalFieldPos(pos, i)),
-			{sequencer2.Wait{Duration: general2.HumanizedMillis(80)}}}...)
+			{sequencer.Wait{Duration: general.HumanizedMillis(80)}}}...)
 	}
 
-	return general2.Flatten(seqs)
+	return general.Flatten(seqs)
 }
 
-func relativeHorizontalFieldPos(from mouse2.Pos, fieldNo int32) mouse2.Pos {
-	return mouse2.Pos{X: from.X + (fieldNo * (itemFieldSize + itemFieldMargin)), Y: from.Y}
+func relativeHorizontalFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
+	return mouse.Pos{X: from.X + (fieldNo * (itemFieldSize + itemFieldMargin)), Y: from.Y}
 }
 
-func relativeVerticalFieldPos(from mouse2.Pos, fieldNo int32) mouse2.Pos {
-	return mouse2.Pos{X: from.X, Y: from.Y + (fieldNo * (itemFieldSize + itemFieldMargin))}
+func relativeVerticalFieldPos(from mouse.Pos, fieldNo int32) mouse.Pos {
+	return mouse.Pos{X: from.X, Y: from.Y + (fieldNo * (itemFieldSize + itemFieldMargin))}
 }
 
-func FillInventoryRow() []sequencer2.Elem {
-	pos := mouse2.GetCursorPos()
+func FillInventoryRow() []sequencer.Elem {
+	pos := mouse.GetCursorPos()
 
-	var seqs [][]sequencer2.Elem
+	var seqs [][]sequencer.Elem
 
 	for i := int32(1); i < 6; i++ {
-		seqs = append(seqs, [][]sequencer2.Elem{
+		seqs = append(seqs, [][]sequencer.Elem{
 			Unstack(pos, relativeHorizontalFieldPos(pos, i)),
-			{sequencer2.Wait{Duration: general2.HumanizedMillis(80)}}}...)
+			{sequencer.Wait{Duration: general.HumanizedMillis(80)}}}...)
 	}
 
-	return general2.Flatten(seqs)
+	return general.Flatten(seqs)
 }
 
-func collect(from mouse2.Pos) []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.SetMousePos{Pos: from},
-		general2.RightMouseButtonDown{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-		general2.RightMouseButtonUp{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-	}
-}
-
-func Unstack(from, to mouse2.Pos) []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.SetMousePos{Pos: from},
-		general2.RightMouseButtonDown{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-		general2.SetMousePos{Pos: to},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-		general2.RightMouseButtonUp{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
+func collect(from mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.SetMousePos{Pos: from},
+		general.RightMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+		general.RightMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
 	}
 }
 
-func Drag(from, to mouse2.Pos) []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.SetMousePos{Pos: from},
-		general2.LeftMouseButtonDown{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-		general2.SetMousePos{Pos: to},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
-		general2.LeftMouseButtonUp{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(80)},
+func Unstack(from, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.SetMousePos{Pos: from},
+		general.RightMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+		general.SetMousePos{Pos: to},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+		general.RightMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
 	}
 }
 
-func DivingTankOff() []sequencer2.Elem {
-	return general2.Flatten(
-		[][]sequencer2.Elem{
+func Drag(from, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.SetMousePos{Pos: from},
+		general.LeftMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+		general.SetMousePos{Pos: to},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(80)},
+	}
+}
+
+func DivingTankOff() []sequencer.Elem {
+	return general.Flatten(
+		[][]sequencer.Elem{
 			openInventory(),
 			dragClothingToInventory(7, 19),
 			closeInventory(),
@@ -117,9 +117,9 @@ func DivingTankOff() []sequencer2.Elem {
 	)
 }
 
-func DivingTankOn() []sequencer2.Elem {
-	return general2.Flatten(
-		[][]sequencer2.Elem{
+func DivingTankOn() []sequencer.Elem {
+	return general.Flatten(
+		[][]sequencer.Elem{
 			openInventory(),
 			dragInventoryToClothing(19, 7),
 			closeInventory(),
@@ -127,25 +127,25 @@ func DivingTankOn() []sequencer2.Elem {
 	)
 }
 
-func SmartBreath() []sequencer2.Elem {
-	var s = [][]sequencer2.Elem{
+func SmartBreath() []sequencer.Elem {
+	var s = [][]sequencer.Elem{
 		DivingTankOn(),
 		{
-			sequencer2.Wait{Duration: general2.HumanizedMillis(6000)},
+			sequencer.Wait{Duration: general.HumanizedMillis(6000)},
 		},
 		DivingTankOff(),
 		{
-			sequencer2.Wait{Duration: general2.HumanizedMillis(2000)},
+			sequencer.Wait{Duration: general.HumanizedMillis(2000)},
 		},
 		{
-			sequencer2.Loop{},
+			sequencer.Loop{},
 		},
 	}
 
-	return general2.Flatten(s)
+	return general.Flatten(s)
 }
 
-func dragInventoryToClothing(inventorySlot, clothingSlot int) []sequencer2.Elem {
+func dragInventoryToClothing(inventorySlot, clothingSlot int) []sequencer.Elem {
 	var inventorySlots = getSlots(slotsInventory)
 	var clothingSlots = getSlots(slotsInventory)
 	return dragInventory(
@@ -154,7 +154,7 @@ func dragInventoryToClothing(inventorySlot, clothingSlot int) []sequencer2.Elem 
 	)
 }
 
-func dragClothingToInventory(clothingSlot, inventorySlot int) []sequencer2.Elem {
+func dragClothingToInventory(clothingSlot, inventorySlot int) []sequencer.Elem {
 	var inventorySlots = getSlots(slotsInventory)
 	var clothingSlots = getSlots(slotsInventory)
 	return dragInventory(
@@ -163,71 +163,71 @@ func dragClothingToInventory(clothingSlot, inventorySlot int) []sequencer2.Elem 
 	)
 }
 
-func toggleInventory() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_TAB},
-		general2.KeyUp{Key: key2.VK_TAB},
+func toggleInventory() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_TAB},
+		general.KeyUp{Key: key.VK_TAB},
 	}
 }
 
-func openInventory() []sequencer2.Elem {
-	return general2.Flatten([][]sequencer2.Elem{
+func openInventory() []sequencer.Elem {
+	return general.Flatten([][]sequencer.Elem{
 		toggleInventory(),
 		{
-			sequencer2.Wait{Duration: general2.HumanizedMillis(inventoryOpenWaitShort)},
+			sequencer.Wait{Duration: general.HumanizedMillis(inventoryOpenWaitShort)},
 		},
 	})
 }
 
-func closeInventory() []sequencer2.Elem {
-	return general2.Flatten([][]sequencer2.Elem{
+func closeInventory() []sequencer.Elem {
+	return general.Flatten([][]sequencer.Elem{
 		toggleInventory(),
 	})
 }
 
-func dragInventory(from mouse2.Pos, to mouse2.Pos) []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.SetMousePos{Pos: from},
-		general2.LeftMouseButtonDown{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(mouseDragWait)},
-		general2.SetMousePos{Pos: to},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(mouseMoveWait)},
-		general2.LeftMouseButtonUp{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(mouseDragWait)},
+func dragInventory(from mouse.Pos, to mouse.Pos) []sequencer.Elem {
+	return []sequencer.Elem{
+		general.SetMousePos{Pos: from},
+		general.LeftMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(mouseDragWait)},
+		general.SetMousePos{Pos: to},
+		sequencer.Wait{Duration: general.HumanizedMillis(mouseMoveWait)},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(mouseDragWait)},
 	}
 }
 
-func ClickingLeft() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.LeftMouseButtonDown{},
-		general2.LeftMouseButtonUp{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(300)},
-		sequencer2.Loop{},
+func ClickingLeft() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.LeftMouseButtonDown{},
+		general.LeftMouseButtonUp{},
+		sequencer.Wait{Duration: general.HumanizedMillis(300)},
+		sequencer.Loop{},
 	}
 }
 
-func RunForward() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_LSHIFT},
-		general2.KeyDown{Key: key2.VK_W},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(3000)},
-		general2.KeyUp{Key: key2.VK_LSHIFT},
+func RunForward() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_LSHIFT},
+		general.KeyDown{Key: key.VK_W},
+		sequencer.Wait{Duration: general.HumanizedMillis(3000)},
+		general.KeyUp{Key: key.VK_LSHIFT},
 	}
 }
 
-func RunForwardStop() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyUp{Key: key2.VK_LSHIFT},
-		general2.KeyUp{Key: key2.VK_W},
+func RunForwardStop() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyUp{Key: key.VK_LSHIFT},
+		general.KeyUp{Key: key.VK_W},
 	}
 }
 
-func Arm() []sequencer2.Elem {
+func Arm() []sequencer.Elem {
 	var inventorySlots = getSlots(slotsInventory)
 	var beltSlots = getSlots(slotsBelt)
 
-	return general2.Flatten(
-		[][]sequencer2.Elem{
+	return general.Flatten(
+		[][]sequencer.Elem{
 			openInventory(),
 			Drag(mousePos(inventorySlots.At(19)), mousePos(beltSlots.At(1))),
 			Drag(mousePos(inventorySlots.At(20)), mousePos(beltSlots.At(2))),
@@ -235,18 +235,18 @@ func Arm() []sequencer2.Elem {
 			Drag(mousePos(inventorySlots.At(22)), mousePos(beltSlots.At(4))),
 			Drag(mousePos(inventorySlots.At(23)), mousePos(beltSlots.At(5))),
 			Drag(mousePos(inventorySlots.At(24)), mousePos(beltSlots.At(6))),
-			{sequencer2.Wait{Duration: general2.HumanizedMillis(300)}},
+			{sequencer.Wait{Duration: general.HumanizedMillis(300)}},
 			closeInventory(),
 		},
 	)
 }
 
-func Unarm() []sequencer2.Elem {
+func Unarm() []sequencer.Elem {
 	var inventorySlots = getSlots(slotsInventory)
 	var beltSlots = getSlots(slotsBelt)
 
-	return general2.Flatten(
-		[][]sequencer2.Elem{
+	return general.Flatten(
+		[][]sequencer.Elem{
 			openInventory(),
 			Drag(mousePos(beltSlots.At(1)), mousePos(inventorySlots.At(19))),
 			Drag(mousePos(beltSlots.At(2)), mousePos(inventorySlots.At(20))),
@@ -254,67 +254,67 @@ func Unarm() []sequencer2.Elem {
 			Drag(mousePos(beltSlots.At(4)), mousePos(inventorySlots.At(22))),
 			Drag(mousePos(beltSlots.At(5)), mousePos(inventorySlots.At(23))),
 			Drag(mousePos(beltSlots.At(6)), mousePos(inventorySlots.At(24))),
-			{sequencer2.Wait{Duration: general2.HumanizedMillis(300)}},
+			{sequencer.Wait{Duration: general.HumanizedMillis(300)}},
 			closeInventory(),
 		},
 	)
 }
 
-func DuckGatherTree() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_LCONTROL},
-		general2.LeftMouseButtonDown{},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(7000)},
-		general2.LeftMouseButtonUp{},
-		general2.KeyUp{Key: key2.VK_LCONTROL},
+func DuckGatherTree() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_LCONTROL},
+		general.LeftMouseButtonDown{},
+		sequencer.Wait{Duration: general.HumanizedMillis(7000)},
+		general.LeftMouseButtonUp{},
+		general.KeyUp{Key: key.VK_LCONTROL},
 	}
 }
 
-func KayakBackward() []sequencer2.Elem {
-	return general2.Flatten(
-		[][]sequencer2.Elem{
-			{general2.KeyDown{Key: key2.VK_S}},
+func KayakBackward() []sequencer.Elem {
+	return general.Flatten(
+		[][]sequencer.Elem{
+			{general.KeyDown{Key: key.VK_S}},
 			KayakPaddle(),
-			{general2.KeyUp{Key: key2.VK_S}},
-			{sequencer2.Loop{}},
+			{general.KeyUp{Key: key.VK_S}},
+			{sequencer.Loop{}},
 		},
 	)
 }
 
-func KayakForward() []sequencer2.Elem {
-	return general2.Flatten(
-		[][]sequencer2.Elem{
+func KayakForward() []sequencer.Elem {
+	return general.Flatten(
+		[][]sequencer.Elem{
 			KayakPaddle(),
-			{sequencer2.Loop{}},
+			{sequencer.Loop{}},
 		},
 	)
 }
 
-func KayakPaddle() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.KeyDown{Key: key2.VK_A},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(paddleTime + 240)},
-		general2.KeyUp{Key: key2.VK_A},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(paddleWait + 240)},
-		general2.KeyDown{Key: key2.VK_D},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(paddleTime)},
-		general2.KeyUp{Key: key2.VK_D},
-		sequencer2.Wait{Duration: general2.HumanizedMillis(paddleWait)},
+func KayakPaddle() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.KeyDown{Key: key.VK_A},
+		sequencer.Wait{Duration: general.HumanizedMillis(paddleTime + 240)},
+		general.KeyUp{Key: key.VK_A},
+		sequencer.Wait{Duration: general.HumanizedMillis(paddleWait + 240)},
+		general.KeyDown{Key: key.VK_D},
+		sequencer.Wait{Duration: general.HumanizedMillis(paddleTime)},
+		general.KeyUp{Key: key.VK_D},
+		sequencer.Wait{Duration: general.HumanizedMillis(paddleWait)},
 	}
 }
 
-func GetMousePos() []sequencer2.Elem {
-	return []sequencer2.Elem{
-		general2.LookupMousePos{},
+func GetMousePos() []sequencer.Elem {
+	return []sequencer.Elem{
+		general.LookupMousePos{},
 	}
 }
 
-func getSlots(kind string) config2.Slots {
-	return config2.GetSlots(version2.Get(), game, kind)
+func getSlots(kind string) config.Slots {
+	return config.GetSlots(version.Get(), game, kind)
 }
 
-func mousePos(pos config2.Pos) mouse2.Pos {
-	return mouse2.Pos{
+func mousePos(pos config.Pos) mouse.Pos {
+	return mouse.Pos{
 		X: int32(pos.X),
 		Y: int32(pos.Y),
 	}

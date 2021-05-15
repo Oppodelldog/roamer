@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	sequences2 "github.com/Oppodelldog/roamer/internal/sequences"
+	"log"
 	"net/http"
 	"path"
 )
@@ -20,7 +21,10 @@ func hPause(w http.ResponseWriter, _ *http.Request) {
 	err := seq.Pause()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("Server Error: %v", err.Error())))
+		_, err := w.Write([]byte(fmt.Sprintf("Server Error: %v", err.Error())))
+		if err != nil {
+			log.Printf("cannot write error: %v", err)
+		}
 	}
 }
 

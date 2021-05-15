@@ -162,7 +162,8 @@ const (
 	VK_KPPLUS  = 78
 	VK_KPDOT   = 83
 
-	// I add 0xFFF for all Virtual key
+	// add 0xFFF for all Virtual key
+
 	VK_LBUTTON    = 0x01 + 0xFFF
 	VK_RBUTTON    = 0x02 + 0xFFF
 	VK_CANCEL     = 0x03 + 0xFFF
