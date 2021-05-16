@@ -260,31 +260,36 @@
       "Actions": [
         {
           "Icon": "ico-run",
-          "Action": "vallheim-run",
           "Caption": "RUN",
           "Sequence": "KD W; KD LSHIFT"
         },
         {
           "Icon": "ico-walk",
-          "Action": "vallheim-walk",
           "Caption": "WALK",
           "Sequence": "KD W"
         },
         {
           "Icon": "ico-grill",
-          "Action": "vallheim-grillmaster",
           "Caption": "GRILLMASTER",
           "Sequence": "KD E;W 300ms; KU E;W 300ms;KD E;W 300ms; KU E;W 300ms;W 26000ms;KD E;W 300ms; KU E; W 300ms;KD E;W 300ms; KU E; W 300ms;W 600ms;L"
         },
         {
           "Icon": "ico-click-left",
-          "Action": "vallheim-gather",
           "Caption": "GAHTER",
           "Sequence": "LD;W 60ms;LU;W 800ms;L"
         },
         {
+          "Icon": "ico-click-left",
+          "Caption": "FILL CHAROCAL KILN",
+          "Sequence": "R 25 [LD;W 60ms;LU]"
+        },
+        {
+          "Icon": "ico-click-left",
+          "Caption": "ULTRA E",
+          "Sequence": "KD E;W 60ms;KU E;W 60ms;L"
+        },
+        {
           "Icon": "ico-jump",
-          "Action": "vallheim-jump",
           "Caption": "JUMP",
           "Sequence": "KD SPACE;W 30ms;KU SPACE;W 800ms;L"
         }

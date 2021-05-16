@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Oppodelldog/roamer/internal/config"
 	"github.com/Oppodelldog/roamer/internal/sequences"
+	"github.com/Oppodelldog/roamer/internal/sequences/parser"
 	"log"
 	"net/http"
 	"path"
@@ -40,7 +41,7 @@ func hSetConfigSeq(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seq.EnqueueSequence(sequences.NewCustomSequenceFunc(page.Actions[actionIdx].Sequence))
+	seq.EnqueueSequence(parser.NewCustomSequenceFunc(page.Actions[actionIdx].Sequence))
 }
 
 func hPause(w http.ResponseWriter, _ *http.Request) {

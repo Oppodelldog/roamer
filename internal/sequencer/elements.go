@@ -17,3 +17,10 @@ type Wait struct {
 type Loop struct {
 	Elem
 }
+
+// Repeat repeats the embedded sequence n times.
+type Repeat struct {
+	Elem
+	Times    int
+	Sequence []Elem
+}

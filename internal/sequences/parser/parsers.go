@@ -1,4 +1,4 @@
-package sequences
+package parser
 
 import (
 	"fmt"
@@ -6,108 +6,132 @@ import (
 	"github.com/Oppodelldog/roamer/internal/mouse"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
-	"log"
 	"strconv"
-	"strings"
 	"time"
 )
 
-var keywordMappings = map[string]func() interface{}{
-	"W":  func() interface{} { return sequencer.Wait{} },
-	"L":  func() interface{} { return sequencer.Loop{} },
-	"KD": func() interface{} { return general.KeyDown{} },
-	"KU": func() interface{} { return general.KeyUp{} },
-	"LD": func() interface{} { return general.LeftMouseButtonDown{} },
-	"LU": func() interface{} { return general.LeftMouseButtonUp{} },
-	"RD": func() interface{} { return general.RightMouseButtonDown{} },
-	"RU": func() interface{} { return general.RightMouseButtonUp{} },
-	"MM": func() interface{} { return general.MouseMove{} },
-	"SM": func() interface{} { return general.SetMousePos{} },
-}
-
-func NewCustomSequenceFunc(script string) func() []sequencer.Elem {
-	return func() []sequencer.Elem {
-		var seq []sequencer.Elem
-		var elements = strings.Split(script, ";")
-
-		for _, elem := range elements {
-			elem = strings.Trim(elem, " ")
-			var parts = strings.Split(elem, " ")
-			keyword := parts[0]
-			var t, ok = keywordMappings[keyword]
-			if !ok {
-				panic(fmt.Sprintf("keyword '%s' not found", keyword))
-			}
-
-			var (
-				arguments = parts[1:]
-				err       error
-			)
-			elem := t().(sequencer.Elem)
-			elem, err = parameterize(elem, arguments)
-			if err != nil {
-				log.Printf("error while parsing custom sequence: %v", err)
-			}
-
-			seq = append(seq, elem)
-		}
-
-		return seq
+func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
+	lit, err := parseLiteral(t)
+	if err != nil {
+		return nil, err
 	}
+
+	times, err := strconv.Atoi(lit.Value)
+	if err != nil {
+		return nil, err
+	}
+
+	var sep = t.Consume()
+	if sep.Type != argumentSeparator {
+		return nil, fmt.Errorf("repeat expects argument separator ' ' after arg1, but was:  %s(='%s')", sep.Type, sep.Value)
+	}
+
+	var open = t.Consume()
+	if open.Type != blockOpen {
+		return nil, fmt.Errorf("repeat expects arg2 to be a sequence that is introduces with '[', but was: %s(='%s')", open.Type, open.Value)
+	}
+
+	sequence, err := parseSequence(t)
+	if err != nil {
+		return nil, err
+	}
+
+	v.Times = times
+	v.Sequence = sequence
+
+	return v, nil
 }
 
-func parameterize(elem sequencer.Elem, arguments []string) (sequencer.Elem, error) {
+func parseLiteral(t *TokenStream) (Token, error) {
+	var (
+		separator = t.Consume()
+		lit       = t.Consume()
+	)
+
+	if separator.Type != argumentSeparator {
+		return Token{}, fmt.Errorf("expected argument seperator ' ', but got '%s'", separator.Type)
+	}
+
+	if lit.Type != literal {
+		return Token{}, fmt.Errorf("W expects arg1 to be literal, but was '%s'", lit.Type)
+	}
+
+	return lit, nil
+}
+
+func parseWait(v sequencer.Wait, t *TokenStream) (sequencer.Elem, error) {
+	lit, err := parseLiteral(t)
+	if err != nil {
+		return nil, err
+	}
+	var duration time.Duration
+	duration, err = time.ParseDuration(lit.Value)
+	v.Duration = duration
+
+	return v, err
+}
+
+func parseKeyDown(v general.KeyDown, t *TokenStream) (sequencer.Elem, error) {
+	lit, err := parseLiteral(t)
+	key, err := getKeyValue(lit.Value)
+	if err != nil {
+		return nil, err
+	}
+
+	v.Key = key
+
+	return v, nil
+}
+
+func parseKeyUp(v general.KeyUp, t *TokenStream) (sequencer.Elem, error) {
+	lit, err := parseLiteral(t)
+	if err != nil {
+		return nil, err
+	}
+
+	key, err := getKeyValue(lit.Value)
+	if err != nil {
+		return nil, fmt.Errorf("KU expects arg1 to be a valid key, but '%s' is not valid: %w", lit.Value, err)
+	}
+	v.Key = key
+
+	return v, nil
+}
+
+func parseMouseMove(v general.MouseMove, t *TokenStream) (sequencer.Elem, error) {
 	var err error
 
-	switch v := elem.(type) {
-	case sequencer.Wait:
-		var duration time.Duration
-		duration, err = time.ParseDuration(arguments[0])
-		v.Duration = duration
-		return v, err
-	case general.KeyDown:
-		var key int
-		key, err = getKeyValue(arguments[0])
-		v.Key = key
-		return v, err
-	case general.KeyUp:
-		var key int
-		key, err = getKeyValue(arguments[0])
-		v.Key = key
-		return v, err
-	case general.LeftMouseButtonDown:
-		return v, err
-	case general.LeftMouseButtonUp:
-		return v, err
-	case general.RightMouseButtonDown:
-		return v, err
-	case general.RightMouseButtonUp:
-		return v, err
-	case general.MouseMove:
-		v.X, v.Y, err = argInt32Coordinates(arguments)
-		return v, err
-	case general.SetMousePos:
-		var x, y int32
-		x, y, err = argInt32Coordinates(arguments)
-		v.Pos = mouse.Pos{
-			X: x,
-			Y: y,
-		}
-		return v, err
-	case sequencer.Loop:
-		return v, err
-	}
+	v.X, v.Y, err = argInt32Coordinates(t)
 
-	return elem, fmt.Errorf("unkown keyword %t", elem)
+	return v, err
 }
 
-func argInt32Coordinates(arguments []string) (int32, int32, error) {
-	x, err := strconv.ParseInt(arguments[0], 0, 32)
+func parseSetMousePos(v general.SetMousePos, t *TokenStream) (elem sequencer.Elem, err error) {
+	var x, y int32
+	x, y, err = argInt32Coordinates(t)
+	v.Pos = mouse.Pos{
+		X: x,
+		Y: y,
+	}
+	return v, err
+}
+
+func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
+	var lit1 = t.Consume()
+	if lit1.Type != literal {
+		return 0, 0, fmt.Errorf("W expects arg1 to be literal, but was '%s'", lit1.Type)
+	}
+	var lit2 = t.Consume()
+	if lit2.Type != literal {
+		return 0, 0, fmt.Errorf("W expects arg2 to be literal, but was '%s'", lit2.Type)
+	}
+
+	x, err := strconv.ParseInt(lit1.Value, 0, 32)
 	if err != nil {
 		return 0, 0, fmt.Errorf("arg1 must be int: %w", err)
 	}
 
-	y, err := strconv.Atoi(arguments[0])
+	y, err := strconv.Atoi(lit2.Value)
 	if err != nil {
 		return 0, 0, fmt.Errorf("arg2 must be int: %w", err)
 	}
