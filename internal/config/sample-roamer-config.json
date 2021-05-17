@@ -261,7 +261,7 @@
         {
           "Icon": "ico-run",
           "Caption": "RUN",
-          "Sequence": "KD W; KD LSHIFT"
+          "Sequence": "KD W;KD LSHIFT"
         },
         {
           "Icon": "ico-walk",
@@ -271,7 +271,7 @@
         {
           "Icon": "ico-grill",
           "Caption": "GRILLMASTER",
-          "Sequence": "KD E;W 300ms; KU E;W 300ms;KD E;W 300ms; KU E;W 300ms;W 26000ms;KD E;W 300ms; KU E; W 300ms;KD E;W 300ms; KU E; W 300ms;W 600ms;L"
+          "Sequence": "KD E;W 300ms;KU E;W 300ms;KD E;W 300ms;KU E;W 300ms;W 26000ms;KD E;W 300ms;KU E;W 300ms;KD E;W 300ms;KU E;W 300ms;W 600ms;L"
         },
         {
           "Icon": "ico-click-left",
