@@ -1,4 +1,4 @@
-package parser
+package script
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ var commandMappings = map[string]func() interface{}{
 
 func NewCustomSequenceFunc(script string) func() []sequencer.Elem {
 	return func() []sequencer.Elem {
-		seq, err := parse(script)
+		seq, err := Parse(script)
 		if err != nil {
 			panic(err)
 		}
@@ -31,16 +31,21 @@ func NewCustomSequenceFunc(script string) func() []sequencer.Elem {
 	}
 }
 
-func parse(script string) ([]sequencer.Elem, error) {
+func Parse(script string) ([]sequencer.Elem, error) {
 	t, err := lex(script)
 	if err != nil {
 		return nil, err
 	}
 
-	return parseSequence(t)
+	seq, err := parse(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return seq, nil
 }
 
-func parseSequence(t *TokenStream) ([]sequencer.Elem, error) {
+func parse(t *TokenStream) ([]sequencer.Elem, error) {
 	var seq []sequencer.Elem
 
 	for !t.isEOF() {
@@ -89,10 +94,10 @@ func parseCommand(t *TokenStream) (sequencer.Elem, error) {
 
 	var commandElem, commandFound = commandMappings[token.Value]
 	if !commandFound {
-		return nil, fmt.Errorf("unkown command '%s'", token.Value)
+		return nil, fmt.Errorf("unknown command '%s'", token.Value)
 	}
 
-	elem, err := parseElement(commandElem().(sequencer.Elem), t)
+	elem, err := parseArguments(commandElem().(sequencer.Elem), t)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing '%s': %w", token.Value, err)
 	}
@@ -100,16 +105,22 @@ func parseCommand(t *TokenStream) (sequencer.Elem, error) {
 	return elem, nil
 }
 
-func parseElement(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error) {
+func parseArguments(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error) {
 	var err error
 
 	switch v := elem.(type) {
 	case sequencer.Wait:
 		return parseWait(v, t)
 	case general.KeyDown:
-		return parseKeyDown(v, t)
+		return parseKey(v, t)
 	case general.KeyUp:
-		return parseKeyUp(v, t)
+		return parseKey(v, t)
+	case sequencer.Repeat:
+		return parseRepeat(v, t)
+	case general.MouseMove:
+		return parseMouseMove(v, t)
+	case general.SetMousePos:
+		return parseSetMousePos(v, t)
 	case general.LeftMouseButtonDown:
 		return v, err
 	case general.LeftMouseButtonUp:
@@ -118,14 +129,8 @@ func parseElement(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error) {
 		return v, err
 	case general.RightMouseButtonUp:
 		return v, err
-	case general.MouseMove:
-		return parseMouseMove(v, t)
-	case general.SetMousePos:
-		return parseSetMousePos(v, t)
 	case sequencer.Loop:
 		return v, err
-	case sequencer.Repeat:
-		return parseRepeat(v, t)
 	}
 
 	return elem, fmt.Errorf("unkown command %T", elem)

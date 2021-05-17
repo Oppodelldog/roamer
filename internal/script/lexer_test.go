@@ -1,4 +1,4 @@
-package parser
+package script
 
 import (
 	"reflect"
@@ -65,7 +65,7 @@ func TestLex(t *testing.T) {
 				t.Fatalf("did not expect an error, but got: %v", err)
 			}
 
-			if !reflect.DeepEqual(td.Tokens, got) {
+			if !reflect.DeepEqual(&td.Tokens, got) {
 				t.Fatalf("objects did not match:\ngot : %#v\nwant: %#v\n", got, td.Tokens)
 			}
 		})

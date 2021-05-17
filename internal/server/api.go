@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Oppodelldog/roamer/internal/config"
+	script2 "github.com/Oppodelldog/roamer/internal/script"
+	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences"
-	"github.com/Oppodelldog/roamer/internal/sequences/parser"
 	"log"
 	"net/http"
 	"path"
@@ -41,7 +42,14 @@ func hSetConfigSeq(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seq.EnqueueSequence(parser.NewCustomSequenceFunc(page.Actions[actionIdx].Sequence))
+	seq.EnqueueSequence(func() []sequencer.Elem {
+		seq, err := script2.Parse(page.Actions[actionIdx].Sequence)
+		if err != nil {
+			panic(err)
+		}
+
+		return seq
+	})
 }
 
 func hPause(w http.ResponseWriter, _ *http.Request) {
@@ -55,7 +63,7 @@ func hPause(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func hAbort(w http.ResponseWriter, _ *http.Request) {
+func hAbort(_ http.ResponseWriter, _ *http.Request) {
 	seq.Abort()
 	Sequence = ""
 }

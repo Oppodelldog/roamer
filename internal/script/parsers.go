@@ -1,4 +1,4 @@
-package parser
+package script
 
 import (
 	"fmt"
@@ -11,27 +11,40 @@ import (
 )
 
 func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
-	lit, err := parseLiteral(t)
+	var (
+		err      error
+		lit      Token
+		sep      Token
+		open     Token
+		times    int
+		sequence []sequencer.Elem
+	)
+
+	lit, err = parseLiteral(t)
 	if err != nil {
 		return nil, err
 	}
 
-	times, err := strconv.Atoi(lit.Value)
+	times, err = strconv.Atoi(lit.Value)
 	if err != nil {
 		return nil, err
 	}
 
-	var sep = t.Consume()
+	sep = t.Consume()
 	if sep.Type != argumentSeparator {
-		return nil, fmt.Errorf("repeat expects argument separator ' ' after arg1, but was:  %s(='%s')", sep.Type, sep.Value)
+		return nil, fmt.Errorf("repeat expects argument separator ' ' after arg1, but was: %s(='%s')", sep.Type, sep.Value)
 	}
 
-	var open = t.Consume()
+	open = t.Consume()
 	if open.Type != blockOpen {
-		return nil, fmt.Errorf("repeat expects arg2 to be a sequence that is introduces with '[', but was: %s(='%s')", open.Type, open.Value)
+		return nil, fmt.Errorf(
+			"repeat expects arg2 to be a sequence that is introduces with '[', but was: %s(='%s')",
+			open.Type,
+			open.Value,
+		)
 	}
 
-	sequence, err := parseSequence(t)
+	sequence, err = parse(t)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +62,7 @@ func parseLiteral(t *TokenStream) (Token, error) {
 	)
 
 	if separator.Type != argumentSeparator {
-		return Token{}, fmt.Errorf("expected argument seperator ' ', but got '%s'", separator.Type)
+		return Token{}, fmt.Errorf("expected argument separator ' ', but got '%s'", separator.Type)
 	}
 
 	if lit.Type != literal {
@@ -60,42 +73,56 @@ func parseLiteral(t *TokenStream) (Token, error) {
 }
 
 func parseWait(v sequencer.Wait, t *TokenStream) (sequencer.Elem, error) {
-	lit, err := parseLiteral(t)
+	var (
+		lit      Token
+		err      error
+		duration time.Duration
+	)
+
+	lit, err = parseLiteral(t)
 	if err != nil {
 		return nil, err
 	}
-	var duration time.Duration
+
 	duration, err = time.ParseDuration(lit.Value)
+	if err != nil {
+		return nil, err
+	}
+
 	v.Duration = duration
 
-	return v, err
+	return v, nil
 }
 
-func parseKeyDown(v general.KeyDown, t *TokenStream) (sequencer.Elem, error) {
-	lit, err := parseLiteral(t)
-	key, err := getKeyValue(lit.Value)
+func parseKey(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error) {
+	var (
+		lit     Token
+		err     error
+		keycode int
+	)
+
+	lit, err = parseLiteral(t)
 	if err != nil {
 		return nil, err
 	}
 
-	v.Key = key
-
-	return v, nil
-}
-
-func parseKeyUp(v general.KeyUp, t *TokenStream) (sequencer.Elem, error) {
-	lit, err := parseLiteral(t)
+	keycode, err = getKeycode(lit.Value)
 	if err != nil {
 		return nil, err
 	}
 
-	key, err := getKeyValue(lit.Value)
-	if err != nil {
-		return nil, fmt.Errorf("KU expects arg1 to be a valid key, but '%s' is not valid: %w", lit.Value, err)
-	}
-	v.Key = key
+	switch v := elem.(type) {
+	case general.KeyDown:
+		v.Key = keycode
 
-	return v, nil
+		return v, nil
+	case general.KeyUp:
+		v.Key = keycode
+
+		return v, nil
+	}
+
+	panic(fmt.Sprintf("invalid element %T", elem))
 }
 
 func parseMouseMove(v general.MouseMove, t *TokenStream) (sequencer.Elem, error) {
@@ -107,21 +134,22 @@ func parseMouseMove(v general.MouseMove, t *TokenStream) (sequencer.Elem, error)
 }
 
 func parseSetMousePos(v general.SetMousePos, t *TokenStream) (elem sequencer.Elem, err error) {
-	var x, y int32
-	x, y, err = argInt32Coordinates(t)
-	v.Pos = mouse.Pos{
-		X: x,
-		Y: y,
-	}
+	var pos mouse.Pos
+
+	pos.X, pos.Y, err = argInt32Coordinates(t)
+	v.Pos = pos
+
 	return v, err
 }
 
 func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
-	var err error
-	var lit1 Token
-	var lit2 Token
-	var x int64
-	var y int64
+	var (
+		err  error
+		lit1 Token
+		lit2 Token
+		x    int64
+		y    int64
+	)
 
 	lit1, err = parseLiteral(t)
 	if err != nil {
@@ -154,7 +182,7 @@ func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
 	return int32(x), int32(y), nil
 }
 
-func getKeyValue(s string) (int, error) {
+func getKeycode(s string) (int, error) {
 	value, ok := map[string]int{
 		"ESC": key.VK_ESC,
 		"1":   key.VK_1,

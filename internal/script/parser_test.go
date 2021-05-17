@@ -1,11 +1,11 @@
-package parser_test
+package script_test
 
 import (
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
+	script2 "github.com/Oppodelldog/roamer/internal/script"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
-	"github.com/Oppodelldog/roamer/internal/sequences/parser"
 	"reflect"
 	"testing"
 	"time"
@@ -53,7 +53,7 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 
 	for name, data := range tests {
 		t.Run(name, func(t *testing.T) {
-			var got = parser.NewCustomSequenceFunc(data.script)()
+			var got = script2.NewCustomSequenceFunc(data.script)()
 			if !reflect.DeepEqual(data.want, got) {
 				t.Fatalf("sequences did not match:\ngot : %#v\nwant: %#v\n", got, data.want)
 			}
