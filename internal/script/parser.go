@@ -65,11 +65,12 @@ func parse(t *TokenStream) ([]sequencer.Elem, error) {
 			return nil, fmt.Errorf("[pos %v] error parsing command: %w", originalPos, err)
 		}
 
-		if repeat, isRepeat := command.(sequencer.Repeat); isRepeat {
-			for i := 0; i < repeat.Times; i++ {
-				seq = append(seq, repeat.Sequence...)
+		switch c := command.(type) {
+		case sequencer.Repeat:
+			for i := 0; i < c.Times; i++ {
+				seq = append(seq, c.Sequence...)
 			}
-		} else {
+		default:
 			seq = append(seq, command)
 		}
 	}
