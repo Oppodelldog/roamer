@@ -125,5 +125,5 @@ func parseArguments(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error)
 		return v, err
 	}
 
-	return elem, fmt.Errorf("unkown command %T", elem)
+	return elem, fmt.Errorf("unknown command %T", elem)
 }
