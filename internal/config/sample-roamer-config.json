@@ -17,82 +17,83 @@
         },
         {
           "Icon": "ico-click-left",
-          "Action": "7d2d_click_left_fast",
+          "Sequence": "LD;LU;W 30ms;L",
           "Caption": "LEFT-CLICK-FAST"
         },
         {
           "Icon": "ico-click-left",
-          "Action": "7d2d_click_left",
+          "Sequence": "LD;LU;W 200ms;L",
           "Caption": "LEFT-CLICK"
         },
         {
           "Icon": "ico-click-left",
-          "Action": "7d2d_click_left_slow",
+          "Sequence": "LD;LU;W 1000ms;L",
           "Caption": "LEFT-CLICK-SLOW"
         },
         {
           "Icon": "ico-walk",
-          "Action": "7d2d_walk",
+          "Sequence": "KD W",
           "Caption": "WALK"
         },
         {
           "Icon": "ico-run",
-          "Action": "7d2d_run",
+          "Sequence": "KD W;KD LSHIFT",
           "Caption": "RUN"
         },
         {
           "Icon": "ico-run-stop",
-          "Action": "7d2d_walk_run_stop",
+          "Sequence": "KU W;KU LSHIFT",
           "Caption": "WALK-RUN-STOP"
         },
         {
           "Icon": "icon-repair",
           "Action": "7d2d_repair-1",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 596 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "1"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-2",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 672 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "2"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-3",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 751 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "3"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-4",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 829 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "4"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-5",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 906 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "5"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-6",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1064 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "6"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-7",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1147 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "7"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-8",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "8"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-9",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1298 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "9"
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-0",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "0"
         }
       ]
