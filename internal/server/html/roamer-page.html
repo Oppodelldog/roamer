@@ -18,9 +18,9 @@
     <div id="actions" class="sequences">
         {{$page := .}}
         {{ range .ActionRows }}
-        {{ range $key,$value := . }}
+        {{ range . }}
         {{ if .HasSequence }}
-        <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{$key}})">
+        <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{.Id}})">
             <span class="caption">{{.Caption}}</span>
         </button>
         {{else}}

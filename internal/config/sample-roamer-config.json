@@ -73,27 +73,27 @@
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1064 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 986 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "6"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1147 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1064 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "7"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1147 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "8"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1298 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "9"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1298 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "0"
         }
       ]
@@ -158,6 +158,7 @@
         {
           "Icon": "",
           "Action": "remnant-equip-hunter",
+          "Sequence": "",
           "Caption": "Hunter"
         },
         {

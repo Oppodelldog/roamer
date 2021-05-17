@@ -17,6 +17,7 @@ type Data struct {
 type ActionRows []Actions
 type Actions []Action
 type Action struct {
+	Id          int
 	Icon        string
 	Action      string
 	Caption     string
@@ -60,6 +61,7 @@ func actionRows(roamerPage config.Page) ActionRows {
 			Action:      action.Action,
 			Caption:     action.Caption,
 			HasSequence: len(action.Sequence) > 0,
+			Id:          no,
 		})
 
 		no++
