@@ -12,7 +12,6 @@ func NewBuildInSequenceFunc(name string) func() []sequencer.Elem {
 	return func() []sequencer.Elem {
 		var sequences = map[string][]sequencer.Elem{
 			"none":                    {},
-			"get-mouse-pos":           rust.GetMousePos(),
 			"click-left":              rust.ClickingLeft(),
 			"run-forward":             rust.RunForward(),
 			"run-forward-stop":        rust.RunForwardStop(),
