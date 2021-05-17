@@ -3,7 +3,7 @@ package script_test
 import (
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
-	script2 "github.com/Oppodelldog/roamer/internal/script"
+	"github.com/Oppodelldog/roamer/internal/script"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
 	"reflect"
@@ -53,11 +53,14 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 
 	for name, data := range tests {
 		t.Run(name, func(t *testing.T) {
-			var got = script2.NewCustomSequenceFunc(data.script)()
+			var got, err = script.Parse(data.script)
+			if err != nil {
+				t.Fatalf("did not expect and error, but got: %v", err)
+			}
+
 			if !reflect.DeepEqual(data.want, got) {
 				t.Fatalf("sequences did not match:\ngot : %#v\nwant: %#v\n", got, data.want)
 			}
 		})
 	}
-
 }

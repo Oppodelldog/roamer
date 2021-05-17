@@ -20,24 +20,19 @@ var commandMappings = map[string]func() interface{}{
 	"R":  func() interface{} { return sequencer.Repeat{} },
 }
 
-func NewCustomSequenceFunc(script string) func() []sequencer.Elem {
-	return func() []sequencer.Elem {
-		seq, err := Parse(script)
-		if err != nil {
-			panic(err)
-		}
-
-		return seq
-	}
-}
-
 func Parse(script string) ([]sequencer.Elem, error) {
-	t, err := lex(script)
+	var (
+		t   *TokenStream
+		seq []sequencer.Elem
+		err error
+	)
+
+	t, err = lex(script)
 	if err != nil {
 		return nil, err
 	}
 
-	seq, err := parse(t)
+	seq, err = parse(t)
 	if err != nil {
 		return nil, err
 	}
@@ -55,21 +50,17 @@ func parse(t *TokenStream) ([]sequencer.Elem, error) {
 			return seq, nil
 		}
 
-		if t.Pos > 0 {
-			sep := t.Peek()
-			if sep.Type == commandSeparator {
-				t.Consume()
+		if t.Pos > 0 && t.Peek().Type == commandSeparator {
+			t.Consume()
 
-				continue
-			}
-			prev := t.PeekAt(-1)
-			if sep.Type != commandSeparator && prev.Type != blockOpen && prev.Type != commandSeparator {
-				return nil, fmt.Errorf("[pos %v] expected command separator, but got: '%s'(='%s')", t.Pos, sep.Type, sep.Value)
-			}
+			continue
 		}
 
-		originalPos := t.Pos
-		command, err := parseCommand(t)
+		var (
+			originalPos  = t.Pos
+			command, err = parseCommand(t)
+		)
+
 		if err != nil {
 			return nil, fmt.Errorf("[pos %v] error parsing command: %w", originalPos, err)
 		}
