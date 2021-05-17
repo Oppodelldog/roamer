@@ -253,10 +253,10 @@
         }
       ]
     },
-    "vallheim": {
-      "Title": "VALLHEIM - Roamer",
-      "TitleShort": "VALLHEIM",
-      "CssFile": "vallheim.css",
+    "valheim": {
+      "Title": "VALHEIM - Roamer",
+      "TitleShort": "VALHEIM",
+      "CssFile": "valheim.css",
       "Actions": [
         {
           "Icon": "ico-run",
