@@ -117,21 +117,36 @@ func parseSetMousePos(v general.SetMousePos, t *TokenStream) (elem sequencer.Ele
 }
 
 func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
-	var lit1 = t.Consume()
-	if lit1.Type != literal {
-		return 0, 0, fmt.Errorf("W expects arg1 to be literal, but was '%s'", lit1.Type)
-	}
-	var lit2 = t.Consume()
-	if lit2.Type != literal {
-		return 0, 0, fmt.Errorf("W expects arg2 to be literal, but was '%s'", lit2.Type)
+	var err error
+	var lit1 Token
+	var lit2 Token
+	var x int64
+	var y int64
+
+	lit1, err = parseLiteral(t)
+	if err != nil {
+		return 0, 0, err
 	}
 
-	x, err := strconv.ParseInt(lit1.Value, 0, 32)
+	lit2, err = parseLiteral(t)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	if lit1.Type != literal {
+		return 0, 0, fmt.Errorf("MM expects arg1 to be literal, but was '%s'", lit1.Type)
+	}
+
+	if lit2.Type != literal {
+		return 0, 0, fmt.Errorf("MM expects arg2 to be literal, but was '%s'", lit2.Type)
+	}
+
+	x, err = strconv.ParseInt(lit1.Value, 0, 32)
 	if err != nil {
 		return 0, 0, fmt.Errorf("arg1 must be int: %w", err)
 	}
 
-	y, err := strconv.Atoi(lit2.Value)
+	y, err = strconv.ParseInt(lit2.Value, 0, 32)
 	if err != nil {
 		return 0, 0, fmt.Errorf("arg2 must be int: %w", err)
 	}
