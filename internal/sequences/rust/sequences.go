@@ -303,12 +303,6 @@ func KayakPaddle() []sequencer.Elem {
 	}
 }
 
-func GetMousePos() []sequencer.Elem {
-	return []sequencer.Elem{
-		general.LookupMousePos{},
-	}
-}
-
 func getSlots(kind string) config.Slots {
 	return config.GetSlots(version.Get(), game, kind)
 }

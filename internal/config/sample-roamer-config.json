@@ -12,7 +12,7 @@
       "Actions": [
         {
           "Icon": "ico-get-mouse-pos",
-          "Action": "get-mouse-pos",
+          "Sequence": "MP",
           "Caption": "GET-MOUSE-POS"
         },
         {
@@ -151,7 +151,7 @@
       "Actions": [
         {
           "Icon": "ico-get-mouse-pos",
-          ",Action": "get-mouse-pos",
+          "Sequence": "MP",
           "Caption": "GET-MOUSE-POS"
         },
         {
@@ -173,7 +173,7 @@
       "Actions": [
         {
           "Icon": "ico-get-mouse-pos",
-          "Action": "get-mouse-pos",
+          "Sequence": "MP",
           "Caption": "GET-MOUSE-POS"
         },
         {
