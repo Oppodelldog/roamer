@@ -19,7 +19,7 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 
 	var tests = map[string]testData{
 		"all commands": {
-			script: "W 3ms;L;R 3 [W 4s];KD A;KU B;LD;LU;RD;RU;MM 10 20;SM 30 40",
+			script: "W 3ms;L;R 3 [W 4s];KD A;KU B;LD;LU;RD;RU;MM 10 20;SM 30 40;MP",
 			want: []sequencer.Elem{
 				sequencer.Wait{Duration: time.Millisecond * 3},
 				sequencer.Loop{},
@@ -34,6 +34,7 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 				general.RightMouseButtonUp{},
 				general.MouseMove{X: 10, Y: 20},
 				general.SetMousePos{Pos: mouse.Pos{X: 30, Y: 40}},
+				general.LookupMousePos{},
 			},
 		},
 		"nested repeats": {

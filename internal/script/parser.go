@@ -7,17 +7,18 @@ import (
 )
 
 var commandMappings = map[string]func() interface{}{
-	"W":  func() interface{} { return sequencer.Wait{} },
 	"L":  func() interface{} { return sequencer.Loop{} },
+	"R":  func() interface{} { return sequencer.Repeat{} },
+	"W":  func() interface{} { return sequencer.Wait{} },
 	"KD": func() interface{} { return general.KeyDown{} },
 	"KU": func() interface{} { return general.KeyUp{} },
 	"LD": func() interface{} { return general.LeftMouseButtonDown{} },
 	"LU": func() interface{} { return general.LeftMouseButtonUp{} },
+	"MP": func() interface{} { return general.LookupMousePos{} },
+	"MM": func() interface{} { return general.MouseMove{} },
 	"RD": func() interface{} { return general.RightMouseButtonDown{} },
 	"RU": func() interface{} { return general.RightMouseButtonUp{} },
-	"MM": func() interface{} { return general.MouseMove{} },
 	"SM": func() interface{} { return general.SetMousePos{} },
-	"R":  func() interface{} { return sequencer.Repeat{} },
 }
 
 func Parse(script string) ([]sequencer.Elem, error) {
@@ -113,6 +114,8 @@ func parseArguments(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error)
 		return parseMouseMove(v, t)
 	case general.SetMousePos:
 		return parseSetMousePos(v, t)
+	case general.LookupMousePos:
+		return v, err
 	case general.LeftMouseButtonDown:
 		return v, err
 	case general.LeftMouseButtonUp:
