@@ -294,6 +294,11 @@
           "Icon": "ico-jump",
           "Caption": "JUMP",
           "Sequence": "KD SPACE;W 30ms;KU SPACE;W 800ms;L"
+        },
+        {
+          "Icon": "ico-fish",
+          "Caption": "FISHING",
+          "Sequence": "LMD;W 2s;LMU"
         }
       ]
     }
