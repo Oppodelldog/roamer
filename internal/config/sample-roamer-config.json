@@ -296,9 +296,14 @@
           "Sequence": "KD SPACE;W 30ms;KU SPACE;W 800ms;L"
         },
         {
+          "Icon": "ico-run",
+          "Caption": "RUN TRAINING",
+          "Sequence": "KD LSHIFT;R 8 [ KD W;W 300ms;KU W; KD D;W 300ms;KU D; KD S;W 300ms;KU S; KD A;W 300ms;KU A;];KU LSHIFT;W 6s;L"
+        },
+        {
           "Icon": "ico-fish",
           "Caption": "FISHING",
-          "Sequence": "LMD;W 2s;LMU"
+          "Sequence": "LD;W 2s;LU;W 2s;RD;W 27s;RU;W 3s;L"
         }
       ]
     }
