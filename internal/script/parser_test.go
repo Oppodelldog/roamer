@@ -27,8 +27,8 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 				sequencer.Wait{Duration: 4 * time.Second},
 				sequencer.Wait{Duration: 4 * time.Second},
 				sequencer.Wait{Duration: 4 * time.Second},
-				general.KeyDown{Key: key.VK_A},
-				general.KeyUp{Key: key.VK_B},
+				general.KeyDown{Key: key.VkA},
+				general.KeyUp{Key: key.VkB},
 				general.LeftMouseButtonDown{},
 				general.LeftMouseButtonUp{},
 				general.RightMouseButtonDown{},
@@ -43,14 +43,14 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 		"nested repeats": {
 			script: "KD D;R 1 [LD;W 60ms;LU;R 3 [W 800ms]];;;KU D;",
 			want: []sequencer.Elem{
-				general.KeyDown{Key: key.VK_D},
+				general.KeyDown{Key: key.VkD},
 				general.LeftMouseButtonDown{},
 				sequencer.Wait{Duration: time.Millisecond * 60},
 				general.LeftMouseButtonUp{},
 				sequencer.Wait{Duration: time.Millisecond * 800},
 				sequencer.Wait{Duration: time.Millisecond * 800},
 				sequencer.Wait{Duration: time.Millisecond * 800},
-				general.KeyUp{Key: key.VK_D},
+				general.KeyUp{Key: key.VkD},
 			},
 		},
 	}

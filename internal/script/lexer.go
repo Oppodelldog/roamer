@@ -35,7 +35,7 @@ func lex(script string) (*TokenStream, error) {
 
 	for !stream.isEOF() {
 		switch {
-		case isCommandSeperator(stream):
+		case isCommandSeparator(stream):
 			stream.Consume()
 
 			tokenStream.Tokens = append(tokenStream.Tokens, Token{Type: commandSeparator})
@@ -74,7 +74,7 @@ func isBlockOpen(stream *InputReader) bool {
 	return stream.Peek(0) == valBlockOpen
 }
 
-func isCommandSeperator(stream *InputReader) bool {
+func isCommandSeparator(stream *InputReader) bool {
 	return stream.Peek(0) == valCommandSep
 }
 

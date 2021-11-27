@@ -8,7 +8,7 @@ import (
 	"github.com/Oppodelldog/roamer/internal/pages/roamerpage"
 )
 
-func serveIndexPage(writer http.ResponseWriter, request *http.Request) {
+func serveIndexPage(writer http.ResponseWriter, _ *http.Request) {
 	var err = index.Render(content, writer)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)

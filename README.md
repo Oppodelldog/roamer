@@ -1,6 +1,6 @@
 # roamer
 
-Demo Project how to automate windows keyboard/mouse interactions through a web frontend.
+Demo Project how to automate Windows keyboard/mouse interactions through a web frontend.
 
 **Attention**
 * Read and understand the source code before using this tool
@@ -13,7 +13,7 @@ This Currently automates boring tasks like
 
 * run
 * paddle kayak
-* left clicking
+* left-clicking
 * mouse pos investigation
 * arm first inventory row
 * unarm items
@@ -25,7 +25,7 @@ This Currently automates boring tasks like
 
 ### seven days to die
 
-* left clicking
+* left-clicking
 * walk
 * run
 * repair slot (1-10)
@@ -35,7 +35,7 @@ This Currently automates boring tasks like
 * attempt for a full run
 * several sequences to jump the first hurdles
 
-###vallheim
+### valheim
 
 * walk
 * run
@@ -46,4 +46,4 @@ This Currently automates boring tasks like
 
 To give some impression how it looks like
 ![Rust Roamer](screenshot-rust-actions.png)
-![Seven Days To Die Raomer](screenshot-7d2d-actions.png)
+![Seven Days To Die Roamer](screenshot-7d2d-actions.png)
