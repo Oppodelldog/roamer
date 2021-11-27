@@ -12,12 +12,7 @@ const filePerm = 0600
 const appDataFolderName = "roamer"
 
 func Load() error {
-	err := loadConfig(fileNameRoamerConfig, &config, sampleRoamerConfig)
-	if err != nil {
-		return err
-	}
-
-	return loadConfig(fileNameUICordsConfig, &uiConf, uiCoordsDefault)
+	return loadConfig(fileNameRoamerConfig, &config, sampleRoamerConfig)
 }
 
 func loadConfig(filename string, data interface{}, defaultData []byte) error {

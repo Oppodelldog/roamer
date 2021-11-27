@@ -20,8 +20,8 @@ function updatePauseButtonLabel() {
     document.getElementById("pause-button").innerHTML = (isPaused) ? "RESUME" : "PAUSE";
 }
 
-function setSequence(sequence) {
-    wsSend({Type: "SEQUENCE_SETSEQUENCE", Payload: {Sequence: sequence}})
+function clearSequence() {
+    wsSend({Type: "SEQUENCE_CLEARSEQUENCE", Payload: {}})
 }
 
 function setConfigSequence(pageId, sequenceIndex) {

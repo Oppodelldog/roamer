@@ -6,7 +6,6 @@ import (
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/script"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
-	"github.com/Oppodelldog/roamer/internal/sequences"
 )
 
 func Worker(actions <-chan Action, broadcast chan<- []byte) {
@@ -21,9 +20,8 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			select {
 			case action := <-actions:
 				switch v := action.(type) {
-				case SequenceSetSequence:
-					seq.EnqueueSequence(sequences.NewBuildInSequenceFunc(v.Sequence))
-					sequence = v.Sequence
+				case SequenceClearSequence:
+					sequence = ""
 				case SequenceSetConfigSequence:
 					page, ok := config.RoamerPage(v.PageId)
 					if !ok {
@@ -36,15 +34,21 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 						return
 					}
 
-					seq.EnqueueSequence(func() []sequencer.Elem {
-						seq, err := script.Parse(page.Actions[v.SequenceIndex].Sequence)
-						if err != nil {
-							panic(err)
-						}
+					var action = page.Actions[v.SequenceIndex]
+					elems, err := script.Parse(action.Sequence)
+					if err != nil {
+						panic(err)
+					}
 
-						return seq
+					s, err := script.Write(elems)
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println(s)
+					seq.EnqueueSequence(func() []sequencer.Elem {
+						return elems
 					})
-					sequence = page.Actions[v.SequenceIndex].Sequence
+					sequence = action.Sequence
 				case SequencePause:
 					err := seq.Pause()
 					if err != nil {

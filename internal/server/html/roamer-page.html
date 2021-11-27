@@ -13,7 +13,6 @@
 <script type="text/javascript" src="/js/api.js"></script>
 <script type="text/javascript" src="/js/wsConnect.js"></script>
 
-
 {{- /*gotype: github.com/Oppodelldog/roamer/internal/pages/roamerpage.Data*/ -}}
 <h1>{{.Title}}</h1>
 <div class="content">
@@ -24,22 +23,17 @@
         {{$page := .}}
         {{ range .ActionRows }}
             {{ range . }}
-                {{ if .HasSequence }}
-                    <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{.Id}})">
-                        <span class="caption">{{.Caption}}</span>
-                    </button>
-                {{else}}
-                    <button class="{{.Icon}}" onclick="setSequence('{{.Action}}')">
-                        <span class="caption">{{.Caption}}</span>
-                    </button>
-                {{ end }}
+                {{- /*gotype: github.com/Oppodelldog/roamer/internal/pages/roamerpage.Action*/ -}}
+                <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{.Id}})">
+                    <span class="caption">{{.Caption}}</span>
+                </button>
             {{ end }}
             <br/>
         {{ end }}
     </div>
 
     <div class="sequences">
-        <button class="ico-none" onclick="setSequence('none')"><span class="caption">NONE</span></button>
+        <button class="ico-none" onclick="clearSequence()"><span class="caption">NONE</span></button>
         <button class="ico-pause-button" id="pause-button" onclick="togglePause()">???</button>
         <button class="ico-abort" id="abort-button" onclick="abort()">Abort</button>
     </div>

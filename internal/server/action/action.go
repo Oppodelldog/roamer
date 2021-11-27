@@ -8,8 +8,7 @@ type (
 		IsPaused    bool
 		HasSequence bool
 	}
-	SequenceSetSequence struct {
-		Sequence string
+	SequenceClearSequence struct {
 	}
 	SequenceSetConfigSequence struct {
 		PageId        string
@@ -25,8 +24,8 @@ type (
 const (
 	serverText           = "SERVER_TEXT"
 	seqState             = "SEQUENCE_STATE"
-	seqSetSequence       = "SEQUENCE_SETSEQUENCE"
 	seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
+	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
 	seqPause             = "SEQUENCE_PAUSE"
 	seqAbort             = "SEQUENCE_ABORT"
 )

@@ -41,10 +41,10 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					var state SequenceState
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&state)
 					message = state
-				case seqSetSequence:
-					var setSequence SequenceSetSequence
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&setSequence)
-					message = setSequence
+				case seqClearSequence:
+					var clearSequence SequenceClearSequence
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&clearSequence)
+					message = clearSequence
 				case seqSetConfigSequence:
 					var setConfigSequence SequenceSetConfigSequence
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&setConfigSequence)

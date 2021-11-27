@@ -7,7 +7,6 @@ import (
 )
 
 func TestLex(t *testing.T) {
-
 	testCases := []struct {
 		Script string
 		Tokens TokenStream
@@ -16,8 +15,7 @@ func TestLex(t *testing.T) {
 			Script: "W",
 			Tokens: TokenStream{Tokens: []Token{
 				{Type: literal, Value: "W"},
-			},
-			},
+			}},
 		},
 		{
 			Script: "KD E;",
@@ -26,8 +24,7 @@ func TestLex(t *testing.T) {
 				{Type: argumentSeparator},
 				{Type: literal, Value: "E"},
 				{Type: commandSeparator},
-			},
-			},
+			}},
 		},
 		{
 			Script: "R 25 [LD;W 60ms;LU;W 800ms]",
@@ -49,8 +46,7 @@ func TestLex(t *testing.T) {
 				{Type: argumentSeparator},
 				{Type: literal, Value: "800ms"},
 				{Type: blockClose},
-			},
-			},
+			}},
 		},
 	}
 

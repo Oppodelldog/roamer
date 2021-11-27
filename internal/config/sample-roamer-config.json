@@ -47,7 +47,6 @@
         },
         {
           "Icon": "icon-repair",
-          "Action": "7d2d_repair-1",
           "Sequence": "KD TAB;KU TAB;W 300ms;SM 596 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "1"
         },
@@ -110,37 +109,37 @@
         },
         {
           "Icon": "",
-          "Action": "altf4-run-1",
+          "Sequence": "MM 115 200;KD W;W 5.3s;KU W;KD SPACE;W 60ms;KU SPACE;W 1.7s;KD W;W 1.2s;MM -94 0;W 30ms;KD SPACE;W 60ms;KU SPACE;W 1.7s;KU W;MM -60 0;W 30ms;KD W;W 1.25s;KD SPACE;W 60ms;KU SPACE;W 1.7s;MM 190 0;W 150ms;KD SPACE;W 60ms;KU SPACE;KD D;W 1.63s;KU D;W 100ms;KU W;MM -40 0;W 50ms;KD W;W 400ms;KD SPACE;W 60ms;KU SPACE;W 1.65s;KU W;MM 535 0;W 50ms;KD W;W 300ms;KD SPACE;W 60ms;KU SPACE;W 1.3s;MM 0 -140;W 100ms;MM -120 0;W 200ms;KU W",
           "Caption": "RUN-1"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-2",
+          "Sequence": "KD W;W 500ms;KD SPACE;W 60ms;KU SPACE;W 2.2s;MM 0 -100;W 100ms;MM -60 0;W 100ms;W 1.6s;KU W",
           "Caption": "RUN-2"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-3",
+          "Sequence": "KD W;W 600ms;MM -50 0;W 800ms;MM -60 0;W 800ms;MM -40 100;KU W;W 800ms;KD W;W 700ms;KU W",
           "Caption": "RUN-3"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-4",
+          "Sequence": "KD W;W 330ms;KD SPACE;W 60ms;KU SPACE;W 500ms;KD SPACE;W 60ms;KU SPACE;W 800ms;W 100ms;KD SPACE;W 60ms;KU SPACE;W 1.2s;KU W;W 7s;MM -250 0;KD W;W 2.2s;KU W;MM -350 0",
           "Caption": "RUN-4"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-5",
+          "Sequence": "KD W;W 500ms;KD SPACE;W 60ms;KU SPACE;W 800ms;KD SPACE;KU W",
           "Caption": "RUN-5"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-all",
+          "Sequence": "KD ESC;W 60ms;KU ESC;W 600ms;SM 178 726;W 100ms;LD;W 60ms;LU;W 600ms;W 2s;MM 115 200;KD W;W 5.3s;KU W;KD SPACE;W 60ms;KU SPACE;W 1.7s;KD W;W 1.2s;MM -94 0;W 30ms;KD SPACE;W 60ms;KU SPACE;W 1.7s;KU W;MM -60 0;W 30ms;KD W;W 1.25s;KD SPACE;W 60ms;KU SPACE;W 1.7s;MM 190 0;W 150ms;KD SPACE;W 60ms;KU SPACE;KD D;W 1.63s;KU D;W 100ms;KU W;MM -40 0;W 50ms;KD W;W 400ms;KD SPACE;W 60ms;KU SPACE;W 1.65s;KU W;MM 535 0;W 50ms;KD W;W 300ms;KD SPACE;W 60ms;KU SPACE;W 1.3s;MM 0 -140;W 100ms;MM -120 0;W 200ms;KU W;W 0s;KD W;W 500ms;KD SPACE;W 60ms;KU SPACE;W 2.2s;MM 0 -100;W 100ms;MM -60 0;W 100ms;W 1.6s;KU W;W 0s;KD W;W 600ms;MM -50 0;W 800ms;MM -60 0;W 800ms;MM -40 100;KU W;W 800ms;KD W;W 700ms;KU W;W 0s;KD W;W 330ms;KD SPACE;W 60ms;KU SPACE;W 500ms;KD SPACE;W 60ms;KU SPACE;W 800ms;W 100ms;KD SPACE;W 60ms;KU SPACE;W 1.2s;KU W;W 7s;MM -250 0;KD W;W 2.2s;KU W;MM -350 0",
           "Caption": "RUN-ALL"
         },
         {
           "Icon": "",
-          "Action": "altf4-run-all-2",
+          "Sequence": "KD ESC;W 60ms;KU ESC;W 600ms;SM 178 726;W 100ms;LD;W 60ms;LU;W 600ms;W 1.6s;MM 115 200;KD W;W 5.3s;KU W;KD SPACE;W 60ms;KU SPACE;W 1.7s;KD W;W 1.2s;MM -94 0;W 30ms;KD SPACE;W 60ms;KU SPACE;W 1.7s;KU W;MM -60 0;W 30ms;KD W;W 1.25s;KD SPACE;W 60ms;KU SPACE;W 1.7s;MM 190 0;W 150ms;KD SPACE;W 60ms;KU SPACE;KD D;W 1.63s;KU D;W 100ms;KU W;MM -40 0;W 50ms;KD W;W 400ms;KD SPACE;W 60ms;KU SPACE;W 1.65s;KU W;MM -127 0;KD W;W 800ms;KD SPACE;W 60ms;W 800ms;KU SPACE;W 60ms;KU W;W 60ms;W 1.2s;KD W;W 1s;KD SPACE;W 60ms;KU SPACE;W 1.8s;KU W;W 0s",
           "Caption": "RUN-ALL 2"
         }
       ]
@@ -157,13 +156,12 @@
         },
         {
           "Icon": "",
-          "Action": "remnant-equip-hunter",
-          "Sequence": "",
+          "Sequence": "KD TAB;W 18ms;KU TAB;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD ESC;W 20ms;KU ESC;W 20ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD ESC;W 18ms;KU ESC;W 18ms;KD UP;W 18ms;KU UP;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD ESC;W 20ms;KU ESC;W 20ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD ESC;W 20ms;KU ESC;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD RIGHT;W 18ms;KU RIGHT;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD ESC;W 18ms;KU ESC;W 18ms;KD UP;W 20ms;KU UP;W 18ms;KD UP;W 20ms;KU UP;W 18ms;KD UP;W 20ms;KU UP;W 18ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD RIGHT;W 20ms;KU RIGHT;W 20ms;KD RIGHT;W 20ms;KU RIGHT;W 20ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 18ms;KU ESC;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 18ms;KU ESC;W 18ms;KD UP;W 20ms;KU UP;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD UP;W 20ms;KU UP;W 20ms;KD TAB;W 20ms;KU TAB;W 20ms",
           "Caption": "Hunter"
         },
         {
           "Icon": "",
-          "Action": "remnant-equip-radiant",
+          "Sequence": "KD TAB;W 20ms;KU TAB;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD ESC;W 20ms;KU ESC;W 20ms;KD DOWN;W 18ms;KU DOWN;W 20ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 18ms;KU ESC;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 20ms;KU ESC;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD ESC;W 20ms;KU ESC;W 20ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD RIGHT;W 18ms;KU RIGHT;W 18ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD SPACE;W 18ms;KU SPACE;W 20ms;KD ESC;W 18ms;KU ESC;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD UP;W 18ms;KU UP;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD RIGHT;W 18ms;KU RIGHT;W 20ms;KD RIGHT;W 18ms;KU RIGHT;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD SPACE;W 20ms;KU SPACE;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD DOWN;W 20ms;KU DOWN;W 20ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 20ms;KU ESC;W 18ms;KD UP;W 18ms;KU UP;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD DOWN;W 20ms;KU DOWN;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD SPACE;W 20ms;KU SPACE;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD DOWN;W 18ms;KU DOWN;W 18ms;KD SPACE;W 18ms;KU SPACE;W 18ms;KD ESC;W 18ms;KU ESC;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD UP;W 18ms;KU UP;W 20ms;KD TAB;W 20ms;KU TAB;W 20ms",
           "Caption": "Radiant"
         }
       ]
@@ -180,77 +178,77 @@
         },
         {
           "Icon": "ico-click-left",
-          "Action": "click-left",
+          "Sequence": "LD;LU;W 322ms;L",
           "Caption": "LEFT-CLICK"
         },
         {
           "Icon": "ico-arm",
-          "Action": "arm",
+          "Sequence": "KD TAB;KU TAB;W 208ms;SM 707 899;LD;W 84ms;SM 707 1003;W 86ms;LU;W 80ms;SM 799 899;LD;W 86ms;SM 806 1003;W 76ms;LU;W 82ms;SM 901 899;LD;W 82ms;SM 898 1003;W 76ms;LU;W 74ms;SM 992 899;LD;W 72ms;SM 992 1003;W 86ms;LU;W 72ms;SM 1082 899;LD;W 80ms;SM 1086 1003;W 86ms;LU;W 74ms;SM 1178 899;LD;W 72ms;SM 1170 1003;W 82ms;LU;W 72ms;W 310ms;KD TAB;KU TAB",
           "Caption": "ARM"
         },
         {
           "Icon": "ico-unarm",
-          "Action": "unarm",
+          "Sequence": "KD TAB;KU TAB;W 212ms;SM 707 1003;LD;W 84ms;SM 707 899;W 84ms;LU;W 78ms;SM 806 1003;LD;W 76ms;SM 799 899;W 86ms;LU;W 76ms;SM 898 1003;LD;W 78ms;SM 901 899;W 72ms;LU;W 72ms;SM 992 1003;LD;W 82ms;SM 992 899;W 72ms;LU;W 78ms;SM 1086 1003;LD;W 86ms;SM 1082 899;W 84ms;LU;W 86ms;SM 1170 1003;LD;W 76ms;SM 1178 899;W 84ms;LU;W 80ms;W 296ms;KD TAB;KU TAB",
           "Caption": "UNARM"
         },
         {
           "Icon": "ico-run",
-          "Action": "run-forward",
+          "Sequence": "KD LSHIFT;KD W;W 2.89s;KU LSHIFT",
           "Caption": "RUN"
         },
         {
           "Icon": "ico-run-stop",
-          "Action": "run-forward-stop",
+          "Sequence": "KU LSHIFT;KU W",
           "Caption": "RUN-STOP"
         },
         {
           "Icon": "ico-gather-tree",
-          "Action": "duck-gather-tree",
+          "Sequence": "KD LCONTROL;LD;W 7.13s;LU;KU LCONTROL",
           "Caption": "DUCK-GATHER"
         },
         {
           "Icon": "ico-kayak-forward",
-          "Action": "kayak-forward'",
+          "Sequence": "KD A;W 1.576s;KU A;W 606ms;KD D;W 1.292s;KU D;W 414ms;L",
           "Caption": "KAYAK-FORWARD"
         },
         {
           "Icon": "ico-kayak-backward",
-          "Action": "kayak-backward",
+          "Sequence": "KD S;KD A;W 1.364s;KU A;W 628ms;KD D;W 1.13s;KU D;W 400ms;KU S;L",
           "Caption": "KAYAK-BACKWARD"
         },
         {
           "Icon": "",
-          "Action": "diving-tank-on",
+          "Sequence": "KD TAB;KU TAB;W 182ms;SM 707 899;LD;W 15ms;SM 707 712;W 62ms;LU;W 15ms;KD TAB;KU TAB",
           "Caption": "DIVE-TANK-ON"
         },
         {
           "Icon": "",
-          "Action": "diving-tank-off",
+          "Sequence": "KD TAB;KU TAB;W 180ms;SM 707 712;LD;W 15ms;SM 707 899;W 58ms;LU;W 15ms;KD TAB;KU TAB",
           "Caption": "DIVE-TANK-OFF"
         },
         {
           "Icon": "",
-          "Action": "fill-inventory-row",
+          "Sequence": "SM 1145 -723;RD;W 80ms;SM 1240 -723;W 74ms;RU;W 84ms;W 74ms;SM 1145 -723;RD;W 80ms;SM 1335 -723;W 84ms;RU;W 78ms;W 86ms;SM 1145 -723;RD;W 78ms;SM 1430 -723;W 82ms;RU;W 86ms;W 86ms;SM 1145 -723;RD;W 72ms;SM 1525 -723;W 82ms;RU;W 78ms;W 86ms;SM 1145 -723;RD;W 86ms;SM 1620 -723;W 78ms;RU;W 80ms;W 80ms",
           "Caption": "FILL-INV-ROW"
         },
         {
           "Icon": "",
-          "Action": "transfer-inventory-row",
+          "Sequence": "SM 331 -630;RD;W 76ms;RU;W 82ms;W 80ms;SM 426 -630;RD;W 80ms;RU;W 82ms;W 84ms;SM 521 -630;RD;W 86ms;RU;W 78ms;W 82ms;SM 616 -630;RD;W 74ms;RU;W 86ms;W 86ms;SM 711 -630;RD;W 74ms;RU;W 72ms;W 78ms;SM 806 -630;RD;W 84ms;RU;W 76ms;W 80ms",
           "Caption": "TRANSFER-INV-ROW"
         },
         {
           "Icon": "",
-          "Action": "move-down-inventory-row",
+          "Sequence": "SM 631 -627;LD;W 72ms;SM 631 -532;W 80ms;LU;W 72ms;W 74ms;SM 726 -627;LD;W 82ms;SM 726 -532;W 78ms;LU;W 80ms;W 82ms;SM 821 -627;LD;W 74ms;SM 821 -532;W 80ms;LU;W 86ms;W 86ms;SM 916 -627;LD;W 74ms;SM 916 -532;W 72ms;LU;W 72ms;W 78ms;SM 1011 -627;LD;W 80ms;SM 1011 -532;W 72ms;LU;W 80ms;W 82ms;SM 1106 -627;LD;W 74ms;SM 1106 -532;W 82ms;LU;W 74ms;W 82ms",
           "Caption": "MOVE-INV-ROW-DOWN"
         },
         {
           "Icon": "",
-          "Action": "move-up-inventory-row",
+          "Sequence": "SM 784 -627;LD;W 76ms;SM 784 -722;W 80ms;LU;W 86ms;W 76ms;SM 879 -627;LD;W 86ms;SM 879 -722;W 72ms;LU;W 72ms;W 84ms;SM 974 -627;LD;W 84ms;SM 974 -722;W 72ms;LU;W 72ms;W 72ms;SM 1069 -627;LD;W 80ms;SM 1069 -722;W 78ms;LU;W 80ms;W 80ms;SM 1164 -627;LD;W 76ms;SM 1164 -722;W 82ms;LU;W 80ms;W 84ms;SM 1259 -627;LD;W 78ms;SM 1259 -722;W 86ms;LU;W 74ms;W 80ms",
           "Caption": "MOVE-INV-ROW-UP"
         },
         {
           "Icon": "",
-          "Action": "smart-breath",
+          "Sequence": "KD TAB;KU TAB;W 200ms;SM 707 899;LD;W 15ms;SM 707 712;W 56ms;LU;W 15ms;KD TAB;KU TAB;W 6.47s;KD TAB;KU TAB;W 192ms;SM 707 712;LD;W 15ms;SM 707 899;W 58ms;LU;W 15ms;KD TAB;KU TAB;W 2.074s;L",
           "Caption": "SMART-BREATH"
         }
       ]

@@ -68,30 +68,32 @@ func lex(script string) (*TokenStream, error) {
 }
 
 func isBlockClose(stream *InputReader) bool {
-	return stream.Peek(0) == ']'
+	return stream.Peek(0) == valBlockClose
 }
 
 func isBlockOpen(stream *InputReader) bool {
-	return stream.Peek(0) == '['
+	return stream.Peek(0) == valBlockOpen
 }
 
 func isCommandSeperator(stream *InputReader) bool {
-	return stream.Peek(0) == ';'
+	return stream.Peek(0) == valCommandSep
 }
 
 func isArgumentSeparator(stream *InputReader) bool {
-	return stream.Peek(0) == ' '
+	return stream.Peek(0) == valArgSep
 }
 
 func isLiteral(stream *InputReader) bool {
 	var (
-		char           = stream.Peek(0)
-		isTimeUnitChar = char == 'n' || char == 's' || char == 'h' || char == 'm' || char == 'u'
-		isUCaseChar    = char >= 'A' && char <= 'Z'
-		isLCaseChar    = char >= '0' && char <= '9'
+		char            = stream.Peek(0)
+		isTimeUnitChar  = char == 'n' || char == 's' || char == 'h' || char == 'm' || char == 'u'
+		isUCaseChar     = char >= 'A' && char <= 'Z'
+		isLCaseChar     = char >= '0' && char <= '9'
+		isDecimalDelim  = char == '.'
+		isNumericPrefix = char == '-'
 	)
 
-	return isUCaseChar || isLCaseChar || isTimeUnitChar
+	return isUCaseChar || isLCaseChar || isTimeUnitChar || isDecimalDelim || isNumericPrefix
 }
 
 func literalToken(stream *InputReader) (Token, error) {
