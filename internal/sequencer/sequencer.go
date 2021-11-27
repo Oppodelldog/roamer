@@ -16,6 +16,7 @@ type Sequencer struct {
 	aborted        bool
 	hasSequence    bool
 	beforeSequence func()
+	debug          bool
 }
 
 // New creates a new sequencer.
@@ -26,6 +27,7 @@ func New(queueSize int) *Sequencer {
 		seq:      make(chan Elem),
 		pause:    make(chan struct{}, 1),
 		paused:   false,
+		debug:    true,
 	}
 
 	go s.playSequence()
@@ -43,12 +45,12 @@ func (s *Sequencer) IsPaused() bool {
 	return s.paused
 }
 
-// HasSequences indicates if sequencer has a sequence for playback or not.
+// HasSequence indicates if sequencer has a sequence for playback or not.
 func (s *Sequencer) HasSequence() bool {
 	return s.hasSequence
 }
 
-// Enqueue adds a new sequence to the sequence queue.
+// EnqueueSequence adds a new sequence to the sequence queue.
 // This method blocks by the queueSize defined in New.
 func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 	var newSequence = newSeq
@@ -134,8 +136,12 @@ func (s *Sequencer) playElement() {
 				s.sleep(v.Duration)
 			case Loop:
 			default:
-				err := el.Do()
-				if err != nil {
+				if s.debug {
+					fmt.Printf("%T\n", el)
+					break
+				}
+
+				if err := el.Do(); err != nil {
 					fmt.Printf("error in %T.Do: %v\n", el, err)
 				}
 			}
@@ -165,4 +171,8 @@ func (s *Sequencer) Abort() {
 
 	}
 	s.aborted = true
+}
+
+func (s *Sequencer) Debug(v bool) {
+	s.debug = v
 }

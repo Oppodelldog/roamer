@@ -4,8 +4,9 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	key2 "github.com/Oppodelldog/roamer/internal/key"
 	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/server/action"
+	"github.com/Oppodelldog/roamer/internal/server/ws"
 	"log"
 	"net/http"
 	"path"
@@ -32,6 +33,11 @@ var seq *sequencer2.Sequencer
 const port = 10982
 
 func Start() {
+
+	var actions = make(chan action.Action)
+	var hub = ws.StartHub(newSessionFunc(actions))
+	action.Worker(actions, hub.Broadcast())
+
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
 	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(content))), http.MethodGet))
 	http.Handle("/roam/", restrictMethod(http.StripPrefix("/roam/", http.HandlerFunc(serveRoamerPage)), http.MethodGet))
@@ -39,23 +45,21 @@ func Start() {
 	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(js)), http.MethodGet))
 	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(css)), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
-	http.Handle("/set/", restrictMethod(http.HandlerFunc(hSet), http.MethodPost))
-	http.Handle("/setconfigseq/", restrictMethod(http.HandlerFunc(hSetConfigSeq), http.MethodPost))
-	http.Handle("/pause", restrictMethod(http.HandlerFunc(hPause), http.MethodPost))
-	http.Handle("/abort", restrictMethod(http.HandlerFunc(hAbort), http.MethodPost))
-	http.Handle("/state", restrictMethod(http.HandlerFunc(hState), http.MethodGet))
 
-	seq = sequencer2.New(1)
-	seq.BeforeSequence(func() {
-		key2.ResetPressed()
-	})
+	http.Handle("/ws", restrictMethod(websocketHandler(hub), http.MethodGet))
 
-	log.Printf("Starting Rust-Roamer")
+	log.Printf("Starting Roamer")
 	log.Printf("http://127.0.0.1:%v", port)
 
 	err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("error running http server: %v", err)
+	}
+}
+
+func newSessionFunc(actions chan action.Action) ws.NewSessionFunc {
+	return func(client *ws.Client) {
+		action.ClientSession(client, actions)
 	}
 }
 
@@ -77,4 +81,10 @@ func restrictMethod(h http.Handler, allowedMethods ...string) http.Handler {
 
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	})
+}
+
+func websocketHandler(hub *ws.Hub) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ws.ServeWs(hub, w, r)
+	}
 }

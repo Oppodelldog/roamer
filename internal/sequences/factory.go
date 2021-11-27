@@ -28,7 +28,6 @@ func NewBuildInSequenceFunc(name string) func() []sequencer.Elem {
 			"move-up-inventory-row":   rust.MoveInventoryRow(-1),
 			"altf4-run-all":           altf4.RunAll(),
 			"altf4-run-all-2":         altf4.RunAll2(),
-			"altf4-run-0":             altf4.Reset(),
 			"altf4-run-1":             altf4.Run1(),
 			"altf4-run-2":             altf4.Run2(),
 			"altf4-run-3":             altf4.Run3(),

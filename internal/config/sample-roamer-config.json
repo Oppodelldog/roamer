@@ -105,7 +105,7 @@
       "Actions": [
         {
           "Icon": "",
-          "Action": "altf4-run-0",
+          "Sequence": "KD ESC;W 60ms;KU ESC;W 600ms;SM 178 726;W 100ms;LD;W 60ms;LU;W 600ms",
           "Caption": "RESET"
         },
         {

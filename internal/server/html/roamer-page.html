@@ -8,8 +8,13 @@
 </head>
 
 <body>
+<script type="text/javascript" src="/js/wsMessageReader.js"></script>
+<script type="text/javascript" src="/js/wsServer.js"></script>
 <script type="text/javascript" src="/js/api.js"></script>
+<script type="text/javascript" src="/js/wsConnect.js"></script>
 
+
+{{- /*gotype: github.com/Oppodelldog/roamer/internal/pages/roamerpage.Data*/ -}}
 <h1>{{.Title}}</h1>
 <div class="content">
 
@@ -18,18 +23,18 @@
     <div id="actions" class="sequences">
         {{$page := .}}
         {{ range .ActionRows }}
-        {{ range . }}
-        {{ if .HasSequence }}
-        <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{.Id}})">
-            <span class="caption">{{.Caption}}</span>
-        </button>
-        {{else}}
-        <button class="{{.Icon}}" onclick="setSequence('{{.Action}}')">
-            <span class="caption">{{.Caption}}</span>
-        </button>
-        {{ end }}
-        {{ end }}
-        <br/>
+            {{ range . }}
+                {{ if .HasSequence }}
+                    <button class="{{.Icon}}" onclick="setConfigSequence('{{$page.PageId}}',{{.Id}})">
+                        <span class="caption">{{.Caption}}</span>
+                    </button>
+                {{else}}
+                    <button class="{{.Icon}}" onclick="setSequence('{{.Action}}')">
+                        <span class="caption">{{.Caption}}</span>
+                    </button>
+                {{ end }}
+            {{ end }}
+            <br/>
         {{ end }}
     </div>
 
