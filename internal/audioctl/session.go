@@ -1,10 +1,11 @@
 package sound
 
 import (
-	"github.com/go-ole/go-ole"
-	"github.com/moutend/go-wca/pkg/wca"
 	"path/filepath"
 	"strings"
+
+	"github.com/go-ole/go-ole"
+	"github.com/moutend/go-wca/pkg/wca"
 )
 
 type Session struct {
@@ -20,8 +21,10 @@ func (s *Session) Release() {
 }
 
 func (s *Session) GetDisplayName() (string, error) {
-	var v string
-	var err = s.asc2.GetDisplayName(&v)
+	var (
+		v   string
+		err = s.asc2.GetDisplayName(&v)
+	)
 
 	return v, err
 }
@@ -32,8 +35,10 @@ func (s *Session) GetDisplayNameEnhanced() (string, error) {
 		if err != nil {
 			return "", err
 		}
+
 		v := ProcessName(int(pid))
 		v = strings.TrimSuffix(v, filepath.Ext(v))
+
 		if len(v) > 0 {
 			v = strings.Title(v)
 		}
@@ -56,57 +61,73 @@ func (s *Session) GetDisplayNameEnhanced() (string, error) {
 }
 
 func (s *Session) GetGroupingParam() (ole.GUID, error) {
-	var v ole.GUID
-	var err = s.asc2.GetGroupingParam(&v)
+	var (
+		v   ole.GUID
+		err = s.asc2.GetGroupingParam(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetIconPath() (string, error) {
-	var v string
-	var err = s.asc2.GetIconPath(&v)
+	var (
+		v   string
+		err = s.asc2.GetIconPath(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetMasterVolume() (float32, error) {
-	var v float32
-	var err = s.sv.GetMasterVolume(&v)
+	var (
+		v   float32
+		err = s.sv.GetMasterVolume(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetMute() (bool, error) {
-	var v bool
-	var err = s.sv.GetMute(&v)
+	var (
+		v   bool
+		err = s.sv.GetMute(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetSessionIdentifier() (string, error) {
-	var v string
-	var err = s.asc2.GetSessionIdentifier(&v)
+	var (
+		v   string
+		err = s.asc2.GetSessionIdentifier(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetSessionInstanceIdentifier() (string, error) {
-	var v string
-	var err = s.asc2.GetSessionInstanceIdentifier(&v)
+	var (
+		v   string
+		err = s.asc2.GetSessionInstanceIdentifier(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetProcessId() (uint32, error) {
-	var v uint32
-	var err = s.asc2.GetProcessId(&v)
+	var (
+		v   uint32
+		err = s.asc2.GetProcessId(&v)
+	)
 
 	return v, err
 }
 
 func (s *Session) GetState() (uint32, error) {
-	var v uint32
-	var err = s.asc2.GetState(&v)
+	var (
+		v   uint32
+		err = s.asc2.GetState(&v)
+	)
 
 	return v, err
 }

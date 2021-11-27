@@ -1,6 +1,7 @@
 package sound
 
 import (
+	"errors"
 	"log"
 	"syscall"
 	"unsafe"
@@ -8,19 +9,21 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// TH32CS_SNAPPROCESS is described in https://msdn.microsoft.com/de-de/library/windows/desktop/ms682489(v=vs.85).aspx
-const TH32CS_SNAPPROCESS = 0x00000002
+// Th32csSnapProcess is described in https://msdn.microsoft.com/de-de/library/windows/desktop/ms682489(v=vs.85).aspx
+const Th32csSnapProcess = 0x00000002
 
 func ProcessName(pid int) string {
-	procs, err := processes()
+	ps, err := processes()
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, proc := range procs {
+
+	for _, proc := range ps {
 		if proc.ProcessID == pid {
 			return proc.Exe
 		}
 	}
+
 	return ""
 }
 
@@ -32,38 +35,52 @@ type WindowsProcess struct {
 }
 
 func processes() ([]WindowsProcess, error) {
-	handle, err := windows.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+	var (
+		entry  windows.ProcessEntry32
+		handle windows.Handle
+		err    error
+	)
+
+	handle, err = windows.CreateToolhelp32Snapshot(Th32csSnapProcess, 0)
+
 	if err != nil {
 		return nil, err
 	}
-	defer windows.CloseHandle(handle)
 
-	var entry windows.ProcessEntry32
+	defer must(windows.CloseHandle(handle))
+
 	entry.Size = uint32(unsafe.Sizeof(entry))
-	// get the first process
+
 	err = windows.Process32First(handle, &entry)
 	if err != nil {
 		return nil, err
 	}
 
 	results := make([]WindowsProcess, 0, 50)
+
 	for {
 		results = append(results, newWindowsProcess(&entry))
 
 		err = windows.Process32Next(handle, &entry)
 		if err != nil {
-			// windows sends ERROR_NO_MORE_FILES on last process
-			if err == syscall.ERROR_NO_MORE_FILES {
+			if errors.Is(err, syscall.ERROR_NO_MORE_FILES) {
 				return results, nil
 			}
+
 			return nil, err
 		}
 	}
 }
 
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func newWindowsProcess(e *windows.ProcessEntry32) WindowsProcess {
-	// Find when the string ends for decoding
-	end := 0
+	var end int
+
 	for {
 		if e.ExeFile[end] == 0 {
 			break

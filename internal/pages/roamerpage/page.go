@@ -1,12 +1,16 @@
 package roamerpage
 
 import (
+	"errors"
 	"fmt"
-	"github.com/Oppodelldog/roamer/internal/config"
 	"html/template"
 	"io"
 	"io/fs"
+
+	"github.com/Oppodelldog/roamer/internal/config"
 )
+
+var ErrPageConfigNotFound = errors.New("config not found for roamer page")
 
 type Data struct {
 	PageId     string
@@ -29,8 +33,9 @@ func Render(pageId string, fs fs.FS, writer io.Writer) error {
 		basePath                 = pageId
 		roamerPage, configExists = config.RoamerPage(basePath)
 	)
+
 	if !configExists {
-		return fmt.Errorf("config not found for roamer page '%s'", pageId)
+		return fmt.Errorf("%w '%s'", ErrPageConfigNotFound, pageId)
 	}
 
 	tpl, err := template.ParseFS(fs, "html/roamer-page.html")

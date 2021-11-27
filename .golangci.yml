@@ -7,22 +7,27 @@ issues:
   exclude-rules:
     - path: _test\.go
       text: .*do not define dynamic errors.*
-    - path: assets/files.go
-      text: .*
-    - path: assets/css.go
-      text: .*
+
 linters:
-  presets:
-    - bugs
-    - complexity
-    - format
-    - performance
-    - style
+  enable:
+    - govet
+    - gofmt
+    - goimports
+    - errcheck
+    - gosec
+    - nilerr
+    - noctx
+    - exportloopref
+    - staticcheck
+    - nestif
+    - goerr113
+    - gocritic
+    - bodyclose
+    - structcheck
+    - wsl
+    - makezero
+    - deadcode
+    - unparam
     - unused
-  disable:
-    - typecheck
-    - gochecknoglobals
-    - testpackage
-    - exhaustivestruct
-    - gofumpt
+    - varcheck
   fast: false

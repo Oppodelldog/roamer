@@ -51,11 +51,12 @@ func TestLex(t *testing.T) {
 	}
 
 	var i = 0
-	for _, testData := range testCases {
-		i++
-		td := testData
-		t.Run("case-"+strconv.Itoa(i), func(t *testing.T) {
 
+	for _, testData := range testCases {
+		var td = testData
+		i++
+
+		t.Run("case-"+strconv.Itoa(i), func(t *testing.T) {
 			got, err := lex(td.Script)
 			if err != nil {
 				t.Fatalf("did not expect an error, but got: %v", err)

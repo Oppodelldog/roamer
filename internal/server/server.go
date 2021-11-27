@@ -4,13 +4,13 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	sequencer2 "github.com/Oppodelldog/roamer/internal/sequencer"
-	"github.com/Oppodelldog/roamer/internal/server/action"
-	"github.com/Oppodelldog/roamer/internal/server/ws"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
+
+	"github.com/Oppodelldog/roamer/internal/server/action"
+	"github.com/Oppodelldog/roamer/internal/server/ws"
 )
 
 //go:embed html
@@ -28,14 +28,14 @@ var css embed.FS
 //go:embed root/favicon.ico
 var root embed.FS
 
-var seq *sequencer2.Sequencer
-
 const port = 10982
 
 func Start() {
+	var (
+		actions = make(chan action.Action)
+		hub     = ws.StartHub(newSessionFunc(actions))
+	)
 
-	var actions = make(chan action.Action)
-	var hub = ws.StartHub(newSessionFunc(actions))
 	action.Worker(actions, hub.Broadcast())
 
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))

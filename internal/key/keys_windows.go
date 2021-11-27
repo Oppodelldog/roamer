@@ -12,14 +12,18 @@ var procKeyBd = dll.NewProc("keybd_event")
 var states = map[int]bool{}
 
 func Down(key int) error {
+	var flag = 0
+
 	states[key] = true
-	flag := 0
+
 	if key < 0xFFF {
 		flag |= keyeventfScancode
 	} else {
 		key -= 0xFFF
 	}
+
 	vkey := key + 0x80
+
 	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
 	if err != nil && isNotSuccess(err) {
 		return fmt.Errorf("error Down: %w", err)
@@ -31,12 +35,15 @@ func Down(key int) error {
 func Up(key int) error {
 	states[key] = false
 	flag := keyEventFKeyUp
+
 	if key < 0xFFF {
 		flag |= keyeventfScancode
 	} else {
 		key -= 0xFFF
 	}
+
 	vkey := key + 0x80
+
 	_, _, err := procKeyBd.Call(uintptr(key), uintptr(vkey), uintptr(flag), 0)
 	if err != nil && isNotSuccess(err) {
 		return fmt.Errorf("error Up: %w", err)

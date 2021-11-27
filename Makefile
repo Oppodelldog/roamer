@@ -5,8 +5,8 @@ GOOS=windows
 GOARCH=amd64
 
 setup: ## Install tools
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.33.0
-	mv bin/golangci-lint $(GOPATH)/bin/golangci-lint && rm -rf bin
+	go install golang.org/x/tools/cmd/goimports
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
 
 lint: ## Run the linters
 	golangci-lint run

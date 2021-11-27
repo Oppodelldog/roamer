@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var ErrPauseAlreadyInProgress = errors.New("pause request is already in progress")
+
 // Sequencer plays sequences of Elem by calling their Do method.
 // It runs as a detached worker using go routines to playback sequences.
 type Sequencer struct {
@@ -27,7 +29,7 @@ func New(queueSize int) *Sequencer {
 		seq:      make(chan Elem),
 		pause:    make(chan struct{}, 1),
 		paused:   false,
-		debug:    true,
+		debug:    false,
 	}
 
 	go s.playSequence()
@@ -72,7 +74,7 @@ func (s *Sequencer) Pause() error {
 
 		return nil
 	default:
-		return errors.New("pause request is already in progress")
+		return ErrPauseAlreadyInProgress
 	}
 }
 
@@ -85,8 +87,11 @@ func (s *Sequencer) waitForResume() {
 func (s *Sequencer) playSequence() {
 waitForNext:
 	s.hasSequence = false
+
 	s.aborted = false
+
 	newSequence := <-s.sequence
+
 	s.hasSequence = true
 
 	if s.beforeSequence != nil {
@@ -108,9 +113,11 @@ loop:
 	select {
 	case newSequence = <-s.sequence:
 		fmt.Println("got a new sequence")
+
 		goto loop
 	default:
 		fmt.Println("got no new sequence")
+
 		var newSeq = newSequence()
 		if len(newSeq) > 0 {
 			if _, isLoop := newSeq[len(newSeq)-1].(Loop); isLoop {
@@ -129,7 +136,6 @@ func (s *Sequencer) playElement() {
 		case <-s.pause:
 			s.waitForResume()
 		case el := <-s.seq:
-
 			switch v := el.(type) {
 			case Wait:
 				fmt.Println("wait ", v.Duration)
@@ -155,9 +161,11 @@ func (s *Sequencer) sleep(d time.Duration) {
 	case <-t.C:
 	case <-s.pause:
 		s.waitForResume()
+
 		if s.aborted {
 			return
 		}
+
 		<-t.C
 	}
 }
@@ -168,8 +176,8 @@ func (s *Sequencer) Abort() {
 		if err != nil {
 			panic(fmt.Sprintf("error while aborting pause: %v", err))
 		}
-
 	}
+
 	s.aborted = true
 }
 

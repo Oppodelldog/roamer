@@ -2,6 +2,7 @@ package general
 
 import (
 	"fmt"
+
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
 )
@@ -49,6 +50,7 @@ func (e SetMousePos) Do() error {
 	if err != nil {
 		fmt.Printf("error SetMousePos: %v\n", err)
 	}
+
 	fmt.Printf("set mouse pos to: %#v\n", e.Pos)
 
 	return nil
@@ -74,7 +76,11 @@ type LookupMousePos struct {
 }
 
 func (e LookupMousePos) Do() error {
-	pos := mouse.GetCursorPos()
+	pos, err := mouse.GetCursorPos()
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("current mouse pos: %#v\n", pos)
 
 	return nil

@@ -2,22 +2,21 @@ package script
 
 import (
 	"fmt"
-	"github.com/Oppodelldog/roamer/internal/sequencer"
-	"github.com/Oppodelldog/roamer/internal/sequences/general"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
 )
 
-func Write(seq []sequencer.Elem) (string, error) {
-	var sb = strings.Builder{}
-	var t TokenStream
-	var err error
+func Write(seq []sequencer.Elem) string {
+	var (
+		sb = strings.Builder{}
+		t  TokenStream
+	)
 
-	err = write(&t, seq)
-	if err != nil {
-		return "", err
-	}
+	write(&t, seq)
 
 	for _, tok := range t.Tokens {
 		switch tok.Type {
@@ -34,21 +33,20 @@ func Write(seq []sequencer.Elem) (string, error) {
 		}
 	}
 
-	return sb.String(), nil
+	return sb.String()
 }
 
-func write(t *TokenStream, seq []sequencer.Elem) error {
+func write(t *TokenStream, seq []sequencer.Elem) {
 	for _, elem := range seq {
 		writeElement(elem, t)
 	}
-
-	return nil
 }
 
 func writeElement(c sequencer.Elem, t *TokenStream) {
 	if len(t.Tokens) > 0 {
 		writeCommandSeparator(t)
 	}
+
 	switch v := c.(type) {
 	case sequencer.Wait:
 		writeWait(t, v)
@@ -82,6 +80,7 @@ func commandByType(elem sequencer.Elem) string {
 	for name, t := range commandMappings {
 		t1 := reflect.TypeOf(t()).String()
 		t2 := reflect.TypeOf(elem).String()
+
 		if t1 == t2 {
 			return name
 		}

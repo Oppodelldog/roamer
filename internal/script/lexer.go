@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+var ErrSyntaxError = errors.New("syntax error")
+
 type InputReader struct {
 	Data string
 	Pos  int
@@ -44,10 +46,7 @@ func lex(script string) (*TokenStream, error) {
 			tokenStream.Tokens = append(tokenStream.Tokens, Token{Type: argumentSeparator})
 
 		case isLiteral(stream):
-			t, err := literalToken(stream)
-			if err != nil {
-				return nil, err
-			}
+			t := literalToken(stream)
 
 			tokenStream.Tokens = append(tokenStream.Tokens, t)
 		case isBlockOpen(stream):
@@ -60,7 +59,7 @@ func lex(script string) (*TokenStream, error) {
 
 			tokenStream.Tokens = append(tokenStream.Tokens, Token{Type: blockClose})
 		default:
-			return nil, errors.New("syntax error")
+			return nil, ErrSyntaxError
 		}
 	}
 
@@ -96,12 +95,12 @@ func isLiteral(stream *InputReader) bool {
 	return isUCaseChar || isLCaseChar || isTimeUnitChar || isDecimalDelim || isNumericPrefix
 }
 
-func literalToken(stream *InputReader) (Token, error) {
+func literalToken(stream *InputReader) Token {
 	var sb = strings.Builder{}
 
 	for !stream.isEOF() && isLiteral(stream) {
 		sb.WriteByte(stream.Consume())
 	}
 
-	return Token{Type: literal, Value: sb.String()}, nil
+	return Token{Type: literal, Value: sb.String()}
 }

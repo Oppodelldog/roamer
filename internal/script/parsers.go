@@ -1,14 +1,21 @@
 package script
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
-	"strconv"
-	"time"
 )
+
+var ErrUnknownKey = errors.New("unknown key")
+var ErrExpectedLiteral = errors.New("expected literal")
+var ErrExpectedArgumentSeparator = errors.New("expected argument separator")
+var ErrExpectedBlockOpen = errors.New("repeat expects arg2 to be a sequence that is introduces with '" + string(valBlockOpen) + "'")
 
 func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
 	var (
@@ -32,13 +39,14 @@ func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
 
 	sep = t.Consume()
 	if sep.Type != argumentSeparator {
-		return nil, fmt.Errorf("repeat expects argument separator ' ' after arg1, but was: %s(='%s')", sep.Type, sep.Value)
+		return nil, fmt.Errorf("%w after arg1 in repeat, but was: %s(='%s')", ErrExpectedArgumentSeparator, sep.Type, sep.Value)
 	}
 
 	open = t.Consume()
 	if open.Type != blockOpen {
 		return nil, fmt.Errorf(
-			"repeat expects arg2 to be a sequence that is introduces with '[', but was: %s(='%s')",
+			"%w, but was: %s(='%s')",
+			ErrExpectedBlockOpen,
 			open.Type,
 			open.Value,
 		)
@@ -62,11 +70,11 @@ func parseLiteral(t *TokenStream) (Token, error) {
 	)
 
 	if separator.Type != argumentSeparator {
-		return Token{}, fmt.Errorf("expected argument separator ' ', but got '%s'", separator.Type)
+		return Token{}, fmt.Errorf("%w ' ', but got '%s'", ErrExpectedArgumentSeparator, separator.Type)
 	}
 
 	if lit.Type != literal {
-		return Token{}, fmt.Errorf("W expects arg1 to be literal, but was '%s'", lit.Type)
+		return Token{}, fmt.Errorf("W %w, but was '%s'", ErrExpectedLiteral, lit.Type)
 	}
 
 	return lit, nil
@@ -162,11 +170,11 @@ func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
 	}
 
 	if lit1.Type != literal {
-		return 0, 0, fmt.Errorf("MM expects arg1 to be literal, but was '%s'", lit1.Type)
+		return 0, 0, fmt.Errorf("arg1 %w, but was '%s'", ErrExpectedLiteral, lit1.Type)
 	}
 
 	if lit2.Type != literal {
-		return 0, 0, fmt.Errorf("MM expects arg2 to be literal, but was '%s'", lit2.Type)
+		return 0, 0, fmt.Errorf("arg2 %w, but was '%s'", ErrExpectedLiteral, lit2.Type)
 	}
 
 	x, err = strconv.ParseInt(lit1.Value, 0, 32)
@@ -183,11 +191,9 @@ func argInt32Coordinates(t *TokenStream) (int32, int32, error) {
 }
 
 func keyCodeFromString(s string) (int, error) {
-
 	value, ok := keyCodeStringMap[s]
-
 	if !ok {
-		return 0, fmt.Errorf("unknown key '%s'", s)
+		return 0, fmt.Errorf("%w '%s'", ErrUnknownKey, s)
 	}
 
 	return value, nil

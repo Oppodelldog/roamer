@@ -38,6 +38,7 @@ func DefaultDevice() (*Device, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer sm.Release()
 
 	device.Sessions, err = sessions(sm)
@@ -80,8 +81,10 @@ func sessions(sm *wca.IAudioSessionManager2) ([]*Session, error) {
 }
 
 func session(se *wca.IAudioSessionEnumerator, sessId int) (*Session, error) {
-	var err error
-	var s = Session{}
+	var (
+		err error
+		s   = Session{}
+	)
 
 	err = se.GetSession(sessId, &s.asc)
 	if err != nil {

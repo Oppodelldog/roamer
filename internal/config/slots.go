@@ -26,8 +26,9 @@ func (s Slots) At(idx int) Pos {
 	if idx >= len(s.Slots) {
 		panic(fmt.Sprintf("cannot get slots at %v, len of slots is %v", idx, len(s.Slots)))
 	}
+
 	if idx < 0 {
-		panic(fmt.Sprintf("idx must be > 0"))
+		panic("idx must be > 0")
 	}
 
 	return s.Slots[idx]

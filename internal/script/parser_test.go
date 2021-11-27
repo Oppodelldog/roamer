@@ -1,14 +1,15 @@
 package script_test
 
 import (
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
 	"github.com/Oppodelldog/roamer/internal/script"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestNewCustomSequenceFunc(t *testing.T) {

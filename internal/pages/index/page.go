@@ -2,10 +2,11 @@ package index
 
 import (
 	"fmt"
-	"github.com/Oppodelldog/roamer/internal/config"
 	"html/template"
 	"io"
 	"io/fs"
+
+	"github.com/Oppodelldog/roamer/internal/config"
 )
 
 type Data struct {

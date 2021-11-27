@@ -1,10 +1,15 @@
 package script
 
 import (
+	"errors"
 	"fmt"
+
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 	"github.com/Oppodelldog/roamer/internal/sequences/general"
 )
+
+var ErrUnknownCommand = errors.New("unknown command")
+var ErrExpectedCommandLiteral = errors.New("expected command literal")
 
 func Parse(script string) ([]sequencer.Elem, error) {
 	var (
@@ -67,12 +72,12 @@ func parse(t *TokenStream) ([]sequencer.Elem, error) {
 func parseCommand(t *TokenStream) (sequencer.Elem, error) {
 	var token = t.Consume()
 	if token.Type != literal {
-		return nil, fmt.Errorf("expected command literal, but got '%s'", token.Type)
+		return nil, fmt.Errorf("%w, but got '%s'", ErrExpectedCommandLiteral, token.Type)
 	}
 
 	var commandElem, commandFound = commandMappings[token.Value]
 	if !commandFound {
-		return nil, fmt.Errorf("unknown command '%s'", token.Value)
+		return nil, fmt.Errorf("%w '%s'", ErrUnknownCommand, token.Value)
 	}
 
 	elem, err := parseArguments(commandElem().(sequencer.Elem), t)
@@ -113,5 +118,5 @@ func parseArguments(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error)
 		return v, err
 	}
 
-	return elem, fmt.Errorf("unknown command %T", elem)
+	return elem, fmt.Errorf("%w %T", ErrUnknownCommand, elem)
 }

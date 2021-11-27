@@ -59,15 +59,20 @@ func SetPosition(pos Pos) error {
 	return normalizeErr(err)
 }
 
-func GetCursorPos() Pos {
-	var pos Pos
-	procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos)))
+func GetCursorPos() (Pos, error) {
+	var (
+		pos Pos
+		err error
+	)
 
-	return pos
+	_, _, err = procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos)))
+
+	return pos, err
 }
 
 func Move(x, y int32) error {
 	_, _, err := procMouseBd.Call(uintptr(flagMove), uintptr(x), uintptr(y), uintptr(0), 0)
+
 	return normalizeErr(err)
 }
 
