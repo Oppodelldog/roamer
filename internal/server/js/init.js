@@ -1,4 +1,4 @@
-const wsUrl = 'ws://'+window.location.host+'/ws'
+const wsUrl = 'ws://' + window.location.host + '/ws'
 let ws = null
 let wsMessageReader = new WebsocketMessageReader()
 let app = null;
@@ -10,6 +10,7 @@ function initApp() {
             hasConfig: false,
             config: null,
             showPage: false,
+            showSounds: false,
             currentPage: null,
             currentPageKey: null,
             connection: {isConnected: false}
@@ -34,6 +35,9 @@ function initApp() {
                 this.showPage = false;
                 this.currentPage = null;
                 this.currentPageKey = null;
+            },
+            showSoundSettings: function () {
+                this.showSounds = !this.showSounds;
             }
         }
     })
