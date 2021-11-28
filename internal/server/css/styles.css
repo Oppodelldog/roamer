@@ -163,3 +163,8 @@ button::-moz-focus-inner {
 #roamer-page {
     position: relative;
 }
+
+.sound-sessions{
+    display: flex;
+    justify-content: center;
+}

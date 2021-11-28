@@ -13,7 +13,14 @@ function initApp() {
             showSounds: false,
             currentPage: null,
             currentPageKey: null,
-            connection: {isConnected: false}
+            connection: {isConnected: false},
+            soundSettings: {
+                Sessions: [
+                    {Name: "Chrome", Icon: "icon", Value: 20},
+                    {Name: "Spotify", Icon: "icon", Value: 50},
+                    {Name: "Diablo II", Icon: "icon", Value: 100},
+                ]
+            }
         },
         methods: {
             selectPage: function (pageKey) {

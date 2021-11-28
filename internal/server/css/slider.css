@@ -1,0 +1,24 @@
+.range-slider{
+    display:flex;
+    flex-direction: column;
+}
+.range-slider .input-range {
+    -webkit-appearance: none;
+    height: 200px;
+    border-radius: 5px;
+    background: #ccc;
+    outline: none;
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+
+}
+
+::-moz-range-track {
+    background: #ccc;
+    border: 0;
+}
+
+input::-moz-focus-inner {
+    border: 0;
+}
+

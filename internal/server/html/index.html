@@ -1,64 +1,75 @@
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
-    <title>Roamer</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
+  <title>Roamer</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="/css/slider.css">
 
-    <script src="/js/vue.js"></script>
-    <script src="/js/wsMessageReader.js"></script>
-    <script src="/js/wsServer.js"></script>
+  <script src="/js/vue.js"></script>
+  <script src="/js/wsMessageReader.js"></script>
+  <script src="/js/wsServer.js"></script>
 </head>
 
 <body>
 <div id="app">
-    <div id="roamer-list" v-if="hasConfig">
-        <div class="top-tools">
-            <span class="offline" v-if="!connection.isConnected">📴</span>
-            <span class="online" v-if="connection.isConnected">🔗</span>
-            <a v-bind:class="{'audio-settings':true, 'on':showSounds}" v-on:pointerup="showSoundSettings()">🕪</a>
-        </div>
-        <div v-bind:class="{'slide-container-vertical':true, 'slide-container-vertical-transition-normal':!showSounds, 'slide-container-vertical-transition-one':showSounds}">
-            <div v-bind:class="{'slide-container-horizontal':true, 'slide-container-horizontal-transition-normal':!showPage, 'slide-container-horizontal-transition-one':showPage}">
-
-                <div id="page-selection" class="slide">
-                    <h1>{{config.Title}}</h1>
-                    <h2>
-                        {{config.WelcomeText}}
-                    </h2>
-                    <div class="buttonlist">
-                        <button
-                                v-for="(page, pageKey) in config.Pages"
-                                v-on:pointerup="selectPage(pageKey)">
-                            {{page.TitleShort}}
-                        </button>
-                    </div>
-                </div>
-
-                <div id="roamer-page" class="slide" v-if="showPage">
-                    <h1>{{currentPage.Title}}</h1>
-                    <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
-                    <div id="active-sequence" class="active-sequence">???</div>
-                    <div id="actions" class="sequences">
-                        <button v-for="(action,idx) in currentPage.Actions" v-on:pointerup="startAction(idx)">
-                            <span class="caption">{{action.Caption}}</span>
-                        </button>
-                    </div>
-                    <div class="sequences">
-                        <button class="ico-none" v-on:pointerup="clearSequence()"><span class="caption">NONE</span>
-                        </button>
-                        <button class="ico-pause-button" id="pause-button" v-on:pointerup="togglePause()">???</button>
-                        <button class="ico-abort" id="abort-button" v-on:pointerup="abort()">Abort</button>
-                    </div>
-                </div>
-
-            </div>
-
-            <div id="sound-settings" class="slide">
-                <h1>Sound Settings</h1>
-            </div>
-        </div>
+  <div id="roamer-list" v-if="hasConfig">
+    <div class="top-tools">
+      <span class="offline" v-if="!connection.isConnected">📴</span>
+      <span class="online" v-if="connection.isConnected">🔗</span>
+      <a v-bind:class="{'audio-settings':true, 'on':showSounds}" v-on:pointerup="showSoundSettings()">🕪</a>
     </div>
+    <div
+        v-bind:class="{'slide-container-vertical':true, 'slide-container-vertical-transition-normal':!showSounds, 'slide-container-vertical-transition-one':showSounds}">
+      <div
+          v-bind:class="{'slide-container-horizontal':true, 'slide-container-horizontal-transition-normal':!showPage, 'slide-container-horizontal-transition-one':showPage}">
+
+        <div id="page-selection" class="slide">
+          <h1>{{ config.Title }}</h1>
+          <h2>
+            {{ config.WelcomeText }}
+          </h2>
+          <div class="buttonlist">
+            <button
+                v-for="(page, pageKey) in config.Pages"
+                v-on:pointerup="selectPage(pageKey)">
+              {{ page.TitleShort }}
+            </button>
+          </div>
+        </div>
+
+        <div id="roamer-page" class="slide" v-if="showPage">
+          <h1>{{ currentPage.Title }}</h1>
+          <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
+          <div id="active-sequence" class="active-sequence">???</div>
+          <div id="actions" class="sequences">
+            <button v-for="(action,idx) in currentPage.Actions" v-on:pointerup="startAction(idx)">
+              <span class="caption">{{ action.Caption }}</span>
+            </button>
+          </div>
+          <div class="sequences">
+            <button class="ico-none" v-on:pointerup="clearSequence()"><span class="caption">NONE</span>
+            </button>
+            <button class="ico-pause-button" id="pause-button" v-on:pointerup="togglePause()">???</button>
+            <button class="ico-abort" id="abort-button" v-on:pointerup="abort()">Abort</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="sound-settings" class="slide">
+        <h1>Sound Settings</h1>
+        <div class="sound-sessions">
+          <div class="range-slider" v-for="session in soundSettings.Sessions">
+            <span>{{ session.Icon }}</span>
+            <span>{{ session.Name }}</span>
+            <input class="input-range" orient="vertical" type="range" step="1"  min="0" max="100"
+                   v-bind:value="session.Value">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="footer"><a href="/attributions.html">Attributions</a></div>
