@@ -1,27 +1,17 @@
 package server
 
 import (
+	"io"
 	"net/http"
-	"path"
-
-	"github.com/Oppodelldog/roamer/internal/pages/index"
-	"github.com/Oppodelldog/roamer/internal/pages/roamerpage"
 )
 
 func serveIndexPage(writer http.ResponseWriter, _ *http.Request) {
-	var err = index.Render(content, writer)
+	f, err := contentFS().Open("html/index.html")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-func serveRoamerPage(writer http.ResponseWriter, request *http.Request) {
-	var (
-		pageId = path.Base(request.URL.Path)
-		err    = roamerpage.Render(pageId, content, writer)
-	)
-
+	_, err = io.Copy(writer, f)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

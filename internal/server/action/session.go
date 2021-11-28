@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Oppodelldog/roamer/internal/config"
 
 	"github.com/Oppodelldog/roamer/internal/server/ws"
 )
@@ -22,7 +23,7 @@ func ClientSession(c *ws.Client, actions chan Action) {
 			}
 		}()
 
-		c.ToClient() <- msgText("hello client")
+		c.ToClient() <- msgConfig(config.Roamer())
 
 		for {
 			select {

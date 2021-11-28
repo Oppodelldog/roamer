@@ -25,7 +25,6 @@ type (
 	}
 	Action struct {
 		Icon     string `json:"Icon"`
-		Action   string `json:"Action"`
 		Caption  string `json:"Caption"`
 		Sequence string `json:"Sequence"`
 	}

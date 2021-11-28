@@ -1,6 +1,8 @@
 package action
 
-import "fmt"
+import (
+	"github.com/Oppodelldog/roamer/internal/config"
+)
 
 type (
 	SequenceState struct {
@@ -16,13 +18,10 @@ type (
 	}
 	SequencePause struct{}
 	SequenceAbort struct{}
-	ServerText    struct {
-		Text string
-	}
 )
 
 const (
-	serverText           = "SERVER_TEXT"
+	roamerConfig         = "CONFIG"
 	seqState             = "SEQUENCE_STATE"
 	seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
 	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
@@ -34,6 +33,6 @@ func msgState(s SequenceState) []byte {
 	return jsonEnvelope(seqState, s)
 }
 
-func msgText(format string, a ...interface{}) []byte {
-	return jsonEnvelope(serverText, ServerText{Text: fmt.Sprintf(format, a...)})
+func msgConfig(config config.Config) []byte {
+	return jsonEnvelope(roamerConfig, config)
 }

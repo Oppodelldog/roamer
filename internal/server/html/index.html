@@ -1,27 +1,58 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
-    <title>{{.Title}}</title>
+    <title>Roamer</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/index.css">
 
+    <script src="/js/vue.js"></script>
     <script src="/js/wsMessageReader.js"></script>
     <script src="/js/wsServer.js"></script>
-    <script src="/js/wsConnect.js"></script>
 </head>
 
 <body>
-<h1>{{.Title}}</h1>
-<div class="content">
-    <h2>
-        {{.WelcomeText}}
-    </h2>
-    <div class="buttonlist">
-        {{range $key,$value:=.Pages}}
-        <button onclick="location.href='/roam/{{$key}}'">{{$value.TitleShort}}</button>
-        {{end}}
+<div id="app">
+    <div id="roamer-list" v-if="hasConfig">
+        <span class="offline" v-if="!connection.isConnected">📴</span>
+        <span class="online" v-if="connection.isConnected">🔗</span>
+        <div v-bind:class="{'slide-container':true, 'slide-container-transition-page-selection':!showPage, 'slide-container-transition-roamer-page':showPage}">
+
+            <div class="page-selection">
+                <h1>{{config.Title}}</h1>
+                <h2>
+                    {{config.WelcomeText}}
+                </h2>
+                <div class="buttonlist">
+                    <button
+                            v-for="(page, pageKey) in config.Pages"
+                            v-on:click="selectPage(pageKey)">
+                        {{page.TitleShort}}
+                    </button>
+                </div>
+            </div>
+
+            <div id="roamer-page" v-if="showPage">
+                <h1>{{currentPage.Title}}</h1>
+                <span v-on:click="showPageSelection()" class="back-arrow">➭</span>
+                <div id="active-sequence" class="active-sequence">???</div>
+                <div id="actions" class="sequences">
+                    <button v-for="(action,idx) in currentPage.Actions" v-on:click="startAction(idx)">
+                        <span class="caption">{{action.Caption}}</span>
+                    </button>
+                </div>
+                <div class="sequences">
+                    <button class="ico-none" onclick="clearSequence()"><span class="caption">NONE</span></button>
+                    <button class="ico-pause-button" id="pause-button" onclick="togglePause()">???</button>
+                    <button class="ico-abort" id="abort-button" onclick="abort()">Abort</button>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="footer"><a href="/attributions.html">Attributions</a></div>
 </div>
+
+<div class="footer"><a href="/attributions.html">Attributions</a></div>
+
+<script src="/js/init.js"></script>
 </body>
 </html>

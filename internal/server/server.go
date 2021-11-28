@@ -4,8 +4,10 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 
@@ -39,11 +41,10 @@ func Start() {
 	action.Worker(actions, hub.Broadcast())
 
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
-	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(content))), http.MethodGet))
-	http.Handle("/roam/", restrictMethod(http.StripPrefix("/roam/", http.HandlerFunc(serveRoamerPage)), http.MethodGet))
-	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(img)), http.MethodGet))
-	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(js)), http.MethodGet))
-	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(css)), http.MethodGet))
+	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(contentFS()))), http.MethodGet))
+	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(imgFS())), http.MethodGet))
+	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(jsFS())), http.MethodGet))
+	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(cssFS())), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
 
 	http.Handle("/ws", restrictMethod(websocketHandler(hub), http.MethodGet))
@@ -87,4 +88,32 @@ func websocketHandler(hub *ws.Hub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ws.ServeWs(hub, w, r)
 	}
+}
+
+func filesystem(envVar string, fs fs.FS) fs.FS {
+	if absolutePath, ok := os.LookupEnv(envVar); ok {
+		return os.DirFS(absolutePath)
+	}
+
+	return fs
+}
+
+func contentFS() fs.FS {
+	return assetFS(content)
+}
+
+func cssFS() fs.FS {
+	return assetFS(css)
+}
+
+func jsFS() fs.FS {
+	return assetFS(js)
+}
+
+func imgFS() fs.FS {
+	return assetFS(img)
+}
+
+func assetFS(efs embed.FS) fs.FS {
+	return filesystem("ROAMER_ASSETS", efs)
 }
