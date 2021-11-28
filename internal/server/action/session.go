@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/Oppodelldog/roamer/internal/config"
 
 	"github.com/Oppodelldog/roamer/internal/server/ws"

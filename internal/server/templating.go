@@ -11,6 +11,7 @@ func serveIndexPage(writer http.ResponseWriter, _ *http.Request) {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	_, err = io.Copy(writer, f)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
