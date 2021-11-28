@@ -60,11 +60,12 @@
       <div id="sound-settings" class="slide">
         <h1>Sound Settings</h1>
         <div class="sound-sessions">
-          <div class="range-slider" v-for="session in soundSettings.Sessions">
+          <div class="range-slider" v-for="(session,idx) in soundSettings.Sessions">
             <span>{{ session.Icon }}</span>
             <span>{{ session.Name }}</span>
-            <input class="input-range" orient="vertical" type="range" step="1"  min="0" max="100"
-                   v-bind:value="session.Value">
+            <input class="input-range" orient="vertical" type="range" step="1" min="0" max="100"
+                   v-on:change="changeSoundSessionValue(idx)"
+                   v-model:value="session.Value">
           </div>
         </div>
       </div>

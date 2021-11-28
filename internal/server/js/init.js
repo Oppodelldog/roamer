@@ -45,6 +45,9 @@ function initApp() {
             },
             showSoundSettings: function () {
                 this.showSounds = !this.showSounds;
+            },
+            changeSoundSessionValue: function(idx) {
+                console.log(this.soundSettings.Sessions[idx].Value)
             }
         }
     })
