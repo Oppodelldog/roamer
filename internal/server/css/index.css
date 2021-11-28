@@ -4,6 +4,7 @@
 body{
     background-image: url('/img/background/index.jpg');
     background-color: #141f35;
+    background-size: cover;
 }
 button {
     background-color: #f1f9fd;

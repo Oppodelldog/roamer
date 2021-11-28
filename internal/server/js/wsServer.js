@@ -10,6 +10,9 @@ const seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
 const seqClearSequence = "SEQUENCE_CLEARSEQUENCE"
 const seqPause = "SEQUENCE_PAUSE"
 const seqAbort = "SEQUENCE_ABORT"
+const soundSettings = "SOUND_SETTINGS"
+const loadSoundSettings = "LOAD_SOUND_SETTINGS"
+const setSoundVolume = "SET_SOUND_VOLUME"
 
 function connectToServer() {
     try {
@@ -30,6 +33,9 @@ function connectToServer() {
                 switch (data.Type) {
                     case roamerConfig:
                         updateAppConfig(data.Payload)
+                        break;
+                    case soundSettings:
+                        updateSoundSettings(data.Payload)
                         break;
                     case seqState:
                         updateState(data.Payload)
@@ -88,6 +94,14 @@ function updateState(state) {
 
 function updatePauseButtonLabel() {
     document.getElementById("pause-button").innerHTML = (isPaused) ? "RESUME" : "PAUSE";
+}
+
+function setVolume(id, volume) {
+    wsSend({Type: setSoundVolume, Payload: {Id: id, Value: volume}})
+}
+
+function querySoundSettings() {
+    wsSend({Type: loadSoundSettings, Payload: {}})
 }
 
 function clearSequence() {

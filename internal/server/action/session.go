@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Oppodelldog/roamer/internal/audioctl"
 
 	"github.com/Oppodelldog/roamer/internal/config"
 
@@ -25,7 +26,6 @@ func ClientSession(c *ws.Client, actions chan Action) {
 		}()
 
 		c.ToClient() <- msgConfig(config.Roamer())
-
 		for {
 			select {
 			case <-ctx.Done():
@@ -66,6 +66,15 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					var abort SequenceAbort
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&abort)
 					message = abort
+				case loadSoundSettings:
+					var lss LoadSoundSettings
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&lss)
+					lss.Response = c.ToClient()
+					message = lss
+				case setSoundVolume:
+					var ssv SetSoundVolume
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
+					message = ssv
 				default:
 					fmt.Printf("unknown message type: %v", envelope.Type)
 				}
@@ -78,4 +87,81 @@ func ClientSession(c *ws.Client, actions chan Action) {
 			}
 		}
 	}()
+}
+
+func getSoundSettings() SoundSettings {
+	var settings = SoundSettings{}
+	device, err := audioctl.DefaultDevice()
+	if err != nil {
+		fmt.Println(err)
+		return settings
+	}
+
+	defer device.Release()
+
+	var soundSessions []SoundSession
+	for i, session := range device.Sessions {
+		var err error
+		var sessionId string
+		var displayName string
+		var iconPath string
+		var volume float32
+
+		sessionId, err = session.GetSessionInstanceIdentifier()
+		if err != nil {
+			fmt.Printf("error getting sound session (%v) display name: %v", i, err)
+			continue
+		}
+		displayName, err = session.GetDisplayNameEnhanced()
+		if err != nil {
+			fmt.Printf("error getting sound session (%v) display name: %v", i, err)
+			continue
+		}
+		iconPath, err = session.GetIconPath()
+		if err != nil {
+			fmt.Printf("error getting sound session (%v) icon path: %v", i, err)
+			continue
+		}
+		volume, err = session.GetMasterVolume()
+		if err != nil {
+			fmt.Printf("error getting sound session (%v) volume: %v", i, err)
+			continue
+		}
+
+		soundSessions = append(soundSessions, SoundSession{
+			Id:    sessionId,
+			Name:  displayName,
+			Icon:  iconPath,
+			Value: volume,
+		})
+	}
+
+	settings.Sessions = soundSessions
+
+	return settings
+}
+
+func setSoundVol(id string, value float32) {
+	device, err := audioctl.DefaultDevice()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer device.Release()
+
+	for i, session := range device.Sessions {
+		sid, err := session.GetSessionInstanceIdentifier()
+		if err != nil {
+			fmt.Printf("error getting sound session (%v) id: %v", i, err)
+			continue
+		}
+		if sid == id {
+			err = session.SetMasterVolume(value)
+			if err != nil {
+				fmt.Printf("error getting sound session (%v) id: %v", i, err)
+			}
+			return
+		}
+	}
 }

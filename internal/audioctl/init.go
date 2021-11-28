@@ -1,4 +1,4 @@
-package sound
+package audioctl
 
 import (
 	"github.com/go-ole/go-ole"

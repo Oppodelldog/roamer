@@ -1,4 +1,4 @@
-package sound
+package audioctl
 
 import (
 	"errors"
@@ -47,7 +47,7 @@ func processes() ([]WindowsProcess, error) {
 		return nil, err
 	}
 
-	defer must(windows.CloseHandle(handle))
+	defer func() { must(windows.CloseHandle(handle)) }()
 
 	entry.Size = uint32(unsafe.Sizeof(entry))
 

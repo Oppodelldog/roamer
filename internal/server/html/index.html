@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/index.css">
   <link rel="stylesheet" href="/css/slider.css">
+  <link rel="stylesheet" href="/css/spinner.css">
 
   <script src="/js/vue.js"></script>
   <script src="/js/wsMessageReader.js"></script>
@@ -59,11 +60,11 @@
 
       <div id="sound-settings" class="slide">
         <h1>Sound Settings</h1>
-        <div class="sound-sessions">
+        <div class="lds-dual-ring" v-if="soundLoading"></div>
+        <div class="sound-sessions" v-if="!soundLoading">
           <div class="range-slider" v-for="(session,idx) in soundSettings.Sessions">
-            <span>{{ session.Icon }}</span>
             <span>{{ session.Name }}</span>
-            <input class="input-range" orient="vertical" type="range" step="1" min="0" max="100"
+            <input class="input-range" orient="vertical" type="range" step="0.01" min="0" max="1"
                    v-on:change="changeSoundSessionValue(idx)"
                    v-model:value="session.Value">
           </div>

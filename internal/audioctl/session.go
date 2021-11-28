@@ -1,4 +1,4 @@
-package sound
+package audioctl
 
 import (
 	"path/filepath"

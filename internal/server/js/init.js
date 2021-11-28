@@ -14,13 +14,8 @@ function initApp() {
             currentPage: null,
             currentPageKey: null,
             connection: {isConnected: false},
-            soundSettings: {
-                Sessions: [
-                    {Name: "Chrome", Icon: "icon", Value: 20},
-                    {Name: "Spotify", Icon: "icon", Value: 50},
-                    {Name: "Diablo II", Icon: "icon", Value: 100},
-                ]
-            }
+            soundSettings: {Sessions: []},
+            soundLoading: false,
         },
         methods: {
             selectPage: function (pageKey) {
@@ -45,10 +40,20 @@ function initApp() {
             },
             showSoundSettings: function () {
                 this.showSounds = !this.showSounds;
+                if (this.showSounds) {
+                    this.soundLoading = true;
+                    querySoundSettings();
+                }
             },
-            changeSoundSessionValue: function(idx) {
-                console.log(this.soundSettings.Sessions[idx].Value)
-            }
+            changeSoundSessionValue: function (idx) {
+                let id = this.soundSettings.Sessions[idx].Id;
+                let volume = this.soundSettings.Sessions[idx].Value;
+                setVolume(id, parseFloat(volume))
+            },
+            updateSoundSettings: function (soundSettings) {
+                this.soundSettings = soundSettings;
+                this.soundLoading = false;
+            },
         }
     })
 }
@@ -59,6 +64,10 @@ function updateAppConfig(config) {
 
 function updateConnectionStatus(isConnected) {
     app.updateConnectionStatus(isConnected)
+}
+
+function updateSoundSettings(soundSettings) {
+    app.updateSoundSettings(soundSettings)
 }
 
 initApp();

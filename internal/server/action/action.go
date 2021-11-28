@@ -18,6 +18,22 @@ type (
 	}
 	SequencePause struct{}
 	SequenceAbort struct{}
+	SoundSession  struct {
+		Id    string
+		Name  string
+		Icon  string
+		Value float32
+	}
+	SoundSettings struct {
+		Sessions []SoundSession
+	}
+	LoadSoundSettings struct {
+		Response chan<- []byte
+	}
+	SetSoundVolume struct {
+		Id    string
+		Value float32
+	}
 )
 
 const (
@@ -27,6 +43,9 @@ const (
 	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
 	seqPause             = "SEQUENCE_PAUSE"
 	seqAbort             = "SEQUENCE_ABORT"
+	soundSettings        = "SOUND_SETTINGS"
+	loadSoundSettings    = "LOAD_SOUND_SETTINGS"
+	setSoundVolume       = "SET_SOUND_VOLUME"
 )
 
 func msgState(s SequenceState) []byte {
@@ -35,4 +54,8 @@ func msgState(s SequenceState) []byte {
 
 func msgConfig(config config.Config) []byte {
 	return jsonEnvelope(roamerConfig, config)
+}
+
+func msgSoundSettings(settings SoundSettings) []byte {
+	return jsonEnvelope(soundSettings, settings)
 }

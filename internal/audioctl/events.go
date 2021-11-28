@@ -1,4 +1,4 @@
-package sound
+package audioctl
 
 import "github.com/moutend/go-wca/pkg/wca"
 

@@ -58,6 +58,12 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				seq.Abort()
 
 				sequence = ""
+			case LoadSoundSettings:
+				v.Response <- msgSoundSettings(getSoundSettings())
+				continue
+			case SetSoundVolume:
+				setSoundVol(v.Id, v.Value)
+				continue
 			default:
 				fmt.Printf("unknown action: %T\n", action)
 			}
