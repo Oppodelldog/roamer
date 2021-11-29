@@ -46,6 +46,15 @@ func Start() {
 	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(jsFS())), http.MethodGet))
 	http.Handle("/css/", restrictMethod(http.FileServer(http.FS(cssFS())), http.MethodGet))
 	http.Handle("/favicon.ico", restrictMethod(addPrefix("/root", http.FileServer(http.FS(root))), http.MethodGet))
+	http.Handle("/manifest.json", restrictMethod(ManifestHandler(Manifest{
+		Name:            "Roamer",
+		ShortName:       "Roamer",
+		ThemeColor:      "#ffffff",
+		BackgroundColor: "#000000",
+		Display:         "browser",
+		Scope:           "/",
+		StartUrl:        "/",
+	}), http.MethodGet))
 
 	http.Handle("/ws", restrictMethod(websocketHandler(hub), http.MethodGet))
 
