@@ -47,52 +47,52 @@
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 596 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 474 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "1"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 672 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 534 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "2"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 751 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 594 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "3"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 829 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 654 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "4"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 906 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 714 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "5"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 986 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 774 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "6"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1064 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 834 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "7"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1147 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 894 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "8"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1226 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 954 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "9"
         },
         {
           "Icon": "icon-repair",
-          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1298 1028;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
+          "Sequence": "KD TAB;KU TAB;W 300ms;SM 1014 810;W 100ms;LD;W 100ms;LU;W 100ms;KD A;KU A;W 300ms;KD TAB;KU TAB",
           "Caption": "0"
         }
       ]
