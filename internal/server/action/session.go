@@ -66,6 +66,11 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					var abort SequenceAbort
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&abort)
 					message = abort
+				case seqSave:
+					var save SequenceSave
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&save)
+					save.Response = c.ToClient()
+					message = save
 				case loadSoundSettings:
 					var lss LoadSoundSettings
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&lss)

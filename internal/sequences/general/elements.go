@@ -2,6 +2,7 @@ package general
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"

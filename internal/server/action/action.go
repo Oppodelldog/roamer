@@ -18,7 +18,19 @@ type (
 	}
 	SequencePause struct{}
 	SequenceAbort struct{}
-	SoundSession  struct {
+	SequenceSave  struct {
+		PageId        string
+		SequenceIndex int
+		Sequence      string
+		Response      chan<- []byte
+	}
+	SequenceSaveResult struct {
+		PageId        string
+		SequenceIndex int
+		Sequence      string
+		Success       bool
+	}
+	SoundSession struct {
 		Id    string
 		Name  string
 		Icon  string
@@ -43,6 +55,8 @@ const (
 	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
 	seqPause             = "SEQUENCE_PAUSE"
 	seqAbort             = "SEQUENCE_ABORT"
+	seqSave              = "SEQUENCE_SAVE"
+	seqSaveResult        = "SEQUENCE_SAVE_RESULT"
 	soundSettings        = "SOUND_SETTINGS"
 	loadSoundSettings    = "LOAD_SOUND_SETTINGS"
 	setSoundVolume       = "SET_SOUND_VOLUME"
@@ -58,4 +72,14 @@ func msgConfig(config config.Config) []byte {
 
 func msgSoundSettings(settings SoundSettings) []byte {
 	return jsonEnvelope(soundSettings, settings)
+}
+
+func msgSequenceSaveResult(pageId string, sequenceIndex int, sequence string, success bool) []byte {
+	var result = SequenceSaveResult{
+		PageId:        pageId,
+		SequenceIndex: sequenceIndex,
+		Sequence:      sequence,
+		Success:       success,
+	}
+	return jsonEnvelope(seqSaveResult, result)
 }

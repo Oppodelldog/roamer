@@ -15,6 +15,10 @@ func Load() error {
 	return loadConfig(fileNameRoamerConfig, &config, sampleRoamerConfig)
 }
 
+func Save() error {
+	return saveConfig(fileNameRoamerConfig, config)
+}
+
 func loadConfig(filename string, data interface{}, defaultData []byte) error {
 	ensureConfig(filename, defaultData)
 
@@ -55,6 +59,29 @@ func ensureConfig(filename string, defaultData []byte) {
 			fmt.Printf("cannot write default '%s': %v", filename, err)
 		}
 	}
+}
+
+func saveConfig(filename string, c Config) error {
+	ensureConfig(filename, nil)
+
+	f, err := os.Create(getConfigFilePath(filename))
+	if err != nil {
+		return fmt.Errorf("cannot open config file for writing: %w", err)
+	}
+
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			fmt.Printf("cannot close '%s': %v\n", filename, err)
+		}
+	}()
+
+	err = json.NewEncoder(f).Encode(c)
+	if err != nil {
+		return fmt.Errorf("cannot encode '%s': %w", filename, err)
+	}
+
+	return nil
 }
 
 func getConfigFilePath(filename string) string {

@@ -2,7 +2,6 @@ package action
 
 import (
 	"fmt"
-
 	"github.com/Oppodelldog/roamer/internal/config"
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/script"
@@ -58,6 +57,9 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				seq.Abort()
 
 				sequence = ""
+			case SequenceSave:
+				saveSequence(v)
+				continue
 			case LoadSoundSettings:
 				v.Response <- msgSoundSettings(getSoundSettings())
 				continue
@@ -74,4 +76,43 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				HasSequence: seq.HasSequence()})
 		}
 	}()
+}
+
+func saveSequence(v SequenceSave) {
+	fmt.Println("save sequence ", v.Sequence)
+	page, ok := config.RoamerPage(v.PageId)
+	if !ok {
+		fmt.Printf("roamer-page '%s' not found", v.PageId)
+		return
+	}
+
+	if len(page.Actions) <= v.SequenceIndex {
+		fmt.Printf("roamer-page '%s' not found", v.PageId)
+		return
+	}
+
+	var action = page.Actions[v.SequenceIndex]
+
+	_, err := script.Parse(v.Sequence)
+	if err != nil {
+		fmt.Println(err)
+		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+		return
+	}
+
+	err = config.SetSequence(v.PageId, v.SequenceIndex, v.Sequence)
+	if err != nil {
+		fmt.Println(err)
+		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+		return
+	}
+
+	err = config.Save()
+	if err != nil {
+		fmt.Println(err)
+		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+		return
+	}
+
+	v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, v.Sequence, true)
 }

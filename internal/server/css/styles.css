@@ -141,6 +141,10 @@ button::-moz-focus-inner {
     z-index: 2;
 }
 
+.edit{
+    font-size: 30px;
+}
+
 .offline, .online {
     font-size: 30px;
 }

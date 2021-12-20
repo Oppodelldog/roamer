@@ -10,6 +10,8 @@ const seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
 const seqClearSequence = "SEQUENCE_CLEARSEQUENCE"
 const seqPause = "SEQUENCE_PAUSE"
 const seqAbort = "SEQUENCE_ABORT"
+const seqSave = "SEQUENCE_SAVE"
+const seqSaveResult = "SEQUENCE_SAVE_RESULT"
 const soundSettings = "SOUND_SETTINGS"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
 const setSoundVolume = "SET_SOUND_VOLUME"
@@ -40,6 +42,10 @@ function connectToServer() {
                     case seqState:
                         updateState(data.Payload)
                         break
+                    case seqSaveResult:
+                        let payload = data.Payload;
+                        respondSaveSequence(payload.PageId, payload.SequenceIndex, payload.Sequence, payload.Success)
+                        break;
                 }
             }
             ws.onclose = function (evt) {
@@ -98,6 +104,10 @@ function updatePauseButtonLabel() {
 
 function setVolume(id, volume) {
     wsSend({Type: setSoundVolume, Payload: {Id: id, Value: volume}})
+}
+
+function saveSequence(pageId, sequenceIndex, sequence) {
+    wsSend({Type: seqSave, Payload: {PageId: pageId, SequenceIndex: sequenceIndex, Sequence: sequence}})
 }
 
 function querySoundSettings() {

@@ -1,6 +1,9 @@
 package config
 
-import _ "embed"
+import (
+	_ "embed"
+	"fmt"
+)
 
 const fileNameRoamerConfig = "roamer-config.json"
 
@@ -44,4 +47,23 @@ func RoamerPage(pageId string) (Page, bool) {
 	}
 
 	return Page{}, false
+}
+
+func SetSequence(pageId string, sequenceIndex int, sequence string) error {
+	var page, pageFound = config.Pages[pageId]
+	if !pageFound {
+		return fmt.Errorf("page %s not found", pageId)
+	}
+
+	if len(page.Actions) < sequenceIndex {
+		return fmt.Errorf("sequence %v not found for page %s", sequenceIndex, pageId)
+	}
+
+	var action = page.Actions[sequenceIndex]
+
+	action.Sequence = sequence
+
+	config.Pages[pageId].Actions[sequenceIndex] = action
+
+	return nil
 }

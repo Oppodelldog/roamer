@@ -1,0 +1,29 @@
+#marco-edit .sequence-container {
+    display: flex;
+    align-items: center;
+}
+
+#actions-edit {
+    overflow-y: scroll;
+    max-height: calc(100% - 200px);
+}
+
+#actions-edit > * + * {
+    margin-top: 10px;
+}
+
+#marco-edit .caption {
+    width: 30vw;
+    font-weight: bold;
+}
+
+#marco-edit textarea {
+    width: 50vw;
+    min-height: 56px;
+    font-family: monospace;
+    padding: 5px;
+}
+
+#marco-edit textarea + button{
+    margin-left:20px;
+}
