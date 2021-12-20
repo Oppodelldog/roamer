@@ -2,6 +2,7 @@ package action
 
 import (
 	"fmt"
+
 	"github.com/Oppodelldog/roamer/internal/config"
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/script"
@@ -81,15 +82,16 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 }
 
 func saveSequence(v SequenceSave) {
-	fmt.Println("save sequence ", v.Sequence)
 	page, ok := config.RoamerPage(v.PageId)
 	if !ok {
 		fmt.Printf("roamer-page '%s' not found", v.PageId)
+
 		return
 	}
 
 	if len(page.Actions) <= v.SequenceIndex {
 		fmt.Printf("roamer-page '%s' not found", v.PageId)
+
 		return
 	}
 
@@ -99,6 +101,7 @@ func saveSequence(v SequenceSave) {
 	if err != nil {
 		fmt.Println(err)
 		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+
 		return
 	}
 
@@ -106,6 +109,7 @@ func saveSequence(v SequenceSave) {
 	if err != nil {
 		fmt.Println(err)
 		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+
 		return
 	}
 
@@ -113,6 +117,7 @@ func saveSequence(v SequenceSave) {
 	if err != nil {
 		fmt.Println(err)
 		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)
+
 		return
 	}
 

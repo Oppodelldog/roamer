@@ -5,8 +5,8 @@ issues:
     - Using the variable on range scope .* in function literal
 
   exclude-rules:
-    - path: _test\.go
-      text: .*do not define dynamic errors.*
+    - path: .go
+      text: .*could not import*
 
 linters:
   enable:

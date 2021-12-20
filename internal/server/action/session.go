@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/Oppodelldog/roamer/internal/audioctl"
 
 	"github.com/Oppodelldog/roamer/internal/config"
@@ -26,6 +27,7 @@ func ClientSession(c *ws.Client, actions chan Action) {
 		}()
 
 		c.ToClient() <- msgConfig(config.Roamer())
+
 		for {
 			select {
 			case <-ctx.Done():
@@ -95,7 +97,11 @@ func ClientSession(c *ws.Client, actions chan Action) {
 }
 
 func getSoundSettings() SoundSettings {
-	var settings = SoundSettings{}
+	var (
+		settings      = SoundSettings{}
+		soundSessions []SoundSession
+	)
+
 	device, err := audioctl.DefaultDevice()
 	if err != nil {
 		fmt.Println(err)
@@ -104,29 +110,33 @@ func getSoundSettings() SoundSettings {
 
 	defer device.Release()
 
-	var soundSessions []SoundSession
 	for i, session := range device.Sessions {
-		var err error
-		var sessionId string
-		var displayName string
-		var iconPath string
-		var volume float32
+		var (
+			err         error
+			sessionId   string
+			displayName string
+			iconPath    string
+			volume      float32
+		)
 
 		sessionId, err = session.GetSessionInstanceIdentifier()
 		if err != nil {
 			fmt.Printf("error getting sound session (%v) display name: %v", i, err)
 			continue
 		}
+
 		displayName, err = session.GetDisplayNameEnhanced()
 		if err != nil {
 			fmt.Printf("error getting sound session (%v) display name: %v", i, err)
 			continue
 		}
+
 		iconPath, err = session.GetIconPath()
 		if err != nil {
 			fmt.Printf("error getting sound session (%v) icon path: %v", i, err)
 			continue
 		}
+
 		volume, err = session.GetMasterVolume()
 		if err != nil {
 			fmt.Printf("error getting sound session (%v) volume: %v", i, err)
@@ -159,13 +169,16 @@ func setSoundVol(id string, value float32) {
 		sid, err := session.GetSessionInstanceIdentifier()
 		if err != nil {
 			fmt.Printf("error getting sound session (%v) id: %v", i, err)
+
 			continue
 		}
+
 		if sid == id {
 			err = session.SetMasterVolume(value)
 			if err != nil {
 				fmt.Printf("error getting sound session (%v) id: %v", i, err)
 			}
+
 			return
 		}
 	}

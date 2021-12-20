@@ -81,5 +81,6 @@ func msgSequenceSaveResult(pageId string, sequenceIndex int, sequence string, su
 		Sequence:      sequence,
 		Success:       success,
 	}
+
 	return jsonEnvelope(seqSaveResult, result)
 }

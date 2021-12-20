@@ -2,10 +2,14 @@ package config
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 )
 
 const fileNameRoamerConfig = "roamer-config.json"
+
+var errSequenceNotFound = errors.New("sequence not found")
+var errPageNotFound = errors.New("page not found")
 
 //go:embed sample-roamer-config.json
 var sampleRoamerConfig []byte
@@ -52,11 +56,11 @@ func RoamerPage(pageId string) (Page, bool) {
 func SetSequence(pageId string, sequenceIndex int, sequence string) error {
 	var page, pageFound = config.Pages[pageId]
 	if !pageFound {
-		return fmt.Errorf("page %s not found", pageId)
+		return fmt.Errorf("%w: %v", errPageNotFound, pageId)
 	}
 
 	if len(page.Actions) < sequenceIndex {
-		return fmt.Errorf("sequence %v not found for page %s", sequenceIndex, pageId)
+		return fmt.Errorf("%w, sequence %v, page %s", errSequenceNotFound, sequenceIndex, pageId)
 	}
 
 	var action = page.Actions[sequenceIndex]
