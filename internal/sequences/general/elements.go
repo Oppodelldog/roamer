@@ -78,7 +78,7 @@ type LookupMousePos struct {
 
 func (e LookupMousePos) Do() error {
 	pos, err := mouse.GetCursorPos()
-	if err != nil {
+	if err != nil && isNotSuccess(err) {
 		return err
 	}
 
@@ -97,4 +97,8 @@ func (e MouseMove) Do() error {
 	err := mouse.Move(e.X, e.Y)
 
 	return err
+}
+
+func isNotSuccess(err error) bool {
+	return !strings.Contains(err.Error(), "success")
 }
