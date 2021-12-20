@@ -27,19 +27,20 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				page, ok := config.RoamerPage(v.PageId)
 				if !ok {
 					fmt.Printf("roamer-page '%s' not found", v.PageId)
-					return
+					continue
 				}
 
 				if len(page.Actions) <= v.SequenceIndex {
 					fmt.Printf("roamer-page '%s' not found", v.PageId)
-					return
+					continue
 				}
 
 				var action = page.Actions[v.SequenceIndex]
 
 				elems, err := script.Parse(action.Sequence)
 				if err != nil {
-					panic(err)
+					fmt.Println(err)
+					continue
 				}
 
 				fmt.Println(script.Write(elems))
@@ -51,7 +52,8 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			case SequencePause:
 				err := seq.Pause()
 				if err != nil {
-					panic(err)
+					fmt.Println(err)
+					continue
 				}
 			case SequenceAbort:
 				seq.Abort()
