@@ -15,6 +15,7 @@ const seqSaveResult = "SEQUENCE_SAVE_RESULT"
 const soundSettings = "SOUND_SETTINGS"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
 const setSoundVolume = "SET_SOUND_VOLUME"
+const setMainSoundVolume = "SET_MAIN_SOUND_VOLUME"
 
 function connectToServer() {
     try {
@@ -104,6 +105,10 @@ function updatePauseButtonLabel() {
 
 function setVolume(id, volume) {
     wsSend({Type: setSoundVolume, Payload: {Id: id, Value: volume}})
+}
+
+function setMainVolume(volume) {
+    wsSend({Type: setMainSoundVolume, Payload: {Value: volume}})
 }
 
 function saveSequence(pageId, sequenceIndex, sequence) {

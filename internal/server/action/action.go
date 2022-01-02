@@ -37,13 +37,17 @@ type (
 		Value float32
 	}
 	SoundSettings struct {
-		Sessions []SoundSession
+		Sessions    []SoundSession
+		MainSession SoundSession
 	}
 	LoadSoundSettings struct {
 		Response chan<- []byte
 	}
 	SetSoundVolume struct {
 		Id    string
+		Value float32
+	}
+	SetMainSoundVolume struct {
 		Value float32
 	}
 )
@@ -60,6 +64,7 @@ const (
 	soundSettings        = "SOUND_SETTINGS"
 	loadSoundSettings    = "LOAD_SOUND_SETTINGS"
 	setSoundVolume       = "SET_SOUND_VOLUME"
+	setMainSoundVolume   = "SET_MAIN_SOUND_VOLUME"
 )
 
 func msgState(s SequenceState) []byte {
