@@ -2,12 +2,25 @@
 
 Demo Project how to automate Windows keyboard/mouse interactions through a web frontend.
 
+* Webservice (HTTP, Websockets) [go]
+* Webfrontend [Vue.js]
+
+The webservice uses  **Win32 API** for simulating
+keyboard and mouse events and **Windows Core Audio API** for sound settings.
+
 **Attention**
+
 * Read and understand the source code before using this tool
 * Some of those tasks require special preparation
 * Ensure to execute any of the following actions only with windows focused on the appropriate game.
 
-This Currently automates boring tasks like
+## Screens
+![Roamer - Overview](Galaxy-J7-1.png)
+![Roamer - Macro List](Galaxy-J7-2.png)
+![Roamer - Sound Settings](Galaxy-J7.png)
+![Roamer - Macro Editor](Galaxy-J7-3.png)
+
+This default configruation brings some samples for some games.
 
 ### rust
 
@@ -41,9 +54,7 @@ This Currently automates boring tasks like
 * run
 * grillmaster
 
-
-**Screenshots**
-
-To give some impression how it looks like
-![Rust Roamer](screenshot-rust-actions.png)
-![Seven Days To Die Roamer](screenshot-7d2d-actions.png)
+---
+**Attributions:**  
+Background
+Image: [aliffian arief](https://unsplash.com/@helip?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyTex)
