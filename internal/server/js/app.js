@@ -16,7 +16,7 @@ function initApp() {
             currentPage: null,
             currentPageKey: null,
             connection: {isConnected: false},
-            soundSettings: {Sessions: []},
+            soundSettings: {Sessions: [], MainSession: {}},
             soundLoading: false,
         },
         methods: {
@@ -53,6 +53,10 @@ function initApp() {
                 let id = this.soundSettings.Sessions[idx].Id
                 let volume = this.soundSettings.Sessions[idx].Value
                 setVolume(id, parseFloat(volume))
+            },
+            changeMainSoundSessionValue: function () {
+                let volume = this.soundSettings.MainSession.Value
+                setMainVolume(parseFloat(volume))
             },
             updateSoundSettings: function (soundSettings) {
                 this.soundSettings = soundSettings;

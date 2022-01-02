@@ -68,6 +68,8 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				continue
 			case SetSoundVolume:
 				setSoundVol(v.Id, v.Value)
+			case SetMainSoundVolume:
+				setMainSoundVol(v.Value)
 				continue
 			default:
 				fmt.Printf("unknown action: %T\n", action)

@@ -172,3 +172,12 @@ button::-moz-focus-inner {
     display: flex;
     justify-content: center;
 }
+
+.main-sound-session{
+    margin-top:20px;
+    margin-left:40px;
+    margin-right:40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

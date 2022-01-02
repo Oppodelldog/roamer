@@ -82,6 +82,10 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					var ssv SetSoundVolume
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
 					message = ssv
+				case setMainSoundVolume:
+					var ssv SetMainSoundVolume
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
+					message = ssv
 				default:
 					fmt.Printf("unknown message type: %v", envelope.Type)
 				}
@@ -152,8 +156,38 @@ func getSoundSettings() SoundSettings {
 	}
 
 	settings.Sessions = soundSessions
+	settings.MainSession = getMasterSoundSession(device)
 
 	return settings
+}
+
+func getMasterSoundSession(dev *audioctl.Device) SoundSession {
+	scalar, err := dev.GetMasterVolumeLevelScalar()
+	if err != nil {
+		fmt.Printf("cannot get main volume: %v\n", err)
+		return SoundSession{}
+	}
+
+	return SoundSession{
+		Name:  "Main Volume",
+		Icon:  "",
+		Value: scalar,
+	}
+}
+
+func setMainSoundVol(value float32) {
+	device, err := audioctl.DefaultDevice()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer device.Release()
+
+	err = device.SetMasterVolumeLevelScalar(value)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func setSoundVol(id string, value float32) {
