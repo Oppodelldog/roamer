@@ -71,6 +71,12 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			case SetMainSoundVolume:
 				setMainSoundVol(v.Value)
 				continue
+			case PageNew:
+				createNewPage()
+				v.Response <- msgConfig(config.Roamer())
+			case PageDelete:
+				deletePage(v.PageId)
+				v.Response <- msgConfig(config.Roamer())
 			default:
 				fmt.Printf("unknown action: %T\n", action)
 			}
@@ -81,6 +87,20 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				HasSequence: seq.HasSequence()})
 		}
 	}()
+}
+
+func deletePage(id string) {
+	err := config.DeletePage(id)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func createNewPage() {
+	err := config.NewPage()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func saveSequence(v SequenceSave) {

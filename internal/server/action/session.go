@@ -86,6 +86,16 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					var ssv SetMainSoundVolume
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
 					message = ssv
+				case pageNew:
+					var np PageNew
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&np)
+					np.Response = c.ToClient()
+					message = np
+				case pageDelete:
+					var dp PageDelete
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&dp)
+					dp.Response = c.ToClient()
+					message = dp
 				default:
 					fmt.Printf("unknown message type: %v", envelope.Type)
 				}

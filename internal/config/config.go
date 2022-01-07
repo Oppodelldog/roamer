@@ -19,6 +19,30 @@ func Save() error {
 	return saveConfig(fileNameRoamerConfig, config)
 }
 
+func NewPage() error {
+	var id = fmt.Sprintf("page_%v", len(config.Pages)+1)
+	if _, exists := config.Pages[id]; exists {
+		return fmt.Errorf("the page (%s) already exists", id)
+	}
+
+	config.Pages[id] = Page{
+		TitleShort: "New Page",
+		Title:      "New Page",
+	}
+
+	return Save()
+}
+
+func DeletePage(id string) error {
+	if _, exists := config.Pages[id]; !exists {
+		return fmt.Errorf("the page (%s) does not exists", id)
+	}
+
+	delete(config.Pages, id)
+
+	return Save()
+}
+
 func loadConfig(filename string, data interface{}, defaultData []byte) error {
 	ensureConfig(filename, defaultData)
 

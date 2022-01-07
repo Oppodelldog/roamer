@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/slider.css">
     <link rel="stylesheet" href="/css/spinner.css">
     <link rel="stylesheet" href="/css/macro-edit.css">
-
+    <link rel="stylesheet" href="/css/pages-edit.css">
 
     <link rel="manifest" href="/manifest.json">
 
@@ -20,16 +20,15 @@
 <div id="app">
     <div id="roamer-list" v-if="hasConfig">
         <div class="top-tools">
+            <span class="edit" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">✏️</span>
             <span class="edit" v-if="showPage || macroEditor" v-on:pointerup="showMacroEditor()">✏️</span>
             <span class="offline" v-if="!connection.isConnected">📴</span>
             <span class="online" v-if="connection.isConnected">🔗</span>
             <a v-bind:class="{'audio-settings':true, 'on':showVerticalSlide}"
                v-on:pointerup="showSoundSettings()">🕪</a>
         </div>
-        <div
-                v-bind:class="{'slide-container-vertical':true, 'slide-container-vertical-transition-normal':!showVerticalSlide, 'slide-container-vertical-transition-one':showVerticalSlide}">
-            <div
-                    v-bind:class="{'slide-container-horizontal':true, 'slide-container-horizontal-transition-normal':!showPage, 'slide-container-horizontal-transition-one':showPage}">
+        <div v-bind:class="{'slide-container-vertical':true, 'slide-container-vertical-transition-normal':!showVerticalSlide, 'slide-container-vertical-transition-one':showVerticalSlide}">
+            <div v-bind:class="{'slide-container-horizontal':true, 'slide-container-horizontal-transition-normal':!showPage, 'slide-container-horizontal-transition-one':showPage}">
 
                 <div id="page-selection" class="slide">
                     <h1>{{ config.Title }}</h1>
@@ -37,8 +36,7 @@
                         {{ config.WelcomeText }}
                     </h2>
                     <div class="buttonlist">
-                        <button
-                                v-for="(page, pageKey) in config.Pages"
+                        <button v-for="(page, pageKey) in config.Pages"
                                 v-on:pointerup="selectPage(pageKey)">
                             {{ page.TitleShort }}
                         </button>
@@ -91,6 +89,31 @@
                         <textarea v-model:value="action.Sequence"></textarea>
                         <button v-on:click="saveSequence(idx)" title="save">💾</button>
                     </div>
+                </div>
+            </div>
+
+            <div id="page-edit" class="slide" v-if="pageEditor">
+                <h1>Edit Pages</h1>
+
+                <div id="actions-edit-pages">
+                    <div class="actions-edit-page" v-for="(page,id) in config.Pages">
+                        <div class="edit-page-vertical-container">
+                            <div class="input-container">
+                                <label for="txtPageTitleShort">Title in main menu:</label>
+                                <input id="txtPageTitleShort" type="text" v-model:value="page.TitleShort"/>
+                            </div>
+                            <div class="input-container">
+                                <label for="txtPageTitle">Title on page:</label>
+                                <input id="txtPageTitle" type="text" v-model:value="page.Title"/>
+                            </div>
+                        </div>
+                        <button v-on:pointerup="removePage(id)"
+                                v-bind:class="{ delete: getPageDeletionStatus(id)===1 }">
+                            <span v-if="getPageDeletionStatus(id)===0">Delete</span>
+                            <span v-if="getPageDeletionStatus(id)===1">Really?</span>
+                        </button>
+                    </div>
+                    <button class="btNewPage" v-on:pointerup="newPage">New Page</button>
                 </div>
             </div>
 

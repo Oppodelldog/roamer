@@ -50,6 +50,13 @@ type (
 	SetMainSoundVolume struct {
 		Value float32
 	}
+	PageNew struct {
+		Response chan<- []byte
+	}
+	PageDelete struct {
+		PageId   string
+		Response chan<- []byte
+	}
 )
 
 const (
@@ -65,6 +72,8 @@ const (
 	loadSoundSettings    = "LOAD_SOUND_SETTINGS"
 	setSoundVolume       = "SET_SOUND_VOLUME"
 	setMainSoundVolume   = "SET_MAIN_SOUND_VOLUME"
+	pageNew              = "PAGE_NEW"
+	pageDelete           = "PAGE_DELETE"
 )
 
 func msgState(s SequenceState) []byte {

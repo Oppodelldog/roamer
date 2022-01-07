@@ -16,6 +16,8 @@ const soundSettings = "SOUND_SETTINGS"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
 const setSoundVolume = "SET_SOUND_VOLUME"
 const setMainSoundVolume = "SET_MAIN_SOUND_VOLUME"
+const pageNew = "PAGE_NEW"
+const pageDelete = "PAGE_DELETE"
 
 function connectToServer() {
     try {
@@ -91,16 +93,19 @@ function updateState(state) {
     updatePauseButtonLabel();
     let pausedInfo = (state.IsPaused) ? " - (paused)" : "";
     let content = sequenceName + pausedInfo;
-    document.getElementById("active-sequence").classList.remove("isActive");
+    console.log("remove isActive class")
+    //document.getElementById("active-sequence").classList.remove("isActive");
     if (hasSequence) {
-        document.getElementById("active-sequence").classList.add("isActive");
+        console.log("add isActive class")
+        //document.getElementById("active-sequence").classList.add("isActive");
     }
 
-    document.getElementById("active-sequence").innerHTML = content;
+    console.log("update active sequence to " + content)
+    //document.getElementById("active-sequence").innerHTML = content;
 }
 
 function updatePauseButtonLabel() {
-    document.getElementById("pause-button").innerHTML = (isPaused) ? "RESUME" : "PAUSE";
+    console.log((isPaused) ? "RESUME" : "PAUSE");
 }
 
 function setVolume(id, volume) {
@@ -125,6 +130,14 @@ function clearSequence() {
 
 function setConfigSequence(pageId, sequenceIndex) {
     wsSend({Type: seqSetConfigSequence, Payload: {PageId: pageId, SequenceIndex: sequenceIndex}})
+}
+
+function createNewPage() {
+    wsSend({Type: pageNew, Payload: {}})
+}
+
+function deletePage(pageId) {
+    wsSend({Type: pageDelete, Payload: {PageId: pageId}})
 }
 
 function pause() {

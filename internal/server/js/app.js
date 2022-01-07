@@ -11,6 +11,7 @@ function initApp() {
             config: null,
             showPage: false,
             showVerticalSlide: false,
+            pageEditor: false,
             macroEditor: false,
             showSounds: false,
             currentPage: null,
@@ -18,8 +19,19 @@ function initApp() {
             connection: {isConnected: false},
             soundSettings: {Sessions: [], MainSession: {}},
             soundLoading: false,
+            deletePageClicks: {}
         },
         methods: {
+            newPage: function () {
+                createNewPage();
+            },
+            removePage: function (pageId) {
+                Vue.set(this.deletePageClicks, pageId, this.deletePageClicks[pageId] + 1)
+                if (this.deletePageClicks[pageId] === 2) {
+                    delete this.deletePageClicks[pageId]
+                    deletePage(pageId);
+                }
+            },
             selectPage: function (pageKey) {
                 this.currentPage = this.config.Pages[pageKey]
                 this.currentPageKey = pageKey
@@ -36,6 +48,7 @@ function initApp() {
                 this.connection.isConnected = isConnected
             },
             showPageSelection: function () {
+                this.pageEditor = false;
                 this.showPage = false
                 this.currentPage = null
                 this.currentPageKey = null
@@ -62,12 +75,25 @@ function initApp() {
                 this.soundSettings = soundSettings;
                 this.soundLoading = false;
             },
+            showPagesEditor: function () {
+                this.clearVerticalSlide()
+                this.showVerticalSlide = !this.showVerticalSlide
+                this.pageEditor=this.showVerticalSlide;
+            },
+            initPageDeleteStatus: function (key) {
+                Vue.set(this.deletePageClicks, key, 0)
+            },
+            getPageDeletionStatus: function (key) {
+                if (this.deletePageClicks[key] === undefined) {
+                    this.initPageDeleteStatus(key)
+                }
+
+                return this.deletePageClicks[key];
+            },
             showMacroEditor: function () {
                 this.clearVerticalSlide()
                 this.showVerticalSlide = !this.showVerticalSlide
-                if (this.showVerticalSlide) {
-                    this.macroEditor = true
-                }
+                this.macroEditor=this.showVerticalSlide;
             },
             clearVerticalSlide: function () {
                 this.showSounds = false;
