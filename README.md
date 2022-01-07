@@ -5,8 +5,8 @@ Demo Project how to automate Windows keyboard/mouse interactions through a web f
 * Webservice (HTTP, Websockets) [go]
 * Webfrontend [Vue.js]
 
-The webservice uses  **Win32 API** for simulating
-keyboard and mouse events and **Windows Core Audio API** for sound settings.
+The webservice uses  **Win32 API** for simulating keyboard and mouse events and **Windows Core Audio API** for sound
+settings.
 
 **Attention**
 
@@ -15,12 +15,13 @@ keyboard and mouse events and **Windows Core Audio API** for sound settings.
 * Ensure to execute any of the following actions only with windows focused on the appropriate game.
 
 ## Screens
+
 ![Roamer - Overview](Galaxy-J7-1.png)
 ![Roamer - Macro List](Galaxy-J7-2.png)
 ![Roamer - Sound Settings](Galaxy-J7.png)
 ![Roamer - Macro Editor](Galaxy-J7-3.png)
 
-This default configruation brings some samples for some games.
+This default configuration brings some samples for some games.
 
 ### rust
 
@@ -44,6 +45,9 @@ This default configruation brings some samples for some games.
 * repair slot (1-10)
 
 ### altf4
+
+*as you might expect this did not work out really well  
+this game beats procedural timed inputs as good as human inputs ;-)*
 
 * attempt for a full run
 * several sequences to jump the first hurdles
