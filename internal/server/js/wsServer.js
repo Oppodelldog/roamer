@@ -86,29 +86,8 @@ function reconnect() {
 
 setInterval(reconnect, 2000);
 
-let isPaused = false;
-let hasSequence = false;
-
 function updateState(state) {
-    let sequenceName = state.Sequence;
-    isPaused = state.IsPaused;
-    hasSequence = state.HasSequence;
-    updatePauseButtonLabel();
-    let pausedInfo = (state.IsPaused) ? " - (paused)" : "";
-    let content = sequenceName + pausedInfo;
-    console.log("remove isActive class")
-    //document.getElementById("active-sequence").classList.remove("isActive");
-    if (hasSequence) {
-        console.log("add isActive class")
-        //document.getElementById("active-sequence").classList.add("isActive");
-    }
-
-    console.log("update active sequence to " + content)
-    //document.getElementById("active-sequence").innerHTML = content;
-}
-
-function updatePauseButtonLabel() {
-    console.log((isPaused) ? "RESUME" : "PAUSE");
+    updatePlaybackState(state)
 }
 
 function setVolume(id, volume) {
@@ -158,9 +137,6 @@ function pause() {
     wsSend({Type: seqPause, Payload: {}})
 }
 
-function togglePause() {
-    pause()
-}
 
 function abort() {
     wsSend({Type: seqAbort, Payload: {}})

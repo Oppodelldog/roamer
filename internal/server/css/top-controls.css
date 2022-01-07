@@ -1,0 +1,41 @@
+.header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    height: 100px;
+    width: 100%;
+
+    background:#37373721;
+    padding-top:20px;
+    font-weight: bold;
+}
+
+.top-tools {
+    position: fixed;
+    right: 20px;
+    top: 10px;
+    display: flex;
+    z-index: 1;
+}
+
+.top-tools > * + * {
+    margin-left: 20px;
+}
+
+.top-tools > * {
+    line-height: 30px;
+    margin-top: 20px;
+    z-index: 2;
+}
+
+.top-controls{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.top-controls .button{
+    height: 40px;
+    font-size: 30px;
+    padding: 2px;
+}

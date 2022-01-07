@@ -18,7 +18,12 @@ function initApp() {
             connection: {isConnected: false},
             soundSettings: {Sessions: [], MainSession: {}},
             soundLoading: false,
-            deletePageClicks: {}
+            deletePageClicks: {},
+            playbackState: {
+                Caption: "",
+                HasSequence: false,
+                IsPaused: false,
+            }
         },
         methods: {
             currentPage: function () {
@@ -118,6 +123,15 @@ function initApp() {
             respondSaveSequence: function (pageId, sequenceIndex, sequence, success) {
                 this.config.Pages[pageId].Actions[sequenceIndex].Sequence = sequence;
                 if (!success) console.error("error saving sequence")
+            },
+            updatePlaybackState: function (state) {
+                this.playbackState = state;
+            },
+            togglePause: function () {
+                pause()
+            },
+            abort:function(){
+                abort()
             }
         }
     })
@@ -137,6 +151,10 @@ function updateSoundSettings(soundSettings) {
 
 function respondSaveSequence(pageId, sequenceIndex, sequence, success) {
     app.respondSaveSequence(pageId, sequenceIndex, sequence, success)
+}
+
+function updatePlaybackState(state) {
+    app.updatePlaybackState(state)
 }
 
 Vue.config.devtools = true

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/spinner.css">
     <link rel="stylesheet" href="/css/macro-edit.css">
     <link rel="stylesheet" href="/css/pages-edit.css">
+    <link rel="stylesheet" href="/css/top-controls.css">
 
     <link rel="manifest" href="/manifest.json">
 
@@ -19,6 +20,14 @@
 <body>
 <div id="app">
     <div id="roamer-list" v-if="hasConfig">
+        <div class="header">
+            <div class="top-status">Currently playing: {{ playbackState.Caption}}</div>
+            <div class="top-controls">
+                <div class="button" v-if="!playbackState.IsPaused" v-on:pointerup="togglePause()">⏸</div>
+                <div class="button" v-if="playbackState.IsPaused" v-on:pointerup="togglePause()">▶︎</div>
+                <div class="button" v-on:pointerup="abort()">⏏️</div>
+            </div>
+        </div>
         <div class="top-tools">
             <span class="edit" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">✏️</span>
             <span class="edit" v-if="showPage || macroEditor" v-on:pointerup="showMacroEditor()">✏️</span>
@@ -46,17 +55,10 @@
                 <div id="roamer-page" class="slide" v-if="showPage">
                     <h1>{{ currentPage().Title }}</h1>
                     <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
-                    <div id="active-sequence" class="active-sequence">???</div>
                     <div id="actions" class="sequences">
                         <button v-for="(action,idx) in currentPage().Actions" v-on:pointerup="startAction(idx)">
                             <span class="caption">{{ action.Caption }}</span>
                         </button>
-                    </div>
-                    <div class="sequences">
-                        <button class="ico-none" v-on:pointerup="clearSequence()"><span class="caption">NONE</span>
-                        </button>
-                        <button class="ico-pause-button" id="pause-button" v-on:pointerup="togglePause()">???</button>
-                        <button class="ico-abort" id="abort-button" v-on:pointerup="abort()">Abort</button>
                     </div>
                 </div>
             </div>

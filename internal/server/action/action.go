@@ -6,7 +6,7 @@ import (
 
 type (
 	SequenceState struct {
-		Sequence    string
+		Caption     string
 		IsPaused    bool
 		HasSequence bool
 	}

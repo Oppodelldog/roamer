@@ -123,25 +123,7 @@ button::-moz-focus-inner {
     margin-top: 60px;
 }
 
-.top-tools {
-    position: fixed;
-    right: 20px;
-    top: 10px;
-    display: flex;
-    z-index: 1;
-}
-
-.top-tools > * + * {
-    margin-left: 20px;
-}
-
-.top-tools > * {
-    line-height: 30px;
-    margin-top: 20px;
-    z-index: 2;
-}
-
-.edit{
+.edit {
     font-size: 30px;
 }
 
@@ -168,15 +150,15 @@ button::-moz-focus-inner {
     position: relative;
 }
 
-.sound-sessions{
+.sound-sessions {
     display: flex;
     justify-content: center;
 }
 
-.main-sound-session{
-    margin-top:20px;
-    margin-left:40px;
-    margin-right:40px;
+.main-sound-session {
+    margin-top: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;

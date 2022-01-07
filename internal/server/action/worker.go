@@ -11,8 +11,8 @@ import (
 
 func Worker(actions <-chan Action, broadcast chan<- []byte) {
 	var (
-		sequence = ""
-		seq      = sequencer.New(1)
+		sequenceCaption = ""
+		seq             = sequencer.New(1)
 	)
 
 	seq.BeforeSequence(func() {
@@ -23,7 +23,7 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 		for action := range actions {
 			switch v := action.(type) {
 			case SequenceClearSequence:
-				sequence = ""
+				sequenceCaption = ""
 			case SequenceSetConfigSequence:
 				page, ok := config.RoamerPage(v.PageId)
 				if !ok {
@@ -49,7 +49,7 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 					return elems
 				})
 
-				sequence = action.Sequence
+				sequenceCaption = action.Caption
 			case SequencePause:
 				err := seq.Pause()
 				if err != nil {
@@ -59,7 +59,7 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			case SequenceAbort:
 				seq.Abort()
 
-				sequence = ""
+				sequenceCaption = ""
 			case SequenceSave:
 				saveSequence(v)
 				continue
@@ -91,7 +91,7 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			}
 
 			broadcast <- msgState(SequenceState{
-				Sequence:    sequence,
+				Caption:     sequenceCaption,
 				IsPaused:    seq.IsPaused(),
 				HasSequence: seq.HasSequence()})
 		}
