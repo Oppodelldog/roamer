@@ -1,4 +1,4 @@
-.header{
+.header {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6,8 +6,7 @@
     height: 100px;
     width: 100%;
 
-    background:#37373721;
-    padding-top:20px;
+    background: #37373721;
     font-weight: bold;
 }
 
@@ -29,13 +28,23 @@
     z-index: 2;
 }
 
-.top-controls{
-    display:flex;
+.top-controls {
+    display: flex;
     flex-direction: row;
     justify-content: center;
 }
-.top-controls .button{
+
+.top-controls .button {
     height: 40px;
     font-size: 30px;
     padding: 2px;
+}
+
+.top-status-label {
+    font-size: 16px;
+}
+
+.top-status-playback {
+    font-size: 20px;
+    margin-top: 4px;
 }

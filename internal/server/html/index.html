@@ -21,7 +21,8 @@
 <div id="app">
     <div id="roamer-list" v-if="hasConfig">
         <div class="header">
-            <div class="top-status">Currently playing: {{ playbackState.Caption}}</div>
+            <div class="top-status-label">Currently playing</div>
+            <div class="top-status-playback"><span> {{ playbackState.PageTitle}}</span> /<span> {{ playbackState.Caption}}</span></div>
             <div class="top-controls">
                 <div class="button" v-if="!playbackState.IsPaused" v-on:pointerup="togglePause()">⏸</div>
                 <div class="button" v-if="playbackState.IsPaused" v-on:pointerup="togglePause()">▶︎</div>
