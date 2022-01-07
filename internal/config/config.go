@@ -43,6 +43,36 @@ func DeletePage(id string) error {
 	return Save()
 }
 
+func NewSequence(pageId string) error {
+	page, exists := config.Pages[pageId]
+	if !exists {
+		return fmt.Errorf("the page (%s) does not exists", pageId)
+	}
+
+	page.Actions = append(page.Actions, Action{Caption: "New Macro"})
+	config.Pages[pageId] = page
+
+	return Save()
+}
+
+func DeleteSequence(pageId string, seq int) error {
+	page, exists := config.Pages[pageId]
+	if !exists {
+		return fmt.Errorf("the page (%s) does not exists", pageId)
+	}
+
+	page.Actions = append(page.Actions[:seq], page.Actions[seq+1:]...)
+	config.Pages[pageId] = page
+
+	return Save()
+}
+
+func SavePages(pages Pages) error {
+	config.Pages = pages
+
+	return Save()
+}
+
 func loadConfig(filename string, data interface{}, defaultData []byte) error {
 	ensureConfig(filename, defaultData)
 

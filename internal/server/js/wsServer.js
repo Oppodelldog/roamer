@@ -11,6 +11,8 @@ const seqClearSequence = "SEQUENCE_CLEARSEQUENCE"
 const seqPause = "SEQUENCE_PAUSE"
 const seqAbort = "SEQUENCE_ABORT"
 const seqSave = "SEQUENCE_SAVE"
+const seqNew = "SEQUENCE_NEW"
+const seqDelete = "SEQUENCE_DELETE"
 const seqSaveResult = "SEQUENCE_SAVE_RESULT"
 const soundSettings = "SOUND_SETTINGS"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
@@ -18,6 +20,7 @@ const setSoundVolume = "SET_SOUND_VOLUME"
 const setMainSoundVolume = "SET_MAIN_SOUND_VOLUME"
 const pageNew = "PAGE_NEW"
 const pageDelete = "PAGE_DELETE"
+const pagesSave = "PAGES_SAVE"
 
 function connectToServer() {
     try {
@@ -116,16 +119,8 @@ function setMainVolume(volume) {
     wsSend({Type: setMainSoundVolume, Payload: {Value: volume}})
 }
 
-function saveSequence(pageId, sequenceIndex, sequence) {
-    wsSend({Type: seqSave, Payload: {PageId: pageId, SequenceIndex: sequenceIndex, Sequence: sequence}})
-}
-
 function querySoundSettings() {
     wsSend({Type: loadSoundSettings, Payload: {}})
-}
-
-function clearSequence() {
-    wsSend({Type: seqClearSequence, Payload: {}})
 }
 
 function setConfigSequence(pageId, sequenceIndex) {
@@ -140,6 +135,25 @@ function deletePage(pageId) {
     wsSend({Type: pageDelete, Payload: {PageId: pageId}})
 }
 
+function createNewSequence(pageId) {
+    wsSend({Type: seqNew, Payload: {PageId: pageId}})
+}
+
+function saveSequence(pageId, sequenceIndex, caption, sequence) {
+    wsSend({
+        Type: seqSave,
+        Payload: {PageId: pageId, SequenceIndex: sequenceIndex, Caption: caption, Sequence: sequence}
+    })
+}
+
+function clearSequence() {
+    wsSend({Type: seqClearSequence, Payload: {}})
+}
+
+function deleteSequence(pageId, sequenceIndex) {
+    wsSend({Type: seqDelete, Payload: {PageId: pageId, SequenceIndex: sequenceIndex}})
+}
+
 function pause() {
     wsSend({Type: seqPause, Payload: {}})
 }
@@ -150,4 +164,9 @@ function togglePause() {
 
 function abort() {
     wsSend({Type: seqAbort, Payload: {}})
+}
+
+
+function savePages(pages) {
+    wsSend({Type: pagesSave, Payload: {Pages: pages}})
 }

@@ -14,14 +14,16 @@ function initApp() {
             pageEditor: false,
             macroEditor: false,
             showSounds: false,
-            currentPage: null,
-            currentPageKey: null,
+            currentPageId: null,
             connection: {isConnected: false},
             soundSettings: {Sessions: [], MainSession: {}},
             soundLoading: false,
             deletePageClicks: {}
         },
         methods: {
+            currentPage: function () {
+                return this.config.Pages[this.currentPageId];
+            },
             newPage: function () {
                 createNewPage();
             },
@@ -33,12 +35,14 @@ function initApp() {
                 }
             },
             selectPage: function (pageKey) {
-                this.currentPage = this.config.Pages[pageKey]
-                this.currentPageKey = pageKey
+                this.currentPageId = pageKey
                 this.showPage = true
             },
+            newSequence: function () {
+                createNewSequence(this.currentPageId);
+            },
             startAction: function (actionIdx) {
-                setConfigSequence(this.currentPageKey, actionIdx)
+                setConfigSequence(this.currentPageId, actionIdx)
             },
             updateConfig: function (config) {
                 this.config = config
@@ -50,8 +54,7 @@ function initApp() {
             showPageSelection: function () {
                 this.pageEditor = false;
                 this.showPage = false
-                this.currentPage = null
-                this.currentPageKey = null
+                this.currentPageId = null
             },
             showSoundSettings: function () {
                 this.clearVerticalSlide()
@@ -78,7 +81,10 @@ function initApp() {
             showPagesEditor: function () {
                 this.clearVerticalSlide()
                 this.showVerticalSlide = !this.showVerticalSlide
-                this.pageEditor=this.showVerticalSlide;
+                this.pageEditor = this.showVerticalSlide;
+                if (!this.pageEditor) {
+                    savePages(this.config.Pages)
+                }
             },
             initPageDeleteStatus: function (key) {
                 Vue.set(this.deletePageClicks, key, 0)
@@ -93,16 +99,21 @@ function initApp() {
             showMacroEditor: function () {
                 this.clearVerticalSlide()
                 this.showVerticalSlide = !this.showVerticalSlide
-                this.macroEditor=this.showVerticalSlide;
+                this.macroEditor = this.showVerticalSlide;
             },
             clearVerticalSlide: function () {
                 this.showSounds = false;
                 this.macroEditor = false;
             },
             saveSequence: function (idx) {
-                const sequence = this.config.Pages[this.currentPageKey].Actions[idx].Sequence;
+                let action = this.config.Pages[this.currentPageId].Actions[idx];
+                const sequence = action.Sequence;
+                const caption = action.Caption;
 
-                saveSequence(this.currentPageKey, idx, sequence)
+                saveSequence(this.currentPageId, idx, caption, sequence)
+            },
+            deleteSequence: function (idx) {
+                deleteSequence(this.currentPageId, idx)
             },
             respondSaveSequence: function (pageId, sequenceIndex, sequence, success) {
                 this.config.Pages[pageId].Actions[sequenceIndex].Sequence = sequence;

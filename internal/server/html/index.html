@@ -44,11 +44,11 @@
                 </div>
 
                 <div id="roamer-page" class="slide" v-if="showPage">
-                    <h1>{{ currentPage.Title }}</h1>
+                    <h1>{{ currentPage().Title }}</h1>
                     <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
                     <div id="active-sequence" class="active-sequence">???</div>
                     <div id="actions" class="sequences">
-                        <button v-for="(action,idx) in currentPage.Actions" v-on:pointerup="startAction(idx)">
+                        <button v-for="(action,idx) in currentPage().Actions" v-on:pointerup="startAction(idx)">
                             <span class="caption">{{ action.Caption }}</span>
                         </button>
                     </div>
@@ -84,11 +84,13 @@
                 <h1>Edit Macro</h1>
 
                 <div id="actions-edit">
-                    <div class="sequence-container" v-for="(action,idx) in currentPage.Actions">
-                        <div class="caption">{{ action.Caption }}</div>
+                    <div class="sequence-container" v-for="(action,idx) in currentPage().Actions">
+                        <input type="text" class="caption" v-model:value="action.Caption"/>
                         <textarea v-model:value="action.Sequence"></textarea>
                         <button v-on:click="saveSequence(idx)" title="save">💾</button>
+                        <button v-on:click="deleteSequence(idx)" title="delete">❌</button>
                     </div>
+                    <button class="btNewMacro" v-on:pointerup="newSequence">New Macro</button>
                 </div>
             </div>
 

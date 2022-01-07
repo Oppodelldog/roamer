@@ -96,6 +96,21 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&dp)
 					dp.Response = c.ToClient()
 					message = dp
+				case macroNew:
+					var mn SequenceNew
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&mn)
+					mn.Response = c.ToClient()
+					message = mn
+				case macroDelete:
+					var sd SequenceDelete
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&sd)
+					sd.Response = c.ToClient()
+					message = sd
+				case pagesSave:
+					var ps PagesSave
+					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ps)
+					ps.Response = c.ToClient()
+					message = ps
 				default:
 					fmt.Printf("unknown message type: %v", envelope.Type)
 				}

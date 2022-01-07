@@ -77,6 +77,15 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			case PageDelete:
 				deletePage(v.PageId)
 				v.Response <- msgConfig(config.Roamer())
+			case SequenceNew:
+				createNewSequence(v.PageId)
+				v.Response <- msgConfig(config.Roamer())
+			case SequenceDelete:
+				deleteSequence(v.PageId, v.SequenceIndex)
+				v.Response <- msgConfig(config.Roamer())
+			case PagesSave:
+				savePages(v.Pages)
+				v.Response <- msgConfig(config.Roamer())
 			default:
 				fmt.Printf("unknown action: %T\n", action)
 			}
@@ -87,6 +96,27 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 				HasSequence: seq.HasSequence()})
 		}
 	}()
+}
+
+func savePages(pages config.Pages) {
+	err := config.SavePages(pages)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func deleteSequence(pageId string, index int) {
+	err := config.DeleteSequence(pageId, index)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func createNewSequence(pageId string) {
+	err := config.NewSequence(pageId)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func deletePage(id string) {
@@ -127,7 +157,7 @@ func saveSequence(v SequenceSave) {
 		return
 	}
 
-	err = config.SetSequence(v.PageId, v.SequenceIndex, v.Sequence)
+	err = config.SetSequence(v.PageId, v.SequenceIndex, v.Caption, v.Sequence)
 	if err != nil {
 		fmt.Println(err)
 		v.Response <- msgSequenceSaveResult(v.PageId, v.SequenceIndex, action.Sequence, false)

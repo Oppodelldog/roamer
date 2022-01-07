@@ -18,9 +18,19 @@ type (
 	}
 	SequencePause struct{}
 	SequenceAbort struct{}
-	SequenceSave  struct {
+	SequenceNew   struct {
+		PageId   string
+		Response chan<- []byte
+	}
+	SequenceDelete struct {
 		PageId        string
 		SequenceIndex int
+		Response      chan<- []byte
+	}
+	SequenceSave struct {
+		PageId        string
+		SequenceIndex int
+		Caption       string
 		Sequence      string
 		Response      chan<- []byte
 	}
@@ -57,6 +67,10 @@ type (
 		PageId   string
 		Response chan<- []byte
 	}
+	PagesSave struct {
+		Pages    config.Pages
+		Response chan<- []byte
+	}
 )
 
 const (
@@ -66,6 +80,8 @@ const (
 	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
 	seqPause             = "SEQUENCE_PAUSE"
 	seqAbort             = "SEQUENCE_ABORT"
+	macroNew             = "SEQUENCE_NEW"
+	macroDelete          = "SEQUENCE_DELETE"
 	seqSave              = "SEQUENCE_SAVE"
 	seqSaveResult        = "SEQUENCE_SAVE_RESULT"
 	soundSettings        = "SOUND_SETTINGS"
@@ -74,6 +90,7 @@ const (
 	setMainSoundVolume   = "SET_MAIN_SOUND_VOLUME"
 	pageNew              = "PAGE_NEW"
 	pageDelete           = "PAGE_DELETE"
+	pagesSave            = "PAGES_SAVE"
 )
 
 func msgState(s SequenceState) []byte {

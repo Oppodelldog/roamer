@@ -14,8 +14,6 @@ settings.
 * Some of those tasks require special preparation
 * Ensure to execute any of the following actions only with windows focused on the appropriate game.
 
-## Screens
-
 ![Roamer - Overview](Galaxy-J7-1.png)
 ![Roamer - Macro List](Galaxy-J7-2.png)
 ![Roamer - Sound Settings](Galaxy-J7.png)
