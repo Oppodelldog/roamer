@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/Oppodelldog/roamer/internal/audioctl"
 
@@ -14,6 +15,22 @@ import (
 )
 
 type Action interface{}
+
+var actionTypesById = map[string]func() Responder{
+	seqClearSequence:     func() Responder { return new(SequenceClearSequence) },
+	seqSetConfigSequence: func() Responder { return new(SequenceSetConfigSequence) },
+	seqPause:             func() Responder { return new(SequencePause) },
+	seqAbort:             func() Responder { return new(SequenceAbort) },
+	seqSave:              func() Responder { return new(SequenceSave) },
+	loadSoundSettings:    func() Responder { return new(LoadSoundSettings) },
+	setSoundVolume:       func() Responder { return new(SetSoundVolume) },
+	setMainSoundVolume:   func() Responder { return new(SetMainSoundVolume) },
+	pageNew:              func() Responder { return new(PageNew) },
+	pageDelete:           func() Responder { return new(PageDelete) },
+	macroNew:             func() Responder { return new(SequenceNew) },
+	macroDelete:          func() Responder { return new(SequenceDelete) },
+	pagesSave:            func() Responder { return new(PagesSave) },
+}
 
 func ClientSession(c *ws.Client, actions chan Action) {
 	var ctx, cancel = context.WithCancel(context.Background())
@@ -45,84 +62,33 @@ func ClientSession(c *ws.Client, actions chan Action) {
 					break
 				}
 
-				var message interface{}
-
-				switch envelope.Type {
-				case seqState:
-					var state SequenceState
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&state)
-					message = state
-				case seqClearSequence:
-					var clearSequence SequenceClearSequence
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&clearSequence)
-					message = clearSequence
-				case seqSetConfigSequence:
-					var setConfigSequence SequenceSetConfigSequence
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&setConfigSequence)
-					message = setConfigSequence
-				case seqPause:
-					var pause SequencePause
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&pause)
-					message = pause
-				case seqAbort:
-					var abort SequenceAbort
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&abort)
-					message = abort
-				case seqSave:
-					var save SequenceSave
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&save)
-					save.Response = c.ToClient()
-					message = save
-				case loadSoundSettings:
-					var lss LoadSoundSettings
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&lss)
-					lss.Response = c.ToClient()
-					message = lss
-				case setSoundVolume:
-					var ssv SetSoundVolume
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
-					message = ssv
-				case setMainSoundVolume:
-					var ssv SetMainSoundVolume
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ssv)
-					message = ssv
-				case pageNew:
-					var np PageNew
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&np)
-					np.Response = c.ToClient()
-					message = np
-				case pageDelete:
-					var dp PageDelete
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&dp)
-					dp.Response = c.ToClient()
-					message = dp
-				case macroNew:
-					var mn SequenceNew
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&mn)
-					mn.Response = c.ToClient()
-					message = mn
-				case macroDelete:
-					var sd SequenceDelete
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&sd)
-					sd.Response = c.ToClient()
-					message = sd
-				case pagesSave:
-					var ps PagesSave
-					err = json.NewDecoder(bytes.NewBuffer(envelope.Payload)).Decode(&ps)
-					ps.Response = c.ToClient()
-					message = ps
-				default:
+				if newType, ok := actionTypesById[envelope.Type]; ok {
+					message, errDecode := decode(newType(), envelope.Payload, c.ToClient())
+					if errDecode != nil {
+						fmt.Printf("error decoding client message '%T': %v\n", message, errDecode)
+						break
+					}
+					actions <- message
+				} else {
 					fmt.Printf("unknown message type: %v", envelope.Type)
 				}
-
-				if err != nil {
-					fmt.Printf("error decoding client message '%T': %v", message, err)
-					break
-				}
-				actions <- message
 			}
 		}
 	}()
+}
+
+func decode(t interface{}, payload json.RawMessage, toClient chan<- []byte) (interface{}, error) {
+	err := json.NewDecoder(bytes.NewBuffer(payload)).Decode(&t)
+
+	if t, ok := t.(Responder); ok {
+		t.SetRespondChannel(toClient)
+	} else {
+		panic("target type of decoding must be a Responder")
+	}
+
+	t = reflect.ValueOf(t).Elem().Interface()
+
+	return t, err
 }
 
 func getSoundSettings() SoundSettings {

@@ -4,8 +4,13 @@ function wsSend(msg) {
 
 let connected = false;
 
-const roamerConfig = "CONFIG"
+// server -> client
 const seqState = "SEQUENCE_STATE"
+const seqSaveResult = "SEQUENCE_SAVE_RESULT"
+const soundSettings = "SOUND_SETTINGS"
+const roamerConfig = "CONFIG"
+
+// client -> server
 const seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
 const seqClearSequence = "SEQUENCE_CLEARSEQUENCE"
 const seqPause = "SEQUENCE_PAUSE"
@@ -13,8 +18,6 @@ const seqAbort = "SEQUENCE_ABORT"
 const seqSave = "SEQUENCE_SAVE"
 const seqNew = "SEQUENCE_NEW"
 const seqDelete = "SEQUENCE_DELETE"
-const seqSaveResult = "SEQUENCE_SAVE_RESULT"
-const soundSettings = "SOUND_SETTINGS"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
 const setSoundVolume = "SET_SOUND_VOLUME"
 const setMainSoundVolume = "SET_MAIN_SOUND_VOLUME"
