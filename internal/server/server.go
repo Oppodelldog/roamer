@@ -34,11 +34,15 @@ const port = 10982
 
 func Start() {
 	var (
-		actions = make(chan action.Action)
-		hub     = ws.StartHub(newSessionFunc(actions))
+		actions          = make(chan action.Action)
+		sequencerActions = make(chan action.Action)
+		soundActions     = make(chan action.Action)
+		hub              = ws.StartHub(newSessionFunc(actions, sequencerActions, soundActions))
 	)
 
-	action.Worker(actions, hub.Broadcast())
+	action.StartConfigWorker(actions, hub.Broadcast())
+	action.StartSequencerWorker(sequencerActions, hub.Broadcast())
+	action.StartSoundSettingsWorker(soundActions, hub.Broadcast())
 
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
 	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(contentFS()))), http.MethodGet))
@@ -67,9 +71,9 @@ func Start() {
 	}
 }
 
-func newSessionFunc(actions chan action.Action) ws.NewSessionFunc {
+func newSessionFunc(actions, sequencerActions, soundActions chan action.Action) ws.NewSessionFunc {
 	return func(client *ws.Client) {
-		action.ClientSession(client, actions)
+		action.ClientSession(client, actions, sequencerActions, soundActions)
 	}
 }
 

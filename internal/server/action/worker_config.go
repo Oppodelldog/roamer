@@ -4,79 +4,18 @@ import (
 	"fmt"
 
 	"github.com/Oppodelldog/roamer/internal/config"
-	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/script"
-	"github.com/Oppodelldog/roamer/internal/sequencer"
 )
 
-func Worker(actions <-chan Action, broadcast chan<- []byte) {
-	var (
-		sequenceCaption = ""
-		pageTitle       = ""
-		seq             = sequencer.New(1)
-	)
-
-	seq.BeforeSequence(func() {
-		key.ResetPressed()
-	})
-
+func StartConfigWorker(actions <-chan Action, _ chan<- []byte) {
 	go func() {
 		for action := range actions {
 			switch v := action.(type) {
-			case SequenceClearSequence:
-				sequenceCaption = ""
-				pageTitle = ""
-			case SequenceSetConfigSequence:
-				page, ok := config.RoamerPage(v.PageId)
-				if !ok {
-					fmt.Printf("roamer-page '%s' not found", v.PageId)
-					continue
-				}
-
-				if len(page.Actions) <= v.SequenceIndex {
-					fmt.Printf("roamer-page '%s' not found", v.PageId)
-					continue
-				}
-
-				var action = page.Actions[v.SequenceIndex]
-
-				elems, err := script.Parse(action.Sequence)
-				if err != nil {
-					fmt.Println(err)
-					continue
-				}
-
-				fmt.Println(script.Write(elems))
-				seq.EnqueueSequence(func() []sequencer.Elem {
-					return elems
-				})
-
-				sequenceCaption = action.Caption
-				pageTitle = page.Title
-			case SequencePause:
-				err := seq.Pause()
-				if err != nil {
-					fmt.Println(err)
-					continue
-				}
-			case SequenceAbort:
-				seq.Abort()
-
-				sequenceCaption = ""
-				pageTitle = ""
-			case SequenceSave:
-				saveSequence(v)
-				continue
-			case LoadSoundSettings:
-				v.Response <- msgSoundSettings(getSoundSettings())
-				continue
-			case SetSoundVolume:
-				setSoundVol(v.Id, v.Value)
-			case SetMainSoundVolume:
-				setMainSoundVol(v.Value)
-				continue
 			case PageNew:
 				createNewPage()
+				v.Response <- msgConfig(config.Roamer())
+			case PagesSave:
+				savePages(v.Pages)
 				v.Response <- msgConfig(config.Roamer())
 			case PageDelete:
 				deletePage(v.PageId)
@@ -84,21 +23,14 @@ func Worker(actions <-chan Action, broadcast chan<- []byte) {
 			case SequenceNew:
 				createNewSequence(v.PageId)
 				v.Response <- msgConfig(config.Roamer())
+			case SequenceSave:
+				saveSequence(v)
 			case SequenceDelete:
 				deleteSequence(v.PageId, v.SequenceIndex)
 				v.Response <- msgConfig(config.Roamer())
-			case PagesSave:
-				savePages(v.Pages)
-				v.Response <- msgConfig(config.Roamer())
 			default:
-				fmt.Printf("unknown action: %T\n", action)
+				fmt.Printf("unknown worker action: %T\n", action)
 			}
-
-			broadcast <- msgState(SequenceState{
-				PageTitle:   pageTitle,
-				Caption:     sequenceCaption,
-				IsPaused:    seq.IsPaused(),
-				HasSequence: seq.HasSequence()})
 		}
 	}()
 }
