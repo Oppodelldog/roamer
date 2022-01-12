@@ -71,7 +71,7 @@
                     <div class="range-slider" v-for="(session,idx) in soundSettings.Sessions">
                         <span>{{ session.Name }}</span>
                         <input class="input-range" orient="vertical" type="range" step="0.01" min="0" max="1"
-                               v-on:change="changeSoundSessionValue()"
+                               v-on:change="changeSoundSessionValue(idx)"
                                v-model:value="session.Value">
                     </div>
                 </div>
