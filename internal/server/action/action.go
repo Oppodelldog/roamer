@@ -31,7 +31,7 @@ type (
 	SequenceState struct {
 		PageTitle   string
 		Caption     string
-		IsPaused    bool
+		IsPlaying   bool
 		HasSequence bool
 	}
 	SoundSession struct {
@@ -51,7 +51,7 @@ type (
 		SetRespondChannel(chan<- []byte)
 	}
 	BaseAction struct {
-		Response chan<- []byte
+		Response chan<- []byte `json:"-"`
 	}
 	SequenceClearSequence struct {
 		BaseAction

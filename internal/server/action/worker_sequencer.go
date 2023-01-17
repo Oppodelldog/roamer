@@ -10,17 +10,26 @@ import (
 type SequencerAdapter interface {
 	Pause() error
 	Abort()
-	IsPaused() bool
+	IsPlaying() bool
 	HasSequence() bool
 	EnqueueSequence(func() []sequencer.Elem)
 }
 
 func StartSequencerWorker(actions <-chan Action, broadcast chan<- []byte) {
 	var (
-		seq             SequencerAdapter = NewSequencerAdapter()
-		sequenceCaption                  = ""
-		pageTitle                        = ""
+		sequenceCaption = ""
+		pageTitle       = ""
 	)
+
+	afterSequence := func(s *sequencer.Sequencer) {
+		broadcast <- msgState(SequenceState{
+			PageTitle:   pageTitle,
+			Caption:     sequenceCaption,
+			IsPlaying:   s.IsPlaying(),
+			HasSequence: s.HasSequence()})
+	}
+
+	var seq SequencerAdapter = NewSequencerAdapter(afterSequence)
 
 	go func() {
 		for action := range actions {
@@ -74,7 +83,7 @@ func StartSequencerWorker(actions <-chan Action, broadcast chan<- []byte) {
 			broadcast <- msgState(SequenceState{
 				PageTitle:   pageTitle,
 				Caption:     sequenceCaption,
-				IsPaused:    seq.IsPaused(),
+				IsPlaying:   seq.IsPlaying(),
 				HasSequence: seq.HasSequence()})
 		}
 	}()

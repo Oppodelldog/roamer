@@ -11,7 +11,7 @@ body {
     padding: 0;
 }
 
-#page-selection * + *,
+#page-selection > * + *,
 .sequences * + * {
     margin-top: 20px;
 }
@@ -116,7 +116,9 @@ button::-moz-focus-inner {
 
 .buttonlist {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
 }
 
 .attributions {

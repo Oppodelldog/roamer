@@ -37,8 +37,7 @@ func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
 		return nil, err
 	}
 
-	sep = t.Consume()
-	if sep.Type != argumentSeparator {
+	if sepErr := consumeSeparators(t); sepErr != nil {
 		return nil, fmt.Errorf("%w after arg1 in repeat, but was: %s(='%s')", ErrExpectedArgumentSeparator, sep.Type, sep.Value)
 	}
 
@@ -64,13 +63,12 @@ func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
 }
 
 func parseLiteral(t *TokenStream) (Token, error) {
-	var (
-		separator = t.Consume()
-		lit       = t.Consume()
-	)
 
-	if separator.Type != argumentSeparator {
-		return Token{}, fmt.Errorf("%w ' ', but got '%s'", ErrExpectedArgumentSeparator, separator.Type)
+	var errSeparators = consumeSeparators(t)
+	var lit = t.Consume()
+
+	if errSeparators != nil {
+		return Token{}, errSeparators
 	}
 
 	if lit.Type != literal {
@@ -78,6 +76,21 @@ func parseLiteral(t *TokenStream) (Token, error) {
 	}
 
 	return lit, nil
+}
+
+func consumeSeparators(t *TokenStream) error {
+	var sep = t.Consume()
+
+	if sep.Type != argumentSeparator {
+		return fmt.Errorf("%w ' ', but got '%s'", ErrExpectedArgumentSeparator, sep.Type)
+
+	}
+
+	for !t.isEOF() && t.Peek().Type == argumentSeparator {
+		t.Consume()
+	}
+
+	return nil
 }
 
 func parseWait(v sequencer.Wait, t *TokenStream) (sequencer.Elem, error) {

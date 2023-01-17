@@ -24,8 +24,8 @@
             <div class="top-status-label">Currently playing</div>
             <div class="top-status-playback"><span> {{ playbackState.PageTitle}}</span> /<span> {{ playbackState.Caption}}</span></div>
             <div class="top-controls">
-                <div class="button" v-if="!playbackState.IsPaused" v-on:pointerup="togglePause()">⏸</div>
-                <div class="button" v-if="playbackState.IsPaused" v-on:pointerup="togglePause()">▶︎</div>
+                <div class="button" v-if="playbackState.IsPlaying" v-on:pointerup="togglePause()">⏸</div>
+                <div class="button" v-if="!playbackState.IsPlaying" v-on:pointerup="togglePause()">▶︎</div>
                 <div class="button" v-on:pointerup="abort()">⏏️</div>
             </div>
         </div>

@@ -22,7 +22,7 @@ function initApp() {
             playbackState: {
                 Caption: "",
                 HasSequence: false,
-                IsPaused: false,
+                IsPlaying: false,
             }
         },
         methods: {

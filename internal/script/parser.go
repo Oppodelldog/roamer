@@ -41,6 +41,12 @@ func parse(t *TokenStream) ([]sequencer.Elem, error) {
 			return seq, nil
 		}
 
+		if t.Peek().Type == argumentSeparator {
+			t.Consume()
+
+			continue
+		}
+
 		if t.Pos > 0 && t.Peek().Type == commandSeparator {
 			t.Consume()
 

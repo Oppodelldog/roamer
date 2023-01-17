@@ -2,6 +2,12 @@ package sequencer
 
 import "time"
 
+type ElemFunc func() error
+
+func (e ElemFunc) Do() error {
+	return e()
+}
+
 // Elem is part of a sequence of elements. As processing sequencer calls the Do method.
 type Elem interface {
 	Do() error

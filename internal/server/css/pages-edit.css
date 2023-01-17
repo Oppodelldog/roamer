@@ -1,4 +1,7 @@
-.actions-edit-pages {
+#actions-edit,
+#actions-edit-pages {
+    overflow-y: scroll;
+    height: 100%;
 }
 
 .actions-edit-page {
