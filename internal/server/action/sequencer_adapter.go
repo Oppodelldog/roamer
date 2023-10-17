@@ -6,31 +6,31 @@ import (
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 )
 
-type defaultSequencerAdapter struct {
+type DefaultSequencerAdapter struct {
 	seq *sequencer.Sequencer
 }
 
-func (d *defaultSequencerAdapter) EnqueueSequence(f func() []sequencer.Elem) {
+func (d *DefaultSequencerAdapter) EnqueueSequence(f func() []sequencer.Elem) {
 	d.seq.EnqueueSequence(f)
 }
 
-func (d *defaultSequencerAdapter) IsPlaying() bool {
+func (d *DefaultSequencerAdapter) IsPlaying() bool {
 	return d.seq.IsPlaying()
 }
 
-func (d *defaultSequencerAdapter) HasSequence() bool {
+func (d *DefaultSequencerAdapter) HasSequence() bool {
 	return d.seq.HasSequence()
 }
 
-func (d *defaultSequencerAdapter) Pause() error {
+func (d *DefaultSequencerAdapter) Pause() error {
 	return d.seq.Pause()
 }
 
-func (d *defaultSequencerAdapter) Abort() {
+func (d *DefaultSequencerAdapter) Abort() {
 	d.seq.Abort()
 }
 
-func NewSequencerAdapter(afterSequence func(s *sequencer.Sequencer)) *defaultSequencerAdapter {
+func NewSequencerAdapter(afterSequence func(s *sequencer.Sequencer)) *DefaultSequencerAdapter {
 	var seq = sequencer.New(context.Background(), 1)
 
 	seq.BeforeSequence(func(s *sequencer.Sequencer) {
@@ -40,5 +40,5 @@ func NewSequencerAdapter(afterSequence func(s *sequencer.Sequencer)) *defaultSeq
 		afterSequence(s)
 	})
 
-	return &defaultSequencerAdapter{seq: seq}
+	return &DefaultSequencerAdapter{seq: seq}
 }

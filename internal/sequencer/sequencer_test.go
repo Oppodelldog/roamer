@@ -52,7 +52,9 @@ func TestSequencer_AfterSequence(t *testing.T) {
 		wg          = sync.WaitGroup{}
 		gotCalled   int
 	)
+
 	defer cancel()
+
 	wg.Add(1)
 
 	s.AfterSequence(func(s *sequencer.Sequencer) {
@@ -163,6 +165,7 @@ func TestSequencer_IsPlaying(t *testing.T) {
 		want = true
 		got  = s.IsPlaying()
 	)
+
 	if got != want {
 		t.Errorf("want: %v, got: %v", want, got)
 	}
@@ -199,11 +202,15 @@ func TestSequencer_WaitElement(t *testing.T) {
 	})
 
 	waitPlayEnd.Wait()
-	min := waitTime
-	max := waitTime * 2 // roughly measured
-	if playDuration < min || playDuration > max {
-		t.Fatalf("expected play duration between %v and %v, but it was %v", min, max, playDuration)
+
+	minWait := waitTime
+	maxWait := waitTime * 2 // roughly measured
+
+	if playDuration < minWait ||
+		playDuration > maxWait {
+		t.Fatalf("expected play duration between %v and %v, but it was %v", minWait, maxWait, playDuration)
 	}
+
 	cancel()
 }
 
@@ -236,15 +243,19 @@ func TestSequencer_Pause(t *testing.T) {
 	})
 
 	<-firstElem
+
 	err := s.Pause()
+
 	if err != nil {
 		t.Fatalf("did not expect Pause (1) to return an error, but got: %v", err)
 	}
+
 	// calling pause a second time will return an error, sequencer still is paused
 	err = s.Pause()
 	if !errors.Is(err, sequencer.ErrPauseAlreadyInProgress) {
 		t.Fatalf("did expect Pause to return %v, but got: %v", sequencer.ErrPauseAlreadyInProgress, err)
 	}
+
 	close(waitForPause)
 
 	var waitTime = time.NewTimer(time.Millisecond * 100)

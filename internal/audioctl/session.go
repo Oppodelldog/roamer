@@ -1,11 +1,13 @@
 package audioctl
 
 import (
+	"golang.org/x/text/language"
 	"path/filepath"
 	"strings"
 
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
+	"golang.org/x/text/cases"
 )
 
 type Session struct {
@@ -40,7 +42,7 @@ func (s *Session) GetDisplayNameEnhanced() (string, error) {
 		v = strings.TrimSuffix(v, filepath.Ext(v))
 
 		if len(v) > 0 {
-			v = strings.Title(v)
+			v = cases.Title(language.Und, cases.NoLower).String(v)
 		}
 
 		return v, nil

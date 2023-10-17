@@ -98,8 +98,8 @@ func ClientSession(c *ws.Client, actions, sequencerActions, soundActions chan Ac
 func decode(t interface{}, payload json.RawMessage, toClient chan<- []byte) (interface{}, error) {
 	err := json.NewDecoder(bytes.NewBuffer(payload)).Decode(&t)
 
-	if t, ok := t.(Responder); ok {
-		t.SetRespondChannel(toClient)
+	if r, ok := t.(Responder); ok {
+		r.SetRespondChannel(toClient)
 	} else {
 		panic(fmt.Sprintf("target type of decoding must be a Responder, but it was %T", t))
 	}

@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -108,7 +107,7 @@ func ensureConfig(filename string, defaultData []byte) {
 
 	configFilePath := getConfigFilePath(filename)
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		err := ioutil.WriteFile(configFilePath, defaultData, filePerm)
+		err := os.WriteFile(configFilePath, defaultData, filePerm)
 		if err != nil {
 			fmt.Printf("cannot write default '%s': %v", filename, err)
 		}

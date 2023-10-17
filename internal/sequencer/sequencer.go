@@ -28,7 +28,6 @@ type Sequencer struct {
 	beforeSequence func(s *Sequencer)
 	afterSequence  func(s *Sequencer)
 	debug          bool
-	cancel         context.CancelFunc
 	seqWait        chan struct{}
 }
 
@@ -42,7 +41,9 @@ func New(ctx context.Context, queueSize int) *Sequencer {
 		state:    Idle,
 		debug:    false,
 	}
+
 	go s.playSequence(ctx)
+
 	go s.playElement(ctx)
 
 	return s
@@ -100,7 +101,9 @@ func (s *Sequencer) Pause() error {
 
 func (s *Sequencer) waitForResume(ctx context.Context) {
 	fmt.Println("pausing")
+
 	s.state = Paused
+
 	select {
 	case <-ctx.Done():
 		fmt.Println("stopped waiting for resume")
@@ -131,6 +134,7 @@ waitForNext:
 loop:
 	newSeq := newSequence()
 	fmt.Printf("play sequence length: %v\n", len(newSeq))
+
 	s.state = Playing
 
 	s.seqWait = make(chan struct{})
@@ -140,8 +144,10 @@ loop:
 			fmt.Println("is not playing sequence")
 			goto waitForNext
 		}
+
 		<-s.seqWait
 	}
+
 	close(s.seqWait)
 
 	if s.afterSequence != nil {
@@ -169,6 +175,7 @@ loop:
 	}
 
 	fmt.Println("wait for next sequence")
+
 	goto waitForNext
 }
 
