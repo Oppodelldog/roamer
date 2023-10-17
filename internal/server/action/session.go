@@ -36,7 +36,7 @@ var soundSettingActions = map[string]func() Responder{
 	setMainSoundVolume: func() Responder { return new(SetMainSoundVolume) },
 }
 
-func ClientSession(c *ws.Client, actions, sequencerActions, soundActions chan Action) {
+func ClientSession(c *ws.Client, actions, sequencerActions, soundActions, loggerActions chan Action) {
 	var ctx, cancel = context.WithCancel(context.Background())
 	c.CancelSession = cancel
 

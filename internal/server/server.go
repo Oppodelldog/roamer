@@ -37,12 +37,14 @@ func Start() {
 		actions          = make(chan action.Action)
 		sequencerActions = make(chan action.Action)
 		soundActions     = make(chan action.Action)
-		hub              = ws.StartHub(newSessionFunc(actions, sequencerActions, soundActions))
+		loggerActions    = make(chan action.Action)
+		hub              = ws.StartHub(newSessionFunc(actions, sequencerActions, soundActions, loggerActions))
 	)
 
 	action.StartConfigWorker(actions, hub.Broadcast())
 	action.StartSequencerWorker(sequencerActions, hub.Broadcast())
 	action.StartSoundSettingsWorker(soundActions, hub.Broadcast())
+	action.StartLoggerWorker(loggerActions, hub.Broadcast())
 
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
 	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(contentFS()))), http.MethodGet))
@@ -65,15 +67,15 @@ func Start() {
 	log.Printf("Starting Roamer")
 	log.Printf("http://127.0.0.1:%v", port)
 
-	err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	err := http.ListenAndServe(":"+strconv.Itoa(port), nil) //nolint:gosec
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("error running http server: %v", err)
 	}
 }
 
-func newSessionFunc(actions, sequencerActions, soundActions chan action.Action) ws.NewSessionFunc {
+func newSessionFunc(actions, sequencerActions, soundActions, loggerActions chan action.Action) ws.NewSessionFunc {
 	return func(client *ws.Client) {
-		action.ClientSession(client, actions, sequencerActions, soundActions)
+		action.ClientSession(client, actions, sequencerActions, soundActions, loggerActions)
 	}
 }
 

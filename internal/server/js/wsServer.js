@@ -8,6 +8,7 @@ let connected = false;
 const seqState = "SEQUENCE_STATE"
 const seqSaveResult = "SEQUENCE_SAVE_RESULT"
 const soundSettings = "SOUND_SETTINGS"
+const logMessage = "LOG_MESSAGE"
 const roamerConfig = "CONFIG"
 
 // client -> server
@@ -47,6 +48,9 @@ function connectToServer() {
                         break;
                     case soundSettings:
                         updateSoundSettings(data.Payload)
+                        break;
+                    case logMessage:
+                        appendLogMessage(data.Payload)
                         break;
                     case seqState:
                         updateState(data.Payload)

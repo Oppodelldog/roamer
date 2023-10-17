@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Oppodelldog/roamer/internal/logger"
 	"time"
 )
 
@@ -75,9 +76,9 @@ func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 	var newSequence = newSeq
 	select {
 	case s.sequence <- newSequence:
-		fmt.Println("sequence enqueued")
+		logger.Println("sequence enqueued")
 	default:
-		fmt.Println("dropped waiting sequence")
+		logger.Println("dropped waiting sequence")
 		<-s.sequence
 		s.sequence <- newSequence
 	}
@@ -100,17 +101,17 @@ func (s *Sequencer) Pause() error {
 }
 
 func (s *Sequencer) waitForResume(ctx context.Context) {
-	fmt.Println("pausing")
+	logger.Println("pausing")
 
 	s.state = Paused
 
 	select {
 	case <-ctx.Done():
-		fmt.Println("stopped waiting for resume")
+		logger.Println("stopped waiting for resume")
 		return
 	case <-s.pause:
 	}
-	fmt.Println("resuming")
+	logger.Println("resuming")
 }
 
 func (s *Sequencer) playSequence(ctx context.Context) {
@@ -120,7 +121,7 @@ waitForNext:
 
 	select {
 	case <-ctx.Done():
-		fmt.Println("stopped sequence queue")
+		logger.Println("stopped sequence queue")
 		return
 	case newSequence = <-s.sequence:
 	}
@@ -141,7 +142,7 @@ loop:
 	for _, e := range newSeq {
 		s.seq <- e
 		if s.state == Idle {
-			fmt.Println("is not playing sequence")
+			logger.Println("is not playing sequence")
 			goto waitForNext
 		}
 
@@ -156,25 +157,25 @@ loop:
 
 	select {
 	case <-ctx.Done():
-		fmt.Println("stopped sequence queue")
+		logger.Println("stopped sequence queue")
 		return
 	case newSequence = <-s.sequence:
-		fmt.Println("got a new sequence")
+		logger.Println("got a new sequence")
 
 		goto loop
 	default:
-		fmt.Println("got no new sequence")
+		logger.Println("got no new sequence")
 
 		var newSeq = newSequence()
 		if len(newSeq) > 0 {
 			if _, isLoop := newSeq[len(newSeq)-1].(Loop); isLoop {
-				fmt.Println("looping sequence")
+				logger.Println("looping sequence")
 				goto loop
 			}
 		}
 	}
 
-	fmt.Println("wait for next sequence")
+	logger.Println("wait for next sequence")
 
 	goto waitForNext
 }
@@ -183,18 +184,18 @@ func (s *Sequencer) playElement(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("stopped element playback")
+			logger.Println("stopped element playback")
 			return
 		case <-s.pause:
 			s.waitForResume(ctx)
 		case el := <-s.seq:
 			switch v := el.(type) {
 			case Wait:
-				fmt.Println("wait ", v.Duration)
+				logger.Println("wait ", v.Duration)
 				s.sleep(ctx, v.Duration)
 			case Loop:
 			case NoOperation:
-				fmt.Println("no operation")
+				logger.Println("no operation")
 			default:
 				if s.debug {
 					fmt.Printf("%T\n", el)
@@ -214,7 +215,7 @@ func (s *Sequencer) sleep(ctx context.Context, d time.Duration) {
 	t := time.NewTimer(d)
 	select {
 	case <-t.C:
-		fmt.Println("the waiting had an end")
+		logger.Println("the waiting had an end")
 	case <-s.pause:
 		s.waitForResume(ctx)
 

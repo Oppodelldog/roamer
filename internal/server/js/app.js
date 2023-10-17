@@ -23,7 +23,8 @@ function initApp() {
                 Caption: "",
                 HasSequence: false,
                 IsPlaying: false,
-            }
+            },
+            logMessages: []
         },
         methods: {
             currentPage: function () {
@@ -82,6 +83,12 @@ function initApp() {
             updateSoundSettings: function (soundSettings) {
                 this.soundSettings = soundSettings;
                 this.soundLoading = false;
+            },
+            appendLogMessage: function (message) {
+                this.logMessages.push(message)
+                if (this.logMessages.length > 50) {
+                    this.logMessages.shift()
+                }
             },
             showPagesEditor: function () {
                 this.clearVerticalSlide()
@@ -147,6 +154,10 @@ function updateConnectionStatus(isConnected) {
 
 function updateSoundSettings(soundSettings) {
     app.updateSoundSettings(soundSettings)
+}
+
+function appendLogMessage(message) {
+    app.appendLogMessage(message)
 }
 
 function respondSaveSequence(pageId, sequenceIndex, sequence, success) {

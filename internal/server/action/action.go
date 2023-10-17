@@ -9,6 +9,7 @@ const (
 	seqState      = "SEQUENCE_STATE"
 	seqSaveResult = "SEQUENCE_SAVE_RESULT"
 	soundSettings = "SOUND_SETTINGS"
+	logMessage    = "LOG_MESSAGE"
 	roamerConfig  = "CONFIG"
 
 	// client -> server
@@ -129,6 +130,10 @@ func msgConfig(config config.Config) []byte {
 
 func msgSoundSettings(settings SoundSettings) []byte {
 	return jsonEnvelope(soundSettings, settings)
+}
+
+func msgLogMessage(message string) []byte {
+	return jsonEnvelope(logMessage, message)
 }
 
 func msgSequenceSaveResult(pageId string, sequenceIndex int, sequence string, success bool) []byte {

@@ -54,6 +54,9 @@
                 </div>
 
                 <div id="roamer-page" class="slide" v-if="showPage">
+                    <div class="logoutput">
+                        <div v-for="logMessage in logMessages">{{ logMessage }}</div>
+                    </div>
                     <h1>{{ currentPage().Title }}</h1>
                     <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
                     <div id="actions" class="sequences">
