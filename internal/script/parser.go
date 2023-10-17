@@ -122,6 +122,8 @@ func parseArguments(elem sequencer.Elem, t *TokenStream) (sequencer.Elem, error)
 		return v, err
 	case sequencer.Loop:
 		return v, err
+	case sequencer.NoOperation:
+		return v, err
 	}
 
 	return elem, fmt.Errorf("%w %T", ErrUnknownCommand, elem)

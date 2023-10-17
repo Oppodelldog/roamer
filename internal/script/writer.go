@@ -71,6 +71,8 @@ func writeElement(c sequencer.Elem, t *TokenStream) {
 		writeRightMouseButtonUp(t, v)
 	case sequencer.Loop:
 		writeLoop(t, v)
+	case sequencer.NoOperation:
+		writeNoOperation(t, v)
 	default:
 		panic(fmt.Sprintf("unknown element '%T'", c))
 	}
@@ -148,5 +150,9 @@ func writeRightMouseButtonUp(t *TokenStream, v general.RightMouseButtonUp) {
 }
 
 func writeLoop(t *TokenStream, v sequencer.Loop) {
+	t.Tokens = append(t.Tokens, Token{Type: literal, Value: commandByType(v)})
+}
+
+func writeNoOperation(t *TokenStream, v sequencer.NoOperation) {
 	t.Tokens = append(t.Tokens, Token{Type: literal, Value: commandByType(v)})
 }

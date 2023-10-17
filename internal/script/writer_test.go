@@ -19,11 +19,12 @@ func TestWrite(t *testing.T) {
 		general.SetMousePos{Pos: mouse.Pos{X: 3, Y: 4}},
 		general.KeyUp{Key: keyCodeStringMap["TAB"]},
 		general.KeyDown{Key: keyCodeStringMap["ESC"]},
+		sequencer.NoOperation{},
 	}
 
 	var (
 		got  = Write(seq)
-		want = "MM 1 2;MP;RD;RU;LD;LU;SM 3 4;KU TAB;KD ESC"
+		want = "MM 1 2;MP;RD;RU;LD;LU;SM 3 4;KU TAB;KD ESC;NOP"
 	)
 
 	if got != want {

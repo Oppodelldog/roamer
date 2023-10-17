@@ -20,8 +20,9 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 
 	var tests = map[string]testData{
 		"all commands": {
-			script: "W 3ms;L;R 3 [W 4s];KD A;KU B;LD;LU;RD;RU;MM 10 20;SM 30 40;MP;W 1.2s;SM -1 -2",
+			script: "NOP W 3ms;L;R 3 [W 4s];KD A;KU B;LD;LU;RD;RU;MM 10 20;SM 30 40;MP;W 1.2s;SM -1 -2",
 			want: []sequencer.Elem{
+				sequencer.NoOperation{},
 				sequencer.Wait{Duration: time.Millisecond * 3},
 				sequencer.Loop{},
 				sequencer.Wait{Duration: 4 * time.Second},

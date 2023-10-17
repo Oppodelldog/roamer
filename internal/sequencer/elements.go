@@ -30,3 +30,8 @@ type Repeat struct {
 	Times    int
 	Sequence []Elem
 }
+
+// NoOperation does nothing.
+type NoOperation struct {
+	Elem
+}

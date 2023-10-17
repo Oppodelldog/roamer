@@ -2,6 +2,20 @@
   "Title": "Roamer",
   "WelcomeText": "where would you like to roam around?",
   "Pages": {
+    "test": {
+      "TitleShort": "Test",
+      "Title": "Test config",
+      "Columns": [
+        1
+      ],
+      "Actions": [
+        {
+          "Icon": "ico-get-mouse-pos",
+          "Sequence": "NOP;W 1s;L",
+          "Caption": "Test Loop"
+        }
+      ]
+    },
     "7d2d": {
       "TitleShort": "SEVEN DAYS TO DIE",
       "Title": "7 days to die - Roamer",

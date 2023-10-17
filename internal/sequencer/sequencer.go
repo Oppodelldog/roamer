@@ -193,6 +193,8 @@ func (s *Sequencer) playElement(ctx context.Context) {
 				fmt.Println("wait ", v.Duration)
 				s.sleep(ctx, v.Duration)
 			case Loop:
+			case NoOperation:
+				fmt.Println("no operation")
 			default:
 				if s.debug {
 					fmt.Printf("%T\n", el)
