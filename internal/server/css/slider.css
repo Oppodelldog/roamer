@@ -1,16 +1,17 @@
 .range-slider {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 .range-slider .input-range {
     -webkit-appearance: none;
-    height: 200px;
+    width: 100%;
+    height: 8px;
     border-radius: 5px;
     background: #ccc;
     outline: none;
-    writing-mode: bt-lr; /* IE */
-    -webkit-appearance: slider-vertical; /* WebKit */
+    writing-mode: horizontal-tb;
 }
 
 ::-moz-range-track {

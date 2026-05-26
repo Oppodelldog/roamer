@@ -1,16 +1,6 @@
-*{
-    color:black;
-}
-body{
-    background-image: url('/img/background/index.jpg');
-    background-color: #141f35;
+body {
+    background-image: var(--roamer-bg-image);
+    background-color: var(--roamer-bg-color);
     background-size: cover;
-}
-button {
-    background-color: #f1f9fd;
-    border-radius: 10px;
-    text-transform: uppercase;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 20px 20px 20px 20px;
+    background-position: center;
 }

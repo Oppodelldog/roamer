@@ -27,8 +27,16 @@ type (
 		TitleShort string  `json:"TitleShort"`
 		Title      string  `json:"Title"`
 		CSSFile    string  `json:"CssFile"`
+		Theme      Theme   `json:"Theme"`
 		Columns    []int   `json:"Columns"`
 		Actions    Actions `json:"Actions"`
+	}
+	Theme struct {
+		BackgroundImage string `json:"BackgroundImage"`
+		BackgroundColor string `json:"BackgroundColor"`
+		AccentColor     string `json:"AccentColor"`
+		CardColor       string `json:"CardColor"`
+		CardTextColor   string `json:"CardTextColor"`
 	}
 	Actions []Action
 	Action  struct {
@@ -54,13 +62,13 @@ func RoamerPage(pageId string) (Page, bool) {
 	return Page{}, false
 }
 
-func SetSequence(pageId string, sequenceIndex int, caption string, sequence string) error {
+func SetSequence(pageId string, sequenceIndex int, caption string, icon string, sequence string) error {
 	var page, pageFound = config.Pages[pageId]
 	if !pageFound {
 		return fmt.Errorf("%w: %v", errPageNotFound, pageId)
 	}
 
-	if len(page.Actions) < sequenceIndex {
+	if sequenceIndex < 0 || len(page.Actions) <= sequenceIndex {
 		return fmt.Errorf("%w, sequence %v, page %s", errSequenceNotFound, sequenceIndex, pageId)
 	}
 
@@ -68,6 +76,7 @@ func SetSequence(pageId string, sequenceIndex int, caption string, sequence stri
 
 	action.Sequence = sequence
 	action.Caption = caption
+	action.Icon = icon
 
 	config.Pages[pageId].Actions[sequenceIndex] = action
 

@@ -14,8 +14,10 @@ var procMouseBd = dll.NewProc("mouse_event")
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getcursorpos
 var procGetCursorPos = dll.NewProc("GetCursorPos")
 
-//https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos
+// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos
 var procSetCursorPos = dll.NewProc("SetCursorPos")
+
+var states = map[string]bool{}
 
 const (
 	flagLeftDown  = 0x0002
@@ -27,7 +29,13 @@ const (
 
 func LeftDown() error {
 	_, _, err := procMouseBd.Call(uintptr(flagLeftDown), uintptr(0), uintptr(0), uintptr(0), 0)
-	return normalizeErr(err)
+	if err := normalizeErr(err); err != nil {
+		return err
+	}
+
+	states["left"] = true
+
+	return nil
 }
 
 func normalizeErr(err error) error {
@@ -40,17 +48,45 @@ func normalizeErr(err error) error {
 
 func LeftUp() error {
 	_, _, err := procMouseBd.Call(uintptr(flagLeftUp), uintptr(0), uintptr(0), uintptr(0), 0)
-	return normalizeErr(err)
+	if err := normalizeErr(err); err != nil {
+		return err
+	}
+
+	states["left"] = false
+
+	return nil
 }
 
 func RightDown() error {
 	_, _, err := procMouseBd.Call(uintptr(flagRightDown), uintptr(0), uintptr(0), uintptr(0), 0)
-	return normalizeErr(err)
+	if err := normalizeErr(err); err != nil {
+		return err
+	}
+
+	states["right"] = true
+
+	return nil
 }
 
 func RightUp() error {
 	_, _, err := procMouseBd.Call(uintptr(flagRightUp), uintptr(0), uintptr(0), uintptr(0), 0)
-	return normalizeErr(err)
+	if err := normalizeErr(err); err != nil {
+		return err
+	}
+
+	states["right"] = false
+
+	return nil
+}
+
+func ResetPressed() {
+	if states["left"] {
+		_ = LeftUp()
+	}
+
+	if states["right"] {
+		_ = RightUp()
+	}
 }
 
 func SetPosition(pos Pos) error {

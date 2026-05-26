@@ -60,6 +60,7 @@ func sessions(sm *wca.IAudioSessionManager2) ([]*Session, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer se.Release()
 
 	err = se.GetCount(&sessCount)
 	if err != nil {
@@ -71,8 +72,6 @@ func sessions(sm *wca.IAudioSessionManager2) ([]*Session, error) {
 		if errSess != nil {
 			return nil, errSess
 		}
-
-		sm.Release()
 
 		sessions = append(sessions, s)
 	}

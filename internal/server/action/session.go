@@ -15,12 +15,16 @@ import (
 type Action interface{}
 
 var actionTypesById = map[string]func() Responder{
-	macroNew:    func() Responder { return new(SequenceNew) },
-	seqSave:     func() Responder { return new(SequenceSave) },
-	macroDelete: func() Responder { return new(SequenceDelete) },
-	pageNew:     func() Responder { return new(PageNew) },
-	pagesSave:   func() Responder { return new(PagesSave) },
-	pageDelete:  func() Responder { return new(PageDelete) },
+	macroNew:       func() Responder { return new(SequenceNew) },
+	seqSave:        func() Responder { return new(SequenceSave) },
+	seqFormat:      func() Responder { return new(SequenceFormat) },
+	seqValidate:    func() Responder { return new(SequenceValidate) },
+	macroDelete:    func() Responder { return new(SequenceDelete) },
+	macroDuplicate: func() Responder { return new(SequenceDuplicate) },
+	macroMove:      func() Responder { return new(SequenceMove) },
+	pageNew:        func() Responder { return new(PageNew) },
+	pagesSave:      func() Responder { return new(PagesSave) },
+	pageDelete:     func() Responder { return new(PageDelete) },
 }
 
 var sequencerActionTypesById = map[string]func() Responder{
@@ -28,6 +32,7 @@ var sequencerActionTypesById = map[string]func() Responder{
 	seqClearSequence:     func() Responder { return new(SequenceClearSequence) },
 	seqPause:             func() Responder { return new(SequencePause) },
 	seqAbort:             func() Responder { return new(SequenceAbort) },
+	seqReleaseInputs:     func() Responder { return new(SequenceReleaseInputs) },
 }
 
 var soundSettingActions = map[string]func() Responder{

@@ -2,24 +2,32 @@ package action
 
 import (
 	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/script"
 )
 
 const (
 	// server -> client
-	seqState      = "SEQUENCE_STATE"
-	seqSaveResult = "SEQUENCE_SAVE_RESULT"
-	soundSettings = "SOUND_SETTINGS"
-	logMessage    = "LOG_MESSAGE"
-	roamerConfig  = "CONFIG"
+	seqState          = "SEQUENCE_STATE"
+	seqSaveResult     = "SEQUENCE_SAVE_RESULT"
+	seqFormatResult   = "SEQUENCE_FORMAT_RESULT"
+	seqValidateResult = "SEQUENCE_VALIDATE_RESULT"
+	soundSettings     = "SOUND_SETTINGS"
+	logMessage        = "LOG_MESSAGE"
+	roamerConfig      = "CONFIG"
 
 	// client -> server
 	seqSetConfigSequence = "SEQUENCE_SETCONFIGSEQUENCE"
 	seqClearSequence     = "SEQUENCE_CLEARSEQUENCE"
 	seqPause             = "SEQUENCE_PAUSE"
 	seqAbort             = "SEQUENCE_ABORT"
+	seqReleaseInputs     = "SEQUENCE_RELEASE_INPUTS"
 	macroNew             = "SEQUENCE_NEW"
 	macroDelete          = "SEQUENCE_DELETE"
+	macroDuplicate       = "SEQUENCE_DUPLICATE"
+	macroMove            = "SEQUENCE_MOVE"
 	seqSave              = "SEQUENCE_SAVE"
+	seqFormat            = "SEQUENCE_FORMAT"
+	seqValidate          = "SEQUENCE_VALIDATE"
 	loadSoundSettings    = "LOAD_SOUND_SETTINGS"
 	setSoundVolume       = "SET_SOUND_VOLUME"
 	setMainSoundVolume   = "SET_MAIN_SOUND_VOLUME"
@@ -30,10 +38,18 @@ const (
 
 type (
 	SequenceState struct {
-		PageTitle   string
-		Caption     string
-		IsPlaying   bool
-		HasSequence bool
+		PageId              string
+		SequenceIndex       int
+		PageTitle           string
+		Caption             string
+		State               string
+		Error               string
+		IsPlaying           bool
+		HasSequence         bool
+		QueuedPageId        string
+		QueuedSequenceIndex int
+		QueuedPageTitle     string
+		QueuedCaption       string
 	}
 	SoundSession struct {
 		Id    string
@@ -68,6 +84,9 @@ type (
 	SequenceAbort struct {
 		BaseAction
 	}
+	SequenceReleaseInputs struct {
+		BaseAction
+	}
 	SequenceNew struct {
 		BaseAction
 		PageId string
@@ -77,11 +96,35 @@ type (
 		PageId        string
 		SequenceIndex int
 	}
+	SequenceDuplicate struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
+	}
+	SequenceMove struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
+		Offset        int
+	}
 	SequenceSave struct {
 		BaseAction
 		PageId        string
 		SequenceIndex int
 		Caption       string
+		Icon          string
+		Sequence      string
+	}
+	SequenceFormat struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
+		Sequence      string
+	}
+	SequenceValidate struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
 		Sequence      string
 	}
 	SequenceSaveResult struct {
@@ -89,7 +132,27 @@ type (
 		PageId        string
 		SequenceIndex int
 		Sequence      string
+		Meta          script.Metadata
 		Success       bool
+		Error         string
+	}
+	SequenceFormatResult struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
+		Sequence      string
+		Meta          script.Metadata
+		Success       bool
+		Error         string
+	}
+	SequenceValidateResult struct {
+		BaseAction
+		PageId        string
+		SequenceIndex int
+		Sequence      string
+		Meta          script.Metadata
+		Success       bool
+		Error         string
 	}
 	LoadSoundSettings struct {
 		BaseAction
@@ -125,7 +188,7 @@ func msgState(s SequenceState) []byte {
 }
 
 func msgConfig(config config.Config) []byte {
-	return jsonEnvelope(roamerConfig, config)
+	return jsonEnvelope(roamerConfig, configView(config))
 }
 
 func msgSoundSettings(settings SoundSettings) []byte {
@@ -136,13 +199,41 @@ func msgLogMessage(message string) []byte {
 	return jsonEnvelope(logMessage, message)
 }
 
-func msgSequenceSaveResult(pageId string, sequenceIndex int, sequence string, success bool) []byte {
+func msgSequenceSaveResult(pageId string, sequenceIndex int, sequence string, meta script.Metadata, success bool, errMsg string) []byte {
 	var result = SequenceSaveResult{
 		PageId:        pageId,
 		SequenceIndex: sequenceIndex,
 		Sequence:      sequence,
+		Meta:          meta,
 		Success:       success,
+		Error:         errMsg,
 	}
 
 	return jsonEnvelope(seqSaveResult, result)
+}
+
+func msgSequenceFormatResult(pageId string, sequenceIndex int, sequence string, meta script.Metadata, success bool, errMsg string) []byte {
+	var result = SequenceFormatResult{
+		PageId:        pageId,
+		SequenceIndex: sequenceIndex,
+		Sequence:      sequence,
+		Meta:          meta,
+		Success:       success,
+		Error:         errMsg,
+	}
+
+	return jsonEnvelope(seqFormatResult, result)
+}
+
+func msgSequenceValidateResult(pageId string, sequenceIndex int, sequence string, meta script.Metadata, success bool, errMsg string) []byte {
+	var result = SequenceValidateResult{
+		PageId:        pageId,
+		SequenceIndex: sequenceIndex,
+		Sequence:      sequence,
+		Meta:          meta,
+		Success:       success,
+		Error:         errMsg,
+	}
+
+	return jsonEnvelope(seqValidateResult, result)
 }

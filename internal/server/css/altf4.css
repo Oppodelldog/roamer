@@ -1,13 +1,7 @@
-body{
-    background-color: #131311;
-    background-image: url(/img/background/knight.jpg);
-    background-size: cover;
-}
-button {
-    background-color: #a9a59b;
-    border-radius: 10px;
-    text-transform: uppercase;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 20px 20px 20px 50px;
+.theme-altf4 {
+    --roamer-bg-image: url('/img/background/knight.jpg');
+    --roamer-bg-color: #131311;
+    --roamer-accent: #a9a59b;
+    --roamer-card-bg: #ecf1e8;
+    --roamer-card-text: #141714;
 }

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/macro-edit.css">
     <link rel="stylesheet" href="/css/pages-edit.css">
     <link rel="stylesheet" href="/css/top-controls.css">
+    <link rel="stylesheet" href="/css/icons.css">
 
     <link rel="manifest" href="/manifest.json">
 
@@ -19,82 +20,188 @@
 
 <body>
 <div id="app">
-    <div id="roamer-list" v-if="hasConfig">
-        <div class="header">
-            <div class="top-status-label">Currently playing</div>
-            <div class="top-status-playback"><span> {{ playbackState.PageTitle}}</span> /<span> {{ playbackState.Caption}}</span></div>
+    <div id="roamer-list" v-bind:class="deckShellClass()" v-if="hasConfig">
+        <div class="deck-topbar">
+            <button type="button" class="nav-button" v-bind:class="{'is-hidden':!showPage}" v-on:click.prevent="showPageSelection()">Back</button>
+            <div v-bind:class="playbackPanelClass()">
+                <div class="status-pill" v-bind:class="{'is-online':connection.isConnected, 'is-offline':!connection.isConnected}">
+                    {{ connectionLabel() }}
+                </div>
+                <div class="playback-copy">
+                    <div class="playback-label">{{ playbackStatusLabel() }}</div>
+                    <div class="playback-title">{{ activeMacroLabel() }}</div>
+                    <div class="playback-error" v-if="playbackState.Error">{{ playbackState.Error }}</div>
+                </div>
+            </div>
             <div class="top-controls">
-                <div class="button" v-if="playbackState.IsPlaying" v-on:pointerup="togglePause()">⏸</div>
-                <div class="button" v-if="!playbackState.IsPlaying" v-on:pointerup="togglePause()">▶︎</div>
-                <div class="button" v-on:pointerup="abort()">⏏️</div>
+                <button class="control-button" v-bind:disabled="!playbackState.HasSequence" v-on:pointerup="togglePause()">
+                    {{ pauseControlLabel() }}
+                </button>
+                <button class="control-button" v-on:pointerup="releaseInputs()">Release Inputs</button>
+                <button class="control-button control-danger" v-bind:disabled="!playbackState.HasSequence" v-on:pointerup="abort()">Abort</button>
             </div>
         </div>
+
         <div class="top-tools">
-            <span class="edit" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">✏️</span>
-            <span class="edit" v-if="showPage || macroEditor" v-on:pointerup="showMacroEditor()">✏️</span>
-            <span class="offline" v-if="!connection.isConnected">📴</span>
-            <span class="online" v-if="connection.isConnected">🔗</span>
-            <a v-bind:class="{'audio-settings':true, 'on':showVerticalSlide}"
-               v-on:pointerup="showSoundSettings()">🕪</a>
+            <button class="tool-button" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">Pages</button>
+            <button class="tool-button" v-if="showPage || macroEditor" v-bind:class="{'is-active':macroEditor}" v-on:pointerup="showMacroEditor()">Macros</button>
+            <button class="tool-button" v-bind:class="{'is-active':showDiagnostics}" v-on:pointerup="toggleDiagnostics()">Logs</button>
+            <button class="tool-button" v-bind:class="{'is-active':showSounds}" v-on:pointerup="showSoundSettings()">Sound</button>
         </div>
+
+        <div class="diagnostics-panel" v-if="showDiagnostics">
+            <div class="diagnostics-header">
+                <span>Diagnostics</span>
+                <button v-on:pointerup="toggleDiagnostics()">Close</button>
+            </div>
+            <div class="diagnostics-grid">
+                <div>
+                    <span>Connection</span>
+                    <strong>{{ connectionLabel() }}</strong>
+                </div>
+                <div>
+                    <span>Sequencer</span>
+                    <strong>{{ playbackStatusLabel() }}</strong>
+                </div>
+                <div>
+                    <span>Active</span>
+                    <strong>{{ activeMacroLabel() }}</strong>
+                </div>
+            </div>
+            <div class="diagnostics-log">
+                <div v-if="logMessages.length === 0">No log messages yet.</div>
+                <div v-for="logMessage in logMessages">{{ logMessage }}</div>
+            </div>
+        </div>
+
         <div v-bind:class="{'slide-container-vertical':true, 'slide-container-vertical-transition-normal':!showVerticalSlide, 'slide-container-vertical-transition-one':showVerticalSlide}">
             <div v-bind:class="{'slide-container-horizontal':true, 'slide-container-horizontal-transition-normal':!showPage, 'slide-container-horizontal-transition-one':showPage}">
 
-                <div id="page-selection" class="slide">
-                    <h1>{{ config.Title }}</h1>
-                    <h2>
-                        {{ config.WelcomeText }}
-                    </h2>
-                    <div class="buttonlist">
-                        <button v-for="(page, pageKey) in config.Pages"
+                <div id="page-selection" class="slide deck-view">
+                    <div class="hero-copy">
+                        <h1>{{ config.Title }}</h1>
+                        <h2>{{ config.WelcomeText }}</h2>
+                    </div>
+                    <div class="page-grid">
+                        <button class="page-card"
+                                v-for="(page, pageKey) in config.Pages"
                                 v-on:pointerup="selectPage(pageKey)">
-                            {{ page.TitleShort }}
+                            <span class="page-card-title">{{ page.TitleShort }}</span>
+                            <span class="page-card-subtitle">{{ page.Title }}</span>
+                            <span class="page-card-meta">{{ pageActionCount(page) }} macros</span>
                         </button>
                     </div>
                 </div>
 
-                <div id="roamer-page" class="slide" v-if="showPage">
+                <div id="roamer-page" class="slide deck-view" v-if="showPage">
                     <div class="logoutput">
                         <div v-for="logMessage in logMessages">{{ logMessage }}</div>
                     </div>
-                    <h1>{{ currentPage().Title }}</h1>
-                    <span v-on:pointerup="showPageSelection()" class="back-arrow">➭</span>
+                    <div class="hero-copy page-hero">
+                        <h1>{{ currentPage().Title }}</h1>
+                        <h2>{{ pageActionCount(currentPage()) }} configured macros</h2>
+                    </div>
                     <div id="actions" class="sequences">
-                        <button v-for="(action,idx) in currentPage().Actions" v-on:pointerup="startAction(idx)">
+                        <button v-for="(action,idx) in currentPage().Actions"
+                                v-bind:class="macroButtonClass(action, idx)"
+                                v-bind:disabled="isActionInvalid(action)"
+                                v-bind:title="macroCardTitle(action)"
+                                v-on:pointerup="startAction(idx)">
                             <span class="caption">{{ action.Caption }}</span>
+                            <span v-bind:class="{'macro-state':true, 'macro-state-idle':!isActionActive(idx)}">{{ macroStateLabel(idx, action) }}</span>
+                            <span class="macro-meta" v-if="macroMeta(action).length > 0">
+                                <span class="macro-chip" v-for="item in macroMeta(action)">{{ item }}</span>
+                            </span>
                         </button>
                     </div>
                 </div>
             </div>
 
             <div id="sound-settings" class="slide" v-if="soundLoading || showSounds">
-                <h1>Sound Settings</h1>
+                <div class="sound-header">
+                    <h1>Sound</h1>
+                    <button type="button" v-on:click.prevent="showSoundSettings()">Close</button>
+                </div>
                 <div class="lds-dual-ring" v-if="soundLoading"></div>
                 <div class="sound-sessions" v-if="!soundLoading">
                     <div class="range-slider" v-for="(session,idx) in soundSettings.Sessions">
-                        <span>{{ session.Name }}</span>
+                        <div>
+                            <span>{{ session.Name }}</span>
+                            <strong>{{ Math.round(session.Value * 100) }}%</strong>
+                        </div>
                         <input class="input-range" orient="vertical" type="range" step="0.01" min="0" max="1"
                                v-on:change="changeSoundSessionValue(idx)"
                                v-model:value="session.Value">
                     </div>
                 </div>
-                <div class="main-sound-session">
-                    <strong>Main Volume</strong>
+                <div class="main-sound-session" v-if="!soundLoading">
+                    <div>
+                        <strong>Main Volume</strong>
+                        <span>{{ Math.round(soundSettings.MainSession.Value * 100) }}%</span>
+                    </div>
                     <input class="input-range" orient="horizontal" type="range" step="0.01" min="0" max="1"
                            v-on:change="changeMainSoundSessionValue()"
                            v-model:value="soundSettings.MainSession.Value">
                 </div>
             </div>
 
-            <div id="marco-edit" class="slide" v-if="macroEditor">
-                <h1>Edit Macro</h1>
+            <div id="marco-edit" class="slide" v-if="macroEditor && currentPageId !== null">
+                <div class="macro-editor-header">
+                    <div>
+                        <h1>Edit Macro</h1>
+                        <span>{{ currentPage().Title }}</span>
+                    </div>
+                    <div class="macro-editor-tools">
+                        <button type="button" v-on:click.prevent="toggleCommandHelp()">{{ showCommandHelp ? 'Hide Help' : 'Show Help' }}</button>
+                        <button type="button" v-on:click.prevent="showMacroEditor()">Close</button>
+                    </div>
+                </div>
+
+                <div class="command-help" v-if="showCommandHelp">
+                    <div><strong>KD key</strong><span>key down</span></div>
+                    <div><strong>KU key</strong><span>key up</span></div>
+                    <div><strong>W duration</strong><span>wait, e.g. 60ms or 2s</span></div>
+                    <div><strong>LD / LU</strong><span>left mouse down/up</span></div>
+                    <div><strong>RD / RU</strong><span>right mouse down/up</span></div>
+                    <div><strong>SM x y</strong><span>set mouse position</span></div>
+                    <div><strong>MM x y</strong><span>move mouse relative</span></div>
+                    <div><strong>MP</strong><span>print current mouse position</span></div>
+                    <div><strong>R n [ ... ]</strong><span>repeat block</span></div>
+                    <div><strong>L</strong><span>loop marker at sequence end</span></div>
+                </div>
 
                 <div id="actions-edit">
                     <div class="sequence-container" v-for="(action,idx) in currentPage().Actions">
-                        <input type="text" class="caption" v-model:value="action.Caption"/>
-                        <textarea v-model:value="action.Sequence"></textarea>
-                        <button v-on:click="saveSequence(idx)" title="save">💾</button>
-                        <button v-on:click="deleteSequence(idx)" title="delete">❌</button>
+                        <div class="sequence-fields">
+                            <input type="text" class="caption" v-model:value="action.Caption"/>
+                            <div class="icon-picker">
+                                <span v-bind:class="['icon-preview', action.Icon || 'ico-none']"></span>
+                                <label>
+                                    Icon
+                                    <select v-model="action.Icon">
+                                        <option v-for="icon in iconOptions" v-bind:value="icon.Class">{{ icon.Label }}</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <textarea v-model:value="action.Sequence"
+                                      v-on:input="scheduleValidateSequence(idx)"></textarea>
+                            <div v-bind:class="sequenceValidationClass(currentPageId, idx)"
+                                 v-if="sequenceValidationText(currentPageId, idx) !== ''">
+                                {{ sequenceValidationText(currentPageId, idx) }}
+                            </div>
+                            <div v-bind:class="sequenceSaveStatusClass(currentPageId, idx)"
+                                 v-if="sequenceSaveStatusText(currentPageId, idx) !== ''">
+                                {{ sequenceSaveStatusText(currentPageId, idx) }}
+                            </div>
+                        </div>
+                        <div class="sequence-actions">
+                            <button v-on:click="saveSequence(idx)" title="save">Save</button>
+                            <button v-on:click="formatSequence(idx)" title="format">Format</button>
+                            <button v-on:click="duplicateSequence(idx)" title="duplicate">Duplicate</button>
+                            <button v-on:click="moveSequence(idx, -1)" v-bind:disabled="!canMoveSequence(idx, -1)" title="move up">Up</button>
+                            <button v-on:click="moveSequence(idx, 1)" v-bind:disabled="!canMoveSequence(idx, 1)" title="move down">Down</button>
+                            <button v-on:click="deleteSequence(idx)" title="delete">Delete</button>
+                        </div>
                     </div>
                     <button class="btNewMacro" v-on:pointerup="newSequence">New Macro</button>
                 </div>
@@ -114,11 +221,32 @@
                                 <label for="txtPageTitle">Title on page:</label>
                                 <input id="txtPageTitle" type="text" v-model:value="page.Title"/>
                             </div>
+                            <div class="input-container">
+                                <label>Background image:</label>
+                                <input type="text" v-model:value="ensurePageTheme(page).BackgroundImage" v-on:input="applyTheme()"/>
+                            </div>
+                            <div class="theme-fields">
+                                <label>
+                                    Background
+                                    <input type="color" v-model:value="ensurePageTheme(page).BackgroundColor" v-on:input="applyTheme()"/>
+                                </label>
+                                <label>
+                                    Accent
+                                    <input type="color" v-model:value="ensurePageTheme(page).AccentColor" v-on:input="applyTheme()"/>
+                                </label>
+                                <label>
+                                    Card
+                                    <input type="color" v-model:value="ensurePageTheme(page).CardColor" v-on:input="applyTheme()"/>
+                                </label>
+                                <label>
+                                    Text
+                                    <input type="color" v-model:value="ensurePageTheme(page).CardTextColor" v-on:input="applyTheme()"/>
+                                </label>
+                            </div>
                         </div>
                         <button v-on:pointerup="removePage(id)"
                                 v-bind:class="{ delete: getPageDeletionStatus(id)===1 }">
-                            <span v-if="getPageDeletionStatus(id)===0">Delete</span>
-                            <span v-if="getPageDeletionStatus(id)===1">Really?</span>
+                            <span>{{ pageDeleteLabel(id) }}</span>
                         </button>
                     </div>
                     <button class="btNewPage" v-on:pointerup="newPage">New Page</button>

@@ -60,7 +60,52 @@ func DeleteSequence(pageId string, seq int) error {
 		return fmt.Errorf("the page (%s) does not exists", pageId)
 	}
 
+	if seq < 0 || seq >= len(page.Actions) {
+		return fmt.Errorf("the sequence (%d) does not exists on page (%s)", seq, pageId)
+	}
+
 	page.Actions = append(page.Actions[:seq], page.Actions[seq+1:]...)
+	config.Pages[pageId] = page
+
+	return Save()
+}
+
+func DuplicateSequence(pageId string, seq int) error {
+	page, exists := config.Pages[pageId]
+	if !exists {
+		return fmt.Errorf("the page (%s) does not exists", pageId)
+	}
+
+	if seq < 0 || seq >= len(page.Actions) {
+		return fmt.Errorf("the sequence (%d) does not exists on page (%s)", seq, pageId)
+	}
+
+	duplicate := page.Actions[seq]
+	duplicate.Caption += " Copy"
+
+	insertAt := seq + 1
+	page.Actions = append(page.Actions[:insertAt], append([]Action{duplicate}, page.Actions[insertAt:]...)...)
+	config.Pages[pageId] = page
+
+	return Save()
+}
+
+func MoveSequence(pageId string, seq int, offset int) error {
+	page, exists := config.Pages[pageId]
+	if !exists {
+		return fmt.Errorf("the page (%s) does not exists", pageId)
+	}
+
+	if seq < 0 || seq >= len(page.Actions) {
+		return fmt.Errorf("the sequence (%d) does not exists on page (%s)", seq, pageId)
+	}
+
+	target := seq + offset
+	if target < 0 || target >= len(page.Actions) {
+		return nil
+	}
+
+	page.Actions[seq], page.Actions[target] = page.Actions[target], page.Actions[seq]
 	config.Pages[pageId] = page
 
 	return Save()
