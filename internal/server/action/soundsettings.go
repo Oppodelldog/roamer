@@ -42,8 +42,7 @@ func getSoundSettings() SoundSettings {
 
 		iconPath, err = session.GetIconPath()
 		if err != nil {
-			fmt.Printf("error getting sound session (%v) icon path: %v", i, err)
-			continue
+			iconPath = ""
 		}
 
 		volume, err = session.GetMasterVolume()

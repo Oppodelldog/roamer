@@ -1,2 +1,4 @@
 .idea
+.cache
 .build-artifacts
+.build

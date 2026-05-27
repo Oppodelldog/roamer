@@ -65,20 +65,29 @@ func parseRepeat(v sequencer.Repeat, t *TokenStream) (sequencer.Elem, error) {
 func parseLiteral(t *TokenStream) (Token, error) {
 
 	var errSeparators = consumeSeparators(t)
-	var lit = t.Consume()
 
 	if errSeparators != nil {
 		return Token{}, errSeparators
 	}
 
+	if t.isEOF() {
+		return Token{}, ErrUnexpectedEOF
+	}
+
+	var lit = t.Consume()
+
 	if lit.Type != literal {
-		return Token{}, fmt.Errorf("W %w, but was '%s'", ErrExpectedLiteral, lit.Type)
+		return Token{}, fmt.Errorf("w %w, but was '%s'", ErrExpectedLiteral, lit.Type)
 	}
 
 	return lit, nil
 }
 
 func consumeSeparators(t *TokenStream) error {
+	if t.isEOF() {
+		return ErrUnexpectedEOF
+	}
+
 	var sep = t.Consume()
 
 	if sep.Type != argumentSeparator {
@@ -88,6 +97,10 @@ func consumeSeparators(t *TokenStream) error {
 
 	for !t.isEOF() && t.Peek().Type == argumentSeparator {
 		t.Consume()
+	}
+
+	if t.isEOF() {
+		return ErrUnexpectedEOF
 	}
 
 	return nil

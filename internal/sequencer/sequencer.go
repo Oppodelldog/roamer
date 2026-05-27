@@ -18,6 +18,17 @@ const (
 	Paused
 )
 
+func (s State) String() string {
+	switch s {
+	case Playing:
+		return "playing"
+	case Paused:
+		return "paused"
+	default:
+		return "idle"
+	}
+}
+
 // Sequencer plays sequences of Elem by calling their Do method.
 // It runs as a detached worker using go routines to playback sequences.
 type Sequencer struct {
@@ -28,6 +39,8 @@ type Sequencer struct {
 	hasSequence    bool
 	beforeSequence func(s *Sequencer)
 	afterSequence  func(s *Sequencer)
+	beforeElement  func(s *Sequencer, elem Elem, event ElementEvent)
+	elementError   func(s *Sequencer, elem Elem, err error)
 	debug          bool
 	seqWait        chan struct{}
 }
@@ -60,9 +73,21 @@ func (s *Sequencer) AfterSequence(f func(s *Sequencer)) {
 	s.afterSequence = f
 }
 
+func (s *Sequencer) ElementError(f func(s *Sequencer, elem Elem, err error)) {
+	s.elementError = f
+}
+
+func (s *Sequencer) BeforeElement(f func(s *Sequencer, elem Elem, event ElementEvent)) {
+	s.beforeElement = f
+}
+
 // IsPlaying indicated if playback is running or not.
 func (s *Sequencer) IsPlaying() bool {
 	return s.state == Playing
+}
+
+func (s *Sequencer) State() State {
+	return s.state
 }
 
 // HasSequence indicates if sequencer has a sequence for playback or not.
@@ -88,9 +113,10 @@ func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 func (s *Sequencer) Pause() error {
 	select {
 	case s.pause <- struct{}{}:
-		if s.state == Paused {
+		switch s.state {
+		case Paused:
 			s.state = Playing
-		} else if s.state == Playing {
+		case Playing:
 			s.state = Paused
 		}
 
@@ -101,6 +127,11 @@ func (s *Sequencer) Pause() error {
 }
 
 func (s *Sequencer) waitForResume(ctx context.Context) {
+	if s.state == Idle {
+		logger.Println("pause ignored after abort")
+		return
+	}
+
 	logger.Println("pausing")
 
 	s.state = Paused
@@ -111,6 +142,12 @@ func (s *Sequencer) waitForResume(ctx context.Context) {
 		return
 	case <-s.pause:
 	}
+
+	if s.state == Idle {
+		logger.Println("resume ignored after abort")
+		return
+	}
+
 	logger.Println("resuming")
 }
 
@@ -128,32 +165,27 @@ waitForNext:
 
 	s.hasSequence = true
 
+loop:
+	s.state = Playing
 	if s.beforeSequence != nil {
 		s.beforeSequence(s)
 	}
 
-loop:
 	newSeq := newSequence()
 	fmt.Printf("play sequence length: %v\n", len(newSeq))
-
-	s.state = Playing
 
 	s.seqWait = make(chan struct{})
 	for _, e := range newSeq {
 		s.seq <- e
+		<-s.seqWait
+
 		if s.state == Idle {
 			logger.Println("is not playing sequence")
 			goto waitForNext
 		}
-
-		<-s.seqWait
 	}
 
 	close(s.seqWait)
-
-	if s.afterSequence != nil {
-		s.afterSequence(s)
-	}
 
 	select {
 	case <-ctx.Done():
@@ -161,6 +193,9 @@ loop:
 		return
 	case newSequence = <-s.sequence:
 		logger.Println("got a new sequence")
+		if s.afterSequence != nil {
+			s.afterSequence(s)
+		}
 
 		goto loop
 	default:
@@ -170,9 +205,19 @@ loop:
 		if len(newSeq) > 0 {
 			if _, isLoop := newSeq[len(newSeq)-1].(Loop); isLoop {
 				logger.Println("looping sequence")
+				if s.afterSequence != nil {
+					s.afterSequence(s)
+				}
 				goto loop
 			}
 		}
+	}
+
+	s.state = Idle
+	s.hasSequence = false
+
+	if s.afterSequence != nil {
+		s.afterSequence(s)
 	}
 
 	logger.Println("wait for next sequence")
@@ -188,7 +233,21 @@ func (s *Sequencer) playElement(ctx context.Context) {
 			return
 		case <-s.pause:
 			s.waitForResume(ctx)
+			continue
+		default:
+		}
+
+		select {
+		case <-ctx.Done():
+			logger.Println("stopped element playback")
+			return
+		case <-s.pause:
+			s.waitForResume(ctx)
 		case el := <-s.seq:
+			if s.beforeElement != nil {
+				s.beforeElement(s, el, DescribeElement(el))
+			}
+
 			switch v := el.(type) {
 			case Wait:
 				logger.Println("wait ", v.Duration)
@@ -204,6 +263,9 @@ func (s *Sequencer) playElement(ctx context.Context) {
 
 				if err := el.Do(); err != nil {
 					fmt.Printf("error in %T.Do: %v\n", el, err)
+					if s.elementError != nil {
+						s.elementError(s, el, err)
+					}
 				}
 			}
 			s.seqWait <- struct{}{}
@@ -228,14 +290,13 @@ func (s *Sequencer) sleep(ctx context.Context, d time.Duration) {
 }
 
 func (s *Sequencer) Abort() {
-	if s.state == Paused {
-		err := s.Pause()
-		if err != nil {
-			panic(fmt.Sprintf("error while aborting pause: %v", err))
-		}
-	}
-
 	s.state = Idle
+	s.hasSequence = false
+
+	select {
+	case s.pause <- struct{}{}:
+	default:
+	}
 }
 
 func (s *Sequencer) Debug(v bool) {

@@ -1,6 +1,7 @@
 package script_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 	"time"
@@ -88,5 +89,34 @@ func TestNewCustomSequenceFunc(t *testing.T) {
 				t.Fatalf("sequences did not match:\ngot : %#v\nwant: %#v\n", got, data.want)
 			}
 		})
+	}
+}
+
+func TestParseIncompleteCommandsReturnError(t *testing.T) {
+	tests := []string{
+		"KU",
+		"KU ",
+		"KD",
+		"W",
+		"MM 10",
+		"SM 10",
+		"R 2",
+		"R 2 ",
+	}
+
+	for _, input := range tests {
+		t.Run(input, func(t *testing.T) {
+			_, err := script.Parse(input)
+			if err == nil {
+				t.Fatal("expected an error")
+			}
+		})
+	}
+}
+
+func TestParseIncompleteKeyCommandReturnsUnexpectedEOF(t *testing.T) {
+	_, err := script.Parse("KU")
+	if !errors.Is(err, script.ErrUnexpectedEOF) {
+		t.Fatalf("expected unexpected EOF error, got %v", err)
 	}
 }

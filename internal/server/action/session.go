@@ -8,6 +8,7 @@ import (
 	"reflect"
 
 	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/inputmode"
 
 	"github.com/Oppodelldog/roamer/internal/server/ws"
 )
@@ -15,12 +16,20 @@ import (
 type Action interface{}
 
 var actionTypesById = map[string]func() Responder{
-	macroNew:    func() Responder { return new(SequenceNew) },
-	seqSave:     func() Responder { return new(SequenceSave) },
-	macroDelete: func() Responder { return new(SequenceDelete) },
-	pageNew:     func() Responder { return new(PageNew) },
-	pagesSave:   func() Responder { return new(PagesSave) },
-	pageDelete:  func() Responder { return new(PageDelete) },
+	macroNew:        func() Responder { return new(SequenceNew) },
+	seqSave:         func() Responder { return new(SequenceSave) },
+	seqFormat:       func() Responder { return new(SequenceFormat) },
+	seqValidate:     func() Responder { return new(SequenceValidate) },
+	macroDelete:     func() Responder { return new(SequenceDelete) },
+	macroDuplicate:  func() Responder { return new(SequenceDuplicate) },
+	macroMove:       func() Responder { return new(SequenceMove) },
+	pageNew:         func() Responder { return new(PageNew) },
+	pagesSave:       func() Responder { return new(PagesSave) },
+	pageDelete:      func() Responder { return new(PageDelete) },
+	setInputMode:    func() Responder { return new(SetInputMode) },
+	recorderStart:   func() Responder { return new(RecorderStart) },
+	recorderStop:    func() Responder { return new(RecorderStop) },
+	remoteMacroSave: func() Responder { return new(RemoteMacroSave) },
 }
 
 var sequencerActionTypesById = map[string]func() Responder{
@@ -28,6 +37,7 @@ var sequencerActionTypesById = map[string]func() Responder{
 	seqClearSequence:     func() Responder { return new(SequenceClearSequence) },
 	seqPause:             func() Responder { return new(SequencePause) },
 	seqAbort:             func() Responder { return new(SequenceAbort) },
+	seqReleaseInputs:     func() Responder { return new(SequenceReleaseInputs) },
 }
 
 var soundSettingActions = map[string]func() Responder{
@@ -37,10 +47,11 @@ var soundSettingActions = map[string]func() Responder{
 }
 
 func ClientSession(c *ws.Client, actions, sequencerActions, soundActions, loggerActions chan Action) {
-	var ctx, cancel = context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 	c.CancelSession = cancel
 
 	go func() {
+		defer cancel()
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Printf("panic in search session: %v\n", r)
@@ -48,6 +59,9 @@ func ClientSession(c *ws.Client, actions, sequencerActions, soundActions, logger
 		}()
 
 		c.ToClient() <- msgConfig(config.Roamer())
+		c.ToClient() <- msgInputModeState()
+		c.ToClient() <- msgRecorderState(recorderStateView(macroRecorder.State(), nil))
+		c.ToClient() <- msgRemoteInfo(currentRemoteInfo())
 
 		for {
 			select {
@@ -107,4 +121,9 @@ func decode(t interface{}, payload json.RawMessage, toClient chan<- []byte) (int
 	t = reflect.ValueOf(t).Elem().Interface()
 
 	return t, err
+}
+
+func setInputExecutionMode(v SetInputMode) {
+	inputmode.SetDryRun(v.DryRun)
+	v.Response <- msgInputModeState()
 }

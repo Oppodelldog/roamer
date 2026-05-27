@@ -81,10 +81,7 @@ func must(err error) {
 func newWindowsProcess(e *windows.ProcessEntry32) WindowsProcess {
 	var end int
 
-	for {
-		if e.ExeFile[end] == 0 {
-			break
-		}
+	for end < len(e.ExeFile) && e.ExeFile[end] != 0 {
 		end++
 	}
 

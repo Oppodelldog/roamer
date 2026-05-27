@@ -3,7 +3,9 @@ package sequencer_test
 import (
 	"context"
 	"errors"
+	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
 	"sync"
 	"testing"
 	"time"
@@ -45,6 +47,56 @@ func TestSequencer_BeforeSequence(t *testing.T) {
 	wg.Wait()
 }
 
+func TestSequencer_BeforeSequenceCalledForQueuedSequence(t *testing.T) {
+	var (
+		ctx, cancel          = context.WithCancel(context.Background())
+		s                    = sequencer.New(ctx, 1)
+		beforeSequenceCalled = make(chan struct{}, 2)
+		firstDone            = make(chan struct{})
+		secondStarted        = make(chan struct{})
+	)
+
+	defer cancel()
+
+	s.BeforeSequence(func(s *sequencer.Sequencer) {
+		beforeSequenceCalled <- struct{}{}
+	})
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				<-firstDone
+				return nil
+			}),
+		}
+	})
+
+	<-beforeSequenceCalled
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				close(secondStarted)
+				return nil
+			}),
+		}
+	})
+
+	close(firstDone)
+
+	select {
+	case <-beforeSequenceCalled:
+	case <-time.After(time.Second):
+		t.Fatal("expected before sequence callback for queued sequence")
+	}
+
+	select {
+	case <-secondStarted:
+	case <-time.After(time.Second):
+		t.Fatal("expected queued sequence to start")
+	}
+}
+
 func TestSequencer_AfterSequence(t *testing.T) {
 	var (
 		ctx, cancel = context.WithCancel(context.Background())
@@ -78,39 +130,154 @@ func TestSequencer_AfterSequence(t *testing.T) {
 	}
 }
 
+func TestSequencer_ElementError(t *testing.T) {
+	var (
+		ctx, cancel = context.WithCancel(context.Background())
+		s           = sequencer.New(ctx, 1)
+		wantErr     = errors.New("boom")
+		gotErr      error
+		done        = make(chan struct{})
+	)
+
+	defer cancel()
+
+	s.ElementError(func(s *sequencer.Sequencer, elem sequencer.Elem, err error) {
+		gotErr = err
+		close(done)
+	})
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				return wantErr
+			}),
+		}
+	})
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("expected element error callback")
+	}
+
+	if !errors.Is(gotErr, wantErr) {
+		t.Fatalf("expected error %v, got %v", wantErr, gotErr)
+	}
+}
+
+func TestSequencer_BeforeElement(t *testing.T) {
+	var (
+		ctx, cancel = context.WithCancel(context.Background())
+		s           = sequencer.New(ctx, 1)
+		events      = make(chan sequencer.ElementEvent, 2)
+	)
+
+	defer cancel()
+
+	s.BeforeElement(func(s *sequencer.Sequencer, elem sequencer.Elem, event sequencer.ElementEvent) {
+		events <- event
+	})
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.NoOperation{},
+			sequencer.Wait{Duration: 10 * time.Millisecond},
+		}
+	})
+
+	first := <-events
+	if first.Label != "NOP" {
+		t.Fatalf("expected first event label NOP, got %q", first.Label)
+	}
+
+	second := <-events
+	if second.Label != "W 10ms" {
+		t.Fatalf("expected second event label W 10ms, got %q", second.Label)
+	}
+	if second.DurationMs != 10 {
+		t.Fatalf("expected second event duration 10ms, got %d", second.DurationMs)
+	}
+
+	third := sequencer.DescribeElement(general.KeyDown{Key: key.VkW})
+	if third.Label != "KD W" {
+		t.Fatalf("expected third event label KD W, got %q", third.Label)
+	}
+}
+
 func TestSequencer_HasSequence(t *testing.T) {
 	var (
-		s      = sequencer.New(context.Background(), 1)
-		wg     = sync.WaitGroup{}
-		freeze = sync.WaitGroup{}
+		s                = sequencer.New(context.Background(), 1)
+		sequenceStarted  = make(chan struct{})
+		waitForAssertion = make(chan struct{})
+		sequenceFinished = make(chan struct{})
 	)
 
 	if s.HasSequence() == true {
 		t.Fatalf("expected HasSequence to return false, but it returned true")
 	}
 
-	freeze.Add(1)
 	s.AfterSequence(func(s *sequencer.Sequencer) {
-		freeze.Wait() // freeze sequencer in after callback to test on the hasSequence flag
+		close(sequenceFinished)
 	})
 
-	wg.Add(1)
 	s.EnqueueSequence(func() []sequencer.Elem {
 		return []sequencer.Elem{
 			sequencer.ElemFunc(func() error {
-				wg.Done()
+				close(sequenceStarted)
+				<-waitForAssertion
 				return nil
 			}),
 		}
 	})
 
-	wg.Wait()
+	<-sequenceStarted
 
 	if s.HasSequence() == false {
 		t.Fatalf("expected HasSequence to return true, but it returned false")
 	}
 
-	freeze.Done()
+	close(waitForAssertion)
+	<-sequenceFinished
+
+	if s.HasSequence() == true {
+		t.Fatalf("expected HasSequence to return false after the sequence finished, but it returned true")
+	}
+}
+
+func TestSequencer_FiniteSequenceReturnsToIdle(t *testing.T) {
+	var (
+		ctx, cancel      = context.WithCancel(context.Background())
+		s                = sequencer.New(ctx, 1)
+		sequenceFinished = make(chan struct{})
+	)
+
+	defer cancel()
+
+	s.AfterSequence(func(s *sequencer.Sequencer) {
+		close(sequenceFinished)
+	})
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				return nil
+			}),
+		}
+	})
+
+	select {
+	case <-sequenceFinished:
+	case <-time.After(time.Second):
+		t.Fatal("expected finite sequence to finish")
+	}
+
+	if s.State() != sequencer.Idle {
+		t.Fatalf("expected finite sequence to return to idle, got %v", s.State())
+	}
+
+	if s.HasSequence() {
+		t.Fatal("expected finite sequence to clear HasSequence")
+	}
 }
 
 func TestSequencer_Looping(t *testing.T) {
@@ -137,6 +304,45 @@ func TestSequencer_Looping(t *testing.T) {
 
 	wg.Wait()
 	cancel()
+}
+
+func TestSequencer_AbortClearsHasSequence(t *testing.T) {
+	var (
+		ctx, cancel      = context.WithCancel(context.Background())
+		s                = sequencer.New(ctx, 1)
+		sequenceStarted  = make(chan struct{})
+		waitForAssertion = make(chan struct{})
+	)
+
+	defer cancel()
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				close(sequenceStarted)
+				<-waitForAssertion
+				return nil
+			}),
+		}
+	})
+
+	select {
+	case <-sequenceStarted:
+	case <-time.After(time.Second):
+		t.Fatal("expected sequence to start")
+	}
+
+	s.Abort()
+
+	if s.State() != sequencer.Idle {
+		t.Fatalf("expected state to be idle after abort, got %v", s.State())
+	}
+
+	if s.HasSequence() {
+		t.Fatal("expected abort to clear HasSequence")
+	}
+
+	close(waitForAssertion)
 }
 
 func TestSequencer_IsPlaying(t *testing.T) {
@@ -274,4 +480,67 @@ func TestSequencer_Pause(t *testing.T) {
 	<-thirdElem
 
 	cancel()
+}
+
+func TestSequencer_AbortWhilePausedDoesNotBlockFutureSequences(t *testing.T) {
+	var (
+		ctx, cancel       = context.WithCancel(context.Background())
+		s                 = sequencer.New(ctx, 1)
+		firstElemStarted  = make(chan struct{})
+		firstElemRelease  = make(chan struct{})
+		secondElemStarted = make(chan struct{})
+		futureElemStarted = make(chan struct{})
+	)
+
+	defer cancel()
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				close(firstElemStarted)
+				<-firstElemRelease
+				return nil
+			}),
+			sequencer.ElemFunc(func() error {
+				close(secondElemStarted)
+				return nil
+			}),
+		}
+	})
+
+	<-firstElemStarted
+
+	if err := s.Pause(); err != nil {
+		t.Fatalf("did not expect Pause to return an error, but got: %v", err)
+	}
+
+	close(firstElemRelease)
+	time.Sleep(time.Millisecond * 20)
+
+	s.Abort()
+
+	if s.State() != sequencer.Idle {
+		t.Fatalf("expected state to be idle after abort, but got %v", s.State())
+	}
+
+	select {
+	case <-secondElemStarted:
+		t.Fatal("second element should not run after abort")
+	default:
+	}
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.ElemFunc(func() error {
+				close(futureElemStarted)
+				return nil
+			}),
+		}
+	})
+
+	select {
+	case <-futureElemStarted:
+	case <-time.After(time.Second):
+		t.Fatal("expected future sequence to run after aborting pause")
+	}
 }

@@ -8,6 +8,13 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    gap: 10px;
+}
+
+.edit-page-vertical-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .actions-edit-page + .actions-edit-page {
@@ -23,10 +30,6 @@
     font-weight: bold;
 }
 
-.actions-edit-page .input-container + .input-container {
-    margin-top: 10px;
-}
-
 .actions-edit-page .input-container {
     display: flex;
     justify-content: center;
@@ -35,20 +38,98 @@
 
 .actions-edit-page input {
     min-width: 500px;
+    max-width: 100%;
     font-size: 20px;
     padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #141714;
+}
+
+.actions-edit-page input[type="text"]::placeholder {
+    color: #687168;
+}
+
+.theme-fields {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(86px, 1fr));
+    gap: 10px;
+}
+
+.theme-fields label {
+    display: flex;
+    width: auto;
+    flex-direction: column;
+    gap: 5px;
+    color: #fff;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.theme-fields input[type="color"] {
+    width: 100%;
+    min-width: 0;
+    min-height: 36px;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .btNewPage {
     margin-top: 40px;
 }
 
-.actions-edit-page button{
-    width:130px;
+.actions-edit-page button {
+    width: 130px;
+    min-height: 44px;
+    border-radius: 8px;
+    background: rgba(239, 243, 235, 0.94);
+    color: #141714;
+    font-weight: 900;
+    text-transform: uppercase;
 }
+
+.actions-edit-page button span {
+    color: inherit;
+}
+
 .actions-edit-page button.delete {
     background-color: #ff8585;
-}
-.actions-edit-page button.delete span{
     color: #740c0c;
+}
+
+.actions-edit-page button.delete span{
+    color: inherit;
+}
+
+@media (max-width: 760px) {
+    .actions-edit-page {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions-edit-page .input-container {
+        flex-direction: column;
+    }
+
+    .actions-edit-page label {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .actions-edit-page input {
+        min-width: 0;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .theme-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .actions-edit-page button {
+        width: 100%;
+    }
 }

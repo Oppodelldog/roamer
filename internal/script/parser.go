@@ -10,6 +10,7 @@ import (
 
 var ErrUnknownCommand = errors.New("unknown command")
 var ErrExpectedCommandLiteral = errors.New("expected command literal")
+var ErrUnexpectedEOF = errors.New("unexpected end of input")
 
 func Parse(script string) ([]sequencer.Elem, error) {
 	var (
