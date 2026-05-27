@@ -39,6 +39,7 @@ type Sequencer struct {
 	hasSequence    bool
 	beforeSequence func(s *Sequencer)
 	afterSequence  func(s *Sequencer)
+	beforeElement  func(s *Sequencer, elem Elem, event ElementEvent)
 	elementError   func(s *Sequencer, elem Elem, err error)
 	debug          bool
 	seqWait        chan struct{}
@@ -74,6 +75,10 @@ func (s *Sequencer) AfterSequence(f func(s *Sequencer)) {
 
 func (s *Sequencer) ElementError(f func(s *Sequencer, elem Elem, err error)) {
 	s.elementError = f
+}
+
+func (s *Sequencer) BeforeElement(f func(s *Sequencer, elem Elem, event ElementEvent)) {
+	s.beforeElement = f
 }
 
 // IsPlaying indicated if playback is running or not.
@@ -227,7 +232,21 @@ func (s *Sequencer) playElement(ctx context.Context) {
 			return
 		case <-s.pause:
 			s.waitForResume(ctx)
+			continue
+		default:
+		}
+
+		select {
+		case <-ctx.Done():
+			logger.Println("stopped element playback")
+			return
+		case <-s.pause:
+			s.waitForResume(ctx)
 		case el := <-s.seq:
+			if s.beforeElement != nil {
+				s.beforeElement(s, el, DescribeElement(el))
+			}
+
 			switch v := el.(type) {
 			case Wait:
 				logger.Println("wait ", v.Duration)

@@ -47,6 +47,7 @@ func Start() {
 	action.StartLoggerWorker(loggerActions, hub.Broadcast())
 
 	http.Handle("/", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
+	http.Handle("/remote", restrictMethod(http.HandlerFunc(serveIndexPage), http.MethodGet))
 	http.Handle("/attributions.html", restrictMethod(addPrefix("/html/", http.FileServer(http.FS(contentFS()))), http.MethodGet))
 	http.Handle("/img/", restrictMethod(http.FileServer(http.FS(imgFS())), http.MethodGet))
 	http.Handle("/js/", restrictMethod(http.FileServer(http.FS(jsFS())), http.MethodGet))

@@ -3,7 +3,9 @@ package sequencer_test
 import (
 	"context"
 	"errors"
+	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
+	"github.com/Oppodelldog/roamer/internal/sequences/general"
 	"sync"
 	"testing"
 	"time"
@@ -160,6 +162,45 @@ func TestSequencer_ElementError(t *testing.T) {
 
 	if !errors.Is(gotErr, wantErr) {
 		t.Fatalf("expected error %v, got %v", wantErr, gotErr)
+	}
+}
+
+func TestSequencer_BeforeElement(t *testing.T) {
+	var (
+		ctx, cancel = context.WithCancel(context.Background())
+		s           = sequencer.New(ctx, 1)
+		events      = make(chan sequencer.ElementEvent, 2)
+	)
+
+	defer cancel()
+
+	s.BeforeElement(func(s *sequencer.Sequencer, elem sequencer.Elem, event sequencer.ElementEvent) {
+		events <- event
+	})
+
+	s.EnqueueSequence(func() []sequencer.Elem {
+		return []sequencer.Elem{
+			sequencer.NoOperation{},
+			sequencer.Wait{Duration: 10 * time.Millisecond},
+		}
+	})
+
+	first := <-events
+	if first.Label != "NOP" {
+		t.Fatalf("expected first event label NOP, got %q", first.Label)
+	}
+
+	second := <-events
+	if second.Label != "W 10ms" {
+		t.Fatalf("expected second event label W 10ms, got %q", second.Label)
+	}
+	if second.DurationMs != 10 {
+		t.Fatalf("expected second event duration 10ms, got %d", second.DurationMs)
+	}
+
+	third := sequencer.DescribeElement(general.KeyDown{Key: key.VkW})
+	if third.Label != "KD W" {
+		t.Fatalf("expected third event label KD W, got %q", third.Label)
 	}
 }
 

@@ -43,12 +43,16 @@ func DeletePage(id string) error {
 }
 
 func NewSequence(pageId string) error {
+	return AddSequence(pageId, Action{Caption: "New Macro"})
+}
+
+func AddSequence(pageId string, action Action) error {
 	page, exists := config.Pages[pageId]
 	if !exists {
 		return fmt.Errorf("the page (%s) does not exists", pageId)
 	}
 
-	page.Actions = append(page.Actions, Action{Caption: "New Macro"})
+	page.Actions = append(page.Actions, action)
 	config.Pages[pageId] = page
 
 	return Save()

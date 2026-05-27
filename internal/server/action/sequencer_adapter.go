@@ -2,8 +2,7 @@ package action
 
 import (
 	"context"
-	"github.com/Oppodelldog/roamer/internal/key"
-	"github.com/Oppodelldog/roamer/internal/mouse"
+	"github.com/Oppodelldog/roamer/internal/input"
 	"github.com/Oppodelldog/roamer/internal/sequencer"
 )
 
@@ -37,20 +36,21 @@ func (d *DefaultSequencerAdapter) Abort() {
 }
 
 func (d *DefaultSequencerAdapter) ReleaseInputs() {
-	key.ResetPressed()
-	mouse.ResetPressed()
+	input.Current().ResetPressed()
 }
 
-func NewSequencerAdapter(beforeSequence, afterSequence func(s *sequencer.Sequencer), elementError func(s *sequencer.Sequencer, elem sequencer.Elem, err error)) *DefaultSequencerAdapter {
+func NewSequencerAdapter(beforeSequence, afterSequence func(s *sequencer.Sequencer), beforeElement func(s *sequencer.Sequencer, elem sequencer.Elem, event sequencer.ElementEvent), elementError func(s *sequencer.Sequencer, elem sequencer.Elem, err error)) *DefaultSequencerAdapter {
 	var seq = sequencer.New(context.Background(), 1)
 
 	seq.BeforeSequence(func(s *sequencer.Sequencer) {
-		key.ResetPressed()
-		mouse.ResetPressed()
+		input.Current().ResetPressed()
 		beforeSequence(s)
 	})
 	seq.AfterSequence(func(s *sequencer.Sequencer) {
 		afterSequence(s)
+	})
+	seq.BeforeElement(func(s *sequencer.Sequencer, elem sequencer.Elem, event sequencer.ElementEvent) {
+		beforeElement(s, elem, event)
 	})
 	seq.ElementError(func(s *sequencer.Sequencer, elem sequencer.Elem, err error) {
 		elementError(s, elem, err)

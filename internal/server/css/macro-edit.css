@@ -63,6 +63,45 @@
     text-transform: uppercase;
 }
 
+.macro-editor-tools button.is-recording {
+    background: rgba(168, 55, 45, 0.92);
+    color: #fff;
+    box-shadow: 0 0 0 2px rgba(255, 116, 96, 0.42);
+}
+
+.recorder-panel {
+    flex: 0 0 auto;
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid rgba(255, 227, 109, 0.34);
+    border-radius: 8px;
+    background: rgba(18, 20, 18, 0.72);
+    text-align: left;
+}
+
+.recorder-panel > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.recorder-panel span,
+.recorder-panel strong {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.recorder-panel strong {
+    color: #ffc0b8;
+}
+
+.recorder-panel textarea {
+    min-height: 58px;
+    margin-top: 10px;
+}
+
 .command-help {
     display: grid;
     flex: 0 0 auto;

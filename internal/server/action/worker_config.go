@@ -4,10 +4,22 @@ import (
 	"fmt"
 
 	"github.com/Oppodelldog/roamer/internal/config"
+	"github.com/Oppodelldog/roamer/internal/recorder"
 	"github.com/Oppodelldog/roamer/internal/script"
 )
 
-func StartConfigWorker(actions <-chan Action, _ chan<- []byte) {
+var macroRecorder = recorder.New(recorder.NewWindowsSampler())
+
+func StartConfigWorker(actions <-chan Action, broadcast chan<- []byte) {
+	go func() {
+		for event := range macroRecorder.Events() {
+			broadcast <- msgRecorderInputEvent(RecorderInputEvent{
+				Label: event.Label,
+				Kind:  event.Kind,
+			})
+		}
+	}()
+
 	go func() {
 		for action := range actions {
 			switch v := action.(type) {
@@ -38,11 +50,71 @@ func StartConfigWorker(actions <-chan Action, _ chan<- []byte) {
 			case SequenceMove:
 				moveSequence(v.PageId, v.SequenceIndex, v.Offset)
 				v.Response <- msgConfig(config.Roamer())
+			case SetInputMode:
+				setInputExecutionMode(v)
+				broadcast <- msgInputModeState()
+			case RecorderStart:
+				startRecorder(v, broadcast)
+			case RecorderStop:
+				stopRecorder(v, broadcast)
+			case RemoteMacroSave:
+				saveRemoteMacro(v, broadcast)
 			default:
 				fmt.Printf("unknown worker action: %T\n", action)
 			}
 		}
 	}()
+}
+
+func saveRemoteMacro(v RemoteMacroSave, broadcast chan<- []byte) {
+	if v.Caption == "" {
+		v.Caption = "Recorded Macro"
+	}
+
+	_, err := script.Parse(v.Sequence)
+	if err != nil {
+		v.Response <- msgSequenceSaveResult(v.PageId, -1, v.Sequence, script.Metadata{Valid: false, Error: err.Error()}, false, err.Error())
+		return
+	}
+
+	err = config.AddSequence(v.PageId, config.Action{
+		Caption:  v.Caption,
+		Sequence: v.Sequence,
+	})
+	if err != nil {
+		v.Response <- msgSequenceSaveResult(v.PageId, -1, v.Sequence, script.Metadata{Valid: false, Error: err.Error()}, false, err.Error())
+		return
+	}
+
+	v.Response <- msgConfig(config.Roamer())
+	broadcast <- msgConfig(config.Roamer())
+}
+
+func startRecorder(v RecorderStart, broadcast chan<- []byte) {
+	err := macroRecorder.Start()
+	state := recorderStateView(macroRecorder.State(), err)
+	v.Response <- msgRecorderState(state)
+	broadcast <- msgRecorderState(state)
+}
+
+func stopRecorder(v RecorderStop, broadcast chan<- []byte) {
+	state, err := macroRecorder.Stop()
+	view := recorderStateView(state, err)
+	v.Response <- msgRecorderState(view)
+	broadcast <- msgRecorderState(view)
+}
+
+func recorderStateView(state recorder.State, err error) RecorderState {
+	view := RecorderState{
+		Active:   state.Active,
+		Sequence: state.Sequence,
+		Count:    state.Count,
+	}
+	if err != nil {
+		view.Error = err.Error()
+	}
+
+	return view
 }
 
 func savePages(pages config.Pages) {

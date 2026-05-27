@@ -31,9 +31,28 @@
                     <div class="playback-label">{{ playbackStatusLabel() }}</div>
                     <div class="playback-title">{{ activeMacroLabel() }}</div>
                     <div class="playback-error" v-if="playbackState.Error">{{ playbackState.Error }}</div>
+                    <div class="timeline-panel" v-if="playbackTimeline.Visible">
+                        <div class="timeline-row">
+                            <span>{{ timelineStepLabel() }}</span>
+                            <strong>{{ playbackTimeline.Current }}</strong>
+                            <span>{{ timelineRemainingLabel() }}</span>
+                        </div>
+                        <div class="timeline-track">
+                            <div class="timeline-fill" v-bind:style="timelineProgressStyle()"></div>
+                        </div>
+                        <div class="timeline-next" v-if="playbackTimeline.Next">
+                            Next <strong>{{ playbackTimeline.Next }}</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="top-controls">
+                <button class="control-button mode-button" v-if="remoteMode">
+                    {{ modeLabel() }}
+                </button>
+                <button class="control-button input-mode-button" v-bind:class="{'is-dry-run':inputMode.DryRun}" v-on:pointerup="toggleInputMode()">
+                    {{ inputModeLabel() }}
+                </button>
                 <button class="control-button" v-bind:disabled="!playbackState.HasSequence" v-on:pointerup="togglePause()">
                     {{ pauseControlLabel() }}
                 </button>
@@ -42,11 +61,45 @@
             </div>
         </div>
 
-        <div class="top-tools">
+        <div class="top-tools" v-if="!remoteMode">
             <button class="tool-button" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">Pages</button>
             <button class="tool-button" v-if="showPage || macroEditor" v-bind:class="{'is-active':macroEditor}" v-on:pointerup="showMacroEditor()">Macros</button>
+            <button class="tool-button" v-bind:class="{'is-active':remotePanel}" v-on:pointerup="toggleRemotePanel()">Remote</button>
             <button class="tool-button" v-bind:class="{'is-active':showDiagnostics}" v-on:pointerup="toggleDiagnostics()">Logs</button>
             <button class="tool-button" v-bind:class="{'is-active':showSounds}" v-on:pointerup="showSoundSettings()">Sound</button>
+        </div>
+
+        <div class="remote-panel" v-if="remotePanel && !remoteMode">
+            <div class="remote-header">
+                <span>Remote</span>
+                <button v-on:pointerup="toggleRemotePanel()">Close</button>
+            </div>
+            <div class="remote-url" v-for="url in remoteUrls()">{{ url }}</div>
+        </div>
+
+        <div class="remote-recorder-overlay" v-if="remoteMode && remoteRecorder.Open">
+            <div class="remote-recorder-shell">
+                <button type="button" class="remote-recorder-close" v-on:pointerup="closeRemoteRecorder()">Close</button>
+                <div class="remote-recorder-title">
+                    <span>{{ currentPage().Title }}</span>
+                    <strong>{{ recorderStatusLabel() }}</strong>
+                </div>
+                <button type="button"
+                        class="remote-record-button"
+                        v-bind:class="{'is-recording': recorder.Active}"
+                        v-on:pointerup="toggleRemoteRecording()">
+                    {{ remoteRecorderPrimaryLabel() }}
+                </button>
+                <div class="remote-recording-form" v-if="recorder.Sequence && !recorder.Active">
+                    <input type="text" v-model:value="remoteRecorder.Name" placeholder="Macro name">
+                    <textarea readonly>{{ recorder.Sequence }}</textarea>
+                    <div class="remote-recorder-error" v-if="remoteRecorder.Error">{{ remoteRecorder.Error }}</div>
+                    <div class="remote-recorder-actions">
+                        <button type="button" v-on:pointerup="saveRemoteRecording()" v-bind:disabled="remoteRecorder.Saving">Save</button>
+                        <button type="button" v-on:pointerup="closeRemoteRecorder()">Discard</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="diagnostics-panel" v-if="showDiagnostics">
@@ -71,6 +124,27 @@
             <div class="diagnostics-log">
                 <div v-if="logMessages.length === 0">No log messages yet.</div>
                 <div v-for="logMessage in logMessages">{{ logMessage }}</div>
+            </div>
+        </div>
+
+        <div class="playback-command-stack">
+             <div class="playback-command-toast"
+                 v-bind:class="['is-' + command.Type, {'is-wait': command.IsWait}]"
+                 v-for="command in playbackCommands"
+                 v-bind:key="command.Id"
+                 v-bind:style="command.Style">
+                <span v-if="command.Context">{{ command.Context }}</span>
+                <strong>{{ command.DisplayLabel || command.Label }}</strong>
+            </div>
+        </div>
+
+        <div class="recorder-command-stack">
+             <div class="recorder-command-toast"
+                 v-bind:class="'is-' + command.Kind"
+                 v-for="command in recorderCommands"
+                 v-bind:key="command.Id"
+                 v-bind:style="command.Style">
+                <strong>{{ command.Label }}</strong>
             </div>
         </div>
 
@@ -101,6 +175,7 @@
                         <h1>{{ currentPage().Title }}</h1>
                         <h2>{{ pageActionCount(currentPage()) }} configured macros</h2>
                     </div>
+                    <button class="remote-new-macro" v-if="remoteMode" v-on:pointerup="openRemoteRecorder()">New Macro</button>
                     <div id="actions" class="sequences">
                         <button v-for="(action,idx) in currentPage().Actions"
                                 v-bind:class="macroButtonClass(action, idx)"
@@ -152,9 +227,24 @@
                         <span>{{ currentPage().Title }}</span>
                     </div>
                     <div class="macro-editor-tools">
+                        <button type="button"
+                                v-bind:class="{'is-recording': recorder.Active}"
+                                v-on:click.prevent="toggleRecorder($event)"
+                                v-on:keydown.space.prevent
+                                v-on:keydown.enter.prevent>
+                            {{ recorderButtonLabel() }}
+                        </button>
                         <button type="button" v-on:click.prevent="toggleCommandHelp()">{{ showCommandHelp ? 'Hide Help' : 'Show Help' }}</button>
                         <button type="button" v-on:click.prevent="showMacroEditor()">Close</button>
                     </div>
+                </div>
+
+                <div class="recorder-panel" v-if="recorder.Active || recorder.Sequence || recorder.Error">
+                    <div>
+                        <span>{{ recorderStatusLabel() }}</span>
+                        <strong v-if="recorder.Error">{{ recorder.Error }}</strong>
+                    </div>
+                    <textarea readonly v-if="recorder.Sequence">{{ recorder.Sequence }}</textarea>
                 </div>
 
                 <div class="command-help" v-if="showCommandHelp">
@@ -197,6 +287,7 @@
                         <div class="sequence-actions">
                             <button v-on:click="saveSequence(idx)" title="save">Save</button>
                             <button v-on:click="formatSequence(idx)" title="format">Format</button>
+                            <button v-on:click="applyRecording(idx)" v-bind:disabled="!recorder.Sequence" title="use recording">Use Recording</button>
                             <button v-on:click="duplicateSequence(idx)" title="duplicate">Duplicate</button>
                             <button v-on:click="moveSequence(idx, -1)" v-bind:disabled="!canMoveSequence(idx, -1)" title="move up">Up</button>
                             <button v-on:click="moveSequence(idx, 1)" v-bind:disabled="!canMoveSequence(idx, 1)" title="move down">Down</button>

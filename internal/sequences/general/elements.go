@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Oppodelldog/roamer/internal/input"
 	"github.com/Oppodelldog/roamer/internal/key"
 	"github.com/Oppodelldog/roamer/internal/mouse"
 )
@@ -12,42 +13,62 @@ type KeyDown struct {
 	Key int
 }
 
+func (e KeyDown) String() string {
+	return fmt.Sprintf("KD %s", key.Name(e.Key))
+}
+
 func (e KeyDown) Do() error {
 	fmt.Println("down ", e.Key)
-	return key.Down(e.Key)
+	return input.Current().KeyDown(e.Key)
 }
 
 type KeyUp struct {
 	Key int
 }
 
+func (e KeyUp) String() string {
+	return fmt.Sprintf("KU %s", key.Name(e.Key))
+}
+
 func (e KeyUp) Do() error {
 	fmt.Println("up ", e.Key)
-	return key.Up(e.Key)
+	return input.Current().KeyUp(e.Key)
 }
 
 type LeftMouseButtonDown struct {
 }
 
+func (e LeftMouseButtonDown) String() string {
+	return "LD"
+}
+
 func (e LeftMouseButtonDown) Do() error {
 	fmt.Println("lmb-down")
-	return mouse.LeftDown()
+	return input.Current().LeftDown()
 }
 
 type RightMouseButtonDown struct {
 }
 
+func (e RightMouseButtonDown) String() string {
+	return "RD"
+}
+
 func (e RightMouseButtonDown) Do() error {
 	fmt.Println("rmb-down")
-	return mouse.RightDown()
+	return input.Current().RightDown()
 }
 
 type SetMousePos struct {
 	Pos mouse.Pos
 }
 
+func (e SetMousePos) String() string {
+	return fmt.Sprintf("SM %d %d", e.Pos.X, e.Pos.Y)
+}
+
 func (e SetMousePos) Do() error {
-	err := mouse.SetPosition(e.Pos)
+	err := input.Current().SetPosition(e.Pos)
 	if err != nil {
 		fmt.Printf("error SetMousePos: %v\n", err)
 	}
@@ -60,24 +81,36 @@ func (e SetMousePos) Do() error {
 type LeftMouseButtonUp struct {
 }
 
+func (e LeftMouseButtonUp) String() string {
+	return "LU"
+}
+
 func (e LeftMouseButtonUp) Do() error {
 	fmt.Println("lmb-up")
-	return mouse.LeftUp()
+	return input.Current().LeftUp()
 }
 
 type RightMouseButtonUp struct {
 }
 
+func (e RightMouseButtonUp) String() string {
+	return "RU"
+}
+
 func (e RightMouseButtonUp) Do() error {
 	fmt.Println("rmb-up")
-	return mouse.RightUp()
+	return input.Current().RightUp()
 }
 
 type LookupMousePos struct {
 }
 
+func (e LookupMousePos) String() string {
+	return "MP"
+}
+
 func (e LookupMousePos) Do() error {
-	pos, err := mouse.GetCursorPos()
+	pos, err := input.Current().GetCursorPos()
 	if err != nil && isNotSuccess(err) {
 		return err
 	}
@@ -92,9 +125,13 @@ type MouseMove struct {
 	Y int32
 }
 
+func (e MouseMove) String() string {
+	return fmt.Sprintf("MM %d %d", e.X, e.Y)
+}
+
 func (e MouseMove) Do() error {
 	fmt.Println("move ", e.X, e.Y)
-	err := mouse.Move(e.X, e.Y)
+	err := input.Current().Move(e.X, e.Y)
 
 	return err
 }

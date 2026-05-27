@@ -9,7 +9,12 @@ const seqState = "SEQUENCE_STATE"
 const seqSaveResult = "SEQUENCE_SAVE_RESULT"
 const seqFormatResult = "SEQUENCE_FORMAT_RESULT"
 const seqValidateResult = "SEQUENCE_VALIDATE_RESULT"
+const seqElementEvent = "SEQUENCE_ELEMENT_EVENT"
+const recorderState = "RECORDER_STATE"
+const recorderInputEvent = "RECORDER_INPUT_EVENT"
+const remoteInfo = "REMOTE_INFO"
 const soundSettings = "SOUND_SETTINGS"
+const inputModeState = "INPUT_MODE_STATE"
 const logMessage = "LOG_MESSAGE"
 const roamerConfig = "CONFIG"
 
@@ -29,6 +34,10 @@ const seqMove = "SEQUENCE_MOVE"
 const loadSoundSettings = "LOAD_SOUND_SETTINGS"
 const setSoundVolume = "SET_SOUND_VOLUME"
 const setMainSoundVolume = "SET_MAIN_SOUND_VOLUME"
+const setInputMode = "SET_INPUT_MODE"
+const recorderStart = "RECORDER_START"
+const recorderStop = "RECORDER_STOP"
+const remoteMacroSave = "REMOTE_MACRO_SAVE"
 const pageNew = "PAGE_NEW"
 const pageDelete = "PAGE_DELETE"
 const pagesSave = "PAGES_SAVE"
@@ -56,11 +65,26 @@ function connectToServer() {
                     case soundSettings:
                         updateSoundSettings(data.Payload)
                         break;
+                    case inputModeState:
+                        updateInputMode(data.Payload)
+                        break;
                     case logMessage:
                         appendLogMessage(data.Payload)
                         break;
                     case seqState:
                         updateState(data.Payload)
+                        break
+                    case seqElementEvent:
+                        appendPlaybackCommand(data.Payload)
+                        break
+                    case recorderState:
+                        updateRecorderState(data.Payload)
+                        break
+                    case recorderInputEvent:
+                        appendRecorderCommand(data.Payload)
+                        break
+                    case remoteInfo:
+                        updateRemoteInfo(data.Payload)
                         break
                     case seqSaveResult:
                         let payload = data.Payload;
@@ -118,6 +142,22 @@ function setVolume(id, volume) {
 
 function setMainVolume(volume) {
     wsSend({Type: setMainSoundVolume, Payload: {Value: volume}})
+}
+
+function setInputExecutionMode(dryRun) {
+    wsSend({Type: setInputMode, Payload: {DryRun: dryRun}})
+}
+
+function startRecorder() {
+    wsSend({Type: recorderStart, Payload: {}})
+}
+
+function stopRecorder() {
+    wsSend({Type: recorderStop, Payload: {}})
+}
+
+function saveRemoteMacro(pageId, caption, sequence) {
+    wsSend({Type: remoteMacroSave, Payload: {PageId: pageId, Caption: caption, Sequence: sequence}})
 }
 
 function querySoundSettings() {

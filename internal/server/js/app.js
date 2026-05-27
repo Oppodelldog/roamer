@@ -9,6 +9,10 @@ function initApp() {
         data: {
             hasConfig: false,
             config: null,
+            remoteMode: window.location.pathname === "/remote",
+            remotePanel: false,
+            remoteInfo: {Urls: []},
+            remoteRecorder: {Open: false, Name: "", Saving: false, Error: ""},
             showPage: false,
             showVerticalSlide: false,
             pageEditor: false,
@@ -18,6 +22,8 @@ function initApp() {
             showCommandHelp: true,
             currentPageId: null,
             connection: {isConnected: false},
+            inputMode: {Mode: "live", DryRun: false},
+            recorder: {Active: false, Sequence: "", Count: 0, Error: ""},
             soundSettings: {Sessions: [], MainSession: {}},
             soundLoading: false,
             deletePageClicks: {},
@@ -25,6 +31,23 @@ function initApp() {
             sequenceValidationStatus: {},
             sequenceValidationTimers: {},
             sequenceExecutionErrors: {},
+            playbackCommands: [],
+            playbackCommandId: 0,
+            playbackCommandTimers: {},
+            recorderCommands: [],
+            recorderCommandId: 0,
+            playbackTimeline: {
+                Visible: false,
+                Current: "",
+                Next: "",
+                StepIndex: 0,
+                TotalSteps: 0,
+                Progress: 0,
+                RemainingMs: 0,
+                Cycle: 0,
+                Looping: false
+            },
+            lastPlaybackStartKey: "",
             playbackState: {
                 PageId: "",
                 SequenceIndex: -1,
@@ -71,6 +94,26 @@ function initApp() {
             },
             connectionLabel: function () {
                 return this.connection.isConnected ? "Connected" : "Offline"
+            },
+            modeLabel: function () {
+                return this.remoteMode ? "Remote" : "Local"
+            },
+            remoteUrl: function () {
+                if (this.remoteInfo.Urls && this.remoteInfo.Urls.length > 0) {
+                    return this.remoteInfo.Urls[0]
+                }
+
+                return window.location.origin + "/remote"
+            },
+            remoteUrls: function () {
+                if (this.remoteInfo.Urls && this.remoteInfo.Urls.length > 0) {
+                    return this.remoteInfo.Urls
+                }
+
+                return [this.remoteUrl()]
+            },
+            inputModeLabel: function () {
+                return this.inputMode.DryRun ? "Dry Run" : "Live"
             },
             playbackStatusLabel: function () {
                 if (this.playbackState.State === "error") {
@@ -357,10 +400,95 @@ function initApp() {
                 this.hasConfig = true
                 this.sequenceValidationStatus = {}
                 this.sequenceValidationTimers = {}
+                if (this.remoteRecorder.Open && this.remoteRecorder.Saving) {
+                    this.remoteRecorder = {Open: false, Name: "", Saving: false, Error: ""}
+                }
                 this.applyTheme()
             },
             updateConnectionStatus: function (isConnected) {
                 this.connection.isConnected = isConnected
+            },
+            updateInputMode: function (state) {
+                this.inputMode = state
+            },
+            updateRemoteInfo: function (info) {
+                this.remoteInfo = info
+            },
+            toggleInputMode: function () {
+                setInputExecutionMode(!this.inputMode.DryRun)
+            },
+            updateRecorderState: function (state) {
+                this.recorder = state
+                if (this.remoteMode && this.remoteRecorder.Open && !state.Active && state.Sequence && !this.remoteRecorder.Name) {
+                    this.remoteRecorder.Name = "Recorded Macro"
+                }
+                if (state.Error) {
+                    this.appendLogMessage("Recorder: " + state.Error)
+                }
+            },
+            recorderStatusLabel: function () {
+                if (this.recorder.Active) {
+                    return "Recording input..."
+                }
+
+                if (this.recorder.Sequence) {
+                    return this.recorder.Count + " recorded commands"
+                }
+
+                return "Recorder idle"
+            },
+            toggleRecorder: function (event) {
+                if (event && event.currentTarget) {
+                    event.currentTarget.blur()
+                }
+
+                if (this.recorder.Active) {
+                    stopRecorder()
+                    return
+                }
+
+                startRecorder()
+            },
+            recorderButtonLabel: function () {
+                return this.recorder.Active ? "Stop Recording" : "Start Recording"
+            },
+            openRemoteRecorder: function () {
+                this.remoteRecorder = {Open: true, Name: "", Saving: false, Error: ""}
+            },
+            closeRemoteRecorder: function () {
+                if (this.recorder.Active) {
+                    stopRecorder()
+                }
+                this.remoteRecorder = {Open: false, Name: "", Saving: false, Error: ""}
+            },
+            toggleRemoteRecording: function () {
+                if (this.recorder.Active) {
+                    stopRecorder()
+                    return
+                }
+
+                this.remoteRecorder.Error = ""
+                startRecorder()
+            },
+            remoteRecorderPrimaryLabel: function () {
+                if (this.recorder.Active) {
+                    return "Stop"
+                }
+
+                if (this.recorder.Sequence) {
+                    return "Record Again"
+                }
+
+                return "Record"
+            },
+            saveRemoteRecording: function () {
+                if (!this.currentPageId || !this.recorder.Sequence || this.remoteRecorder.Saving) {
+                    return
+                }
+
+                this.remoteRecorder.Saving = true
+                this.remoteRecorder.Error = ""
+                saveRemoteMacro(this.currentPageId, this.remoteRecorder.Name || "Recorded Macro", this.recorder.Sequence)
             },
             showPageSelection: function () {
                 this.pageEditor = false;
@@ -371,7 +499,14 @@ function initApp() {
                 this.currentPageId = null
                 this.applyTheme()
             },
+            toggleRemotePanel: function () {
+                this.remotePanel = !this.remotePanel
+            },
             showSoundSettings: function () {
+                if (this.remoteMode) {
+                    return
+                }
+
                 if (this.showSounds) {
                     this.showSounds = false
                     this.soundLoading = false
@@ -394,6 +529,10 @@ function initApp() {
                 querySoundSettings()
             },
             toggleDiagnostics: function () {
+                if (this.remoteMode) {
+                    return
+                }
+
                 this.showDiagnostics = !this.showDiagnostics
             },
             changeSoundSessionValue: function (idx) {
@@ -415,7 +554,227 @@ function initApp() {
                     this.logMessages.shift()
                 }
             },
+            appendPlaybackCommand: function (event) {
+                this.updatePlaybackTimeline(event)
+                let id = ++this.playbackCommandId
+                let waitMs = event.DurationMs || 0
+                let durationMs = waitMs > 0 ? waitMs + 1800 : 1800
+                this.pushPlaybackCommandsUp()
+                let command = {
+                    Id: id,
+                    Type: "command",
+                    Label: event.Label,
+                    DisplayLabel: waitMs > 0 ? this.waitCountdownLabel(waitMs) : event.Label,
+                    IsWait: waitMs > 0,
+                    Slot: 0,
+                    DurationMs: durationMs,
+                    Style: this.playbackToastStyle(0, durationMs)
+                }
+
+                this.playbackCommands.push(command)
+                this.prunePlaybackCommands()
+                if (waitMs > 0) {
+                    this.startWaitCountdown(command, waitMs)
+                }
+
+                let app = this
+                setTimeout(function () {
+                    app.removePlaybackCommand(id)
+                }, durationMs + 120)
+            },
+            appendRecorderCommand: function (event) {
+                let id = ++this.recorderCommandId
+                let durationMs = 1500
+                this.pushRecorderCommandsUp()
+                let command = {
+                    Id: id,
+                    Label: event.Label,
+                    Kind: event.Kind || "command",
+                    Slot: 0,
+                    Style: this.recorderToastStyle(0, durationMs)
+                }
+
+                this.recorderCommands.push(command)
+                this.pruneRecorderCommands()
+
+                let app = this
+                setTimeout(function () {
+                    app.removeRecorderCommand(id)
+                }, durationMs + 120)
+            },
+            removeRecorderCommand: function (id) {
+                this.recorderCommands = this.recorderCommands.filter(function (command) {
+                    return command.Id !== id
+                })
+            },
+            pushRecorderCommandsUp: function () {
+                for (let i = 0; i < this.recorderCommands.length; i++) {
+                    let command = this.recorderCommands[i]
+                    command.Slot = (command.Slot || 0) + 1
+                    command.Style = this.recorderToastStyle(command.Slot, 1500)
+                }
+            },
+            recorderToastStyle: function (slot, durationMs) {
+                return {
+                    animationDuration: durationMs + "ms",
+                    "--toast-offset": (slot * 34) + "px"
+                }
+            },
+            pruneRecorderCommands: function () {
+                if (this.recorderCommands.length <= 48) {
+                    return
+                }
+
+                this.recorderCommands = this.recorderCommands.slice(this.recorderCommands.length - 48)
+            },
+            updatePlaybackTimeline: function (event) {
+                if (event.IsLoop) {
+                    this.playbackTimeline = {
+                        Visible: true,
+                        Current: "Loop",
+                        Next: event.NextLabel || "",
+                        StepIndex: event.StepIndex || event.TotalSteps || 0,
+                        TotalSteps: event.TotalSteps || 0,
+                        Progress: 100,
+                        RemainingMs: 0,
+                        Cycle: event.Cycle || 0,
+                        Looping: true
+                    }
+                    return
+                }
+
+                this.playbackTimeline = {
+                    Visible: true,
+                    Current: event.Label || "",
+                    Next: event.NextLabel || "",
+                    StepIndex: event.StepIndex || 0,
+                    TotalSteps: event.TotalSteps || 0,
+                    Progress: Math.max(0, Math.min(event.Progress || 0, 100)),
+                    RemainingMs: event.RemainingMs || 0,
+                    Cycle: event.Cycle || 0,
+                    Looping: this.playbackState.State === "looping"
+                }
+            },
+            timelineProgressStyle: function () {
+                return {
+                    width: this.playbackTimeline.Progress + "%"
+                }
+            },
+            timelineStepLabel: function () {
+                if (!this.playbackTimeline.Visible) {
+                    return ""
+                }
+
+                let prefix = this.playbackTimeline.Looping && this.playbackTimeline.Cycle > 0 ? "Cycle " + this.playbackTimeline.Cycle + " - " : ""
+                if (this.playbackTimeline.TotalSteps <= 0) {
+                    return prefix + "Step"
+                }
+
+                return prefix + this.playbackTimeline.StepIndex + " / " + this.playbackTimeline.TotalSteps
+            },
+            timelineRemainingLabel: function () {
+                let ms = this.playbackTimeline.RemainingMs
+                if (!ms || ms <= 0) {
+                    return this.playbackTimeline.Looping ? "cycle ending" : "finishing"
+                }
+
+                if (ms < 1000) {
+                    return "~" + Math.ceil(ms) + "ms left"
+                }
+
+                if (ms < 60000) {
+                    return "~" + Math.ceil(ms / 1000) + "s left"
+                }
+
+                return "~" + Math.ceil(ms / 60000) + "m left"
+            },
+            appendPlaybackStart: function (state) {
+                let id = ++this.playbackCommandId
+                let durationMs = 2600
+                let command = {
+                    Id: id,
+                    Type: "start",
+                    Label: state.Caption || "Macro started",
+                    DisplayLabel: state.Caption || "Macro started",
+                    Context: state.PageTitle || "",
+                    DurationMs: durationMs,
+                    Style: {
+                        animationDuration: durationMs + "ms",
+                        "--toast-offset": "318px"
+                    }
+                }
+
+                this.playbackCommands.push(command)
+                this.prunePlaybackCommands()
+
+                let app = this
+                setTimeout(function () {
+                    app.removePlaybackCommand(id)
+                }, durationMs + 120)
+            },
+            removePlaybackCommand: function (id) {
+                if (this.playbackCommandTimers[id]) {
+                    clearInterval(this.playbackCommandTimers[id])
+                    Vue.delete(this.playbackCommandTimers, id)
+                }
+
+                this.playbackCommands = this.playbackCommands.filter(function (command) {
+                    return command.Id !== id
+                })
+            },
+            startWaitCountdown: function (command, waitMs) {
+                let app = this
+                let endAt = Date.now() + waitMs
+                let interval = setInterval(function () {
+                    let remainingMs = Math.max(0, endAt - Date.now())
+                    command.DisplayLabel = app.waitCountdownLabel(remainingMs)
+
+                    if (remainingMs <= 0) {
+                        command.DisplayLabel = command.Label
+                        command.IsWait = false
+                        clearInterval(interval)
+                        Vue.delete(app.playbackCommandTimers, command.Id)
+                    }
+                }, 250)
+
+                Vue.set(this.playbackCommandTimers, command.Id, interval)
+            },
+            waitCountdownLabel: function (remainingMs) {
+                if (remainingMs >= 1000) {
+                    return "W " + Math.ceil(remainingMs / 1000) + "s"
+                }
+
+                return "W " + Math.ceil(remainingMs) + "ms"
+            },
+            pushPlaybackCommandsUp: function () {
+                for (let i = 0; i < this.playbackCommands.length; i++) {
+                    let command = this.playbackCommands[i]
+                    if (command.Type !== "command") {
+                        continue
+                    }
+
+                    command.Slot = (command.Slot || 0) + 1
+                    command.Style = this.playbackToastStyle(command.Slot, command.DurationMs)
+                }
+            },
+            playbackToastStyle: function (slot, durationMs) {
+                return {
+                    animationDuration: durationMs + "ms",
+                    "--toast-offset": (slot * 38) + "px"
+                }
+            },
+            prunePlaybackCommands: function () {
+                if (this.playbackCommands.length <= 80) {
+                    return
+                }
+
+                this.playbackCommands = this.playbackCommands.slice(this.playbackCommands.length - 80)
+            },
             showPagesEditor: function () {
+                if (this.remoteMode) {
+                    return
+                }
+
                 if (this.pageEditor && this.showVerticalSlide) {
                     this.closeVerticalSlide()
                     savePages(this.config.Pages)
@@ -476,6 +835,10 @@ function initApp() {
                 }
             },
             showMacroEditor: function () {
+                if (this.remoteMode) {
+                    return
+                }
+
                 if (this.macroEditor) {
                     this.macroEditor = false
                     return
@@ -542,6 +905,15 @@ function initApp() {
             moveSequence: function (idx, offset) {
                 moveSequence(this.currentPageId, idx, offset)
             },
+            applyRecording: function (idx) {
+                if (!this.recorder.Sequence) {
+                    return
+                }
+
+                let action = this.config.Pages[this.currentPageId].Actions[idx]
+                action.Sequence = this.recorder.Sequence
+                this.scheduleValidateSequence(idx)
+            },
             canMoveSequence: function (idx, offset) {
                 let page = this.currentPage()
                 if (!page || !page.Actions) {
@@ -552,6 +924,12 @@ function initApp() {
                 return target >= 0 && target < page.Actions.length
             },
             respondSaveSequence: function (pageId, sequenceIndex, sequence, meta, success, error) {
+                if (sequenceIndex < 0 && this.remoteRecorder.Open) {
+                    this.remoteRecorder.Saving = false
+                    this.remoteRecorder.Error = error || "Could not save recording"
+                    return
+                }
+
                 this.config.Pages[pageId].Actions[sequenceIndex].Sequence = sequence;
                 this.config.Pages[pageId].Actions[sequenceIndex].Meta = meta;
                 if (success) {
@@ -690,6 +1068,17 @@ function initApp() {
                 this.showCommandHelp = !this.showCommandHelp
             },
             updatePlaybackState: function (state) {
+                let isRunning = state.State === "playing" || state.State === "looping" || state.State === "paused"
+                let playbackKey = state.PageId + ":" + state.SequenceIndex + ":" + state.Caption
+                if (isRunning && state.HasSequence && playbackKey !== this.lastPlaybackStartKey) {
+                    this.lastPlaybackStartKey = playbackKey
+                    this.appendPlaybackStart(state)
+                }
+                if (!isRunning || !state.HasSequence) {
+                    this.lastPlaybackStartKey = ""
+                    this.playbackTimeline.Visible = false
+                }
+
                 this.playbackState = state;
                 if (state.State === "error" && state.Error && state.PageId && state.SequenceIndex >= 0) {
                     Vue.set(this.sequenceExecutionErrors, this.sequenceSaveKey(state.PageId, state.SequenceIndex), state.Error)
@@ -717,12 +1106,32 @@ function updateConnectionStatus(isConnected) {
     app.updateConnectionStatus(isConnected)
 }
 
+function updateInputMode(state) {
+    app.updateInputMode(state)
+}
+
+function updateRemoteInfo(info) {
+    app.updateRemoteInfo(info)
+}
+
+function updateRecorderState(state) {
+    app.updateRecorderState(state)
+}
+
 function updateSoundSettings(soundSettings) {
     app.updateSoundSettings(soundSettings)
 }
 
 function appendLogMessage(message) {
     app.appendLogMessage(message)
+}
+
+function appendPlaybackCommand(event) {
+    app.appendPlaybackCommand(event)
+}
+
+function appendRecorderCommand(event) {
+    app.appendRecorderCommand(event)
 }
 
 function respondSaveSequence(pageId, sequenceIndex, sequence, meta, success, error) {
