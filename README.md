@@ -8,6 +8,16 @@ Demo Project how to automate Windows keyboard/mouse interactions through a web f
 The webservice uses  **Win32 API** for simulating keyboard and mouse events and **Windows Core Audio API** for sound
 settings.
 
+## Install
+
+```cmd
+.\install.bat
+```
+
+The install script builds `roamer.exe` and writes it to `GOBIN`, or to `GOPATH\bin` when `GOBIN` is not set.
+Make sure that directory is on `PATH` if you want to launch Roamer from a terminal or Windows search.
+Close any running Roamer instance before installing, otherwise Windows may block replacing `roamer.exe`.
+
 **Attention**
 
 * Read and understand the source code before using this tool
