@@ -113,9 +113,10 @@ func (s *Sequencer) EnqueueSequence(newSeq func() []Elem) {
 func (s *Sequencer) Pause() error {
 	select {
 	case s.pause <- struct{}{}:
-		if s.state == Paused {
+		switch s.state {
+		case Paused:
 			s.state = Playing
-		} else if s.state == Playing {
+		case Playing:
 			s.state = Paused
 		}
 

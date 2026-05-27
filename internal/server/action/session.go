@@ -47,10 +47,11 @@ var soundSettingActions = map[string]func() Responder{
 }
 
 func ClientSession(c *ws.Client, actions, sequencerActions, soundActions, loggerActions chan Action) {
-	var ctx, cancel = context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 	c.CancelSession = cancel
 
 	go func() {
+		defer cancel()
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Printf("panic in search session: %v\n", r)

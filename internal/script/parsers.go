@@ -77,7 +77,7 @@ func parseLiteral(t *TokenStream) (Token, error) {
 	var lit = t.Consume()
 
 	if lit.Type != literal {
-		return Token{}, fmt.Errorf("W %w, but was '%s'", ErrExpectedLiteral, lit.Type)
+		return Token{}, fmt.Errorf("w %w, but was '%s'", ErrExpectedLiteral, lit.Type)
 	}
 
 	return lit, nil

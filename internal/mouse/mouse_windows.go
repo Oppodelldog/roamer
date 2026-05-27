@@ -90,6 +90,8 @@ func ResetPressed() {
 }
 
 func SetPosition(pos Pos) error {
+	// WinAPI syscall parameters are passed as uintptr; negative coordinates are valid on multi-monitor setups.
+	//nolint:gosec
 	_, _, err := procSetCursorPos.Call(uintptr(pos.X), uintptr(pos.Y))
 
 	return normalizeErr(err)
@@ -107,6 +109,8 @@ func GetCursorPos() (Pos, error) {
 }
 
 func Move(x, y int32) error {
+	// WinAPI syscall parameters are passed as uintptr; relative movement may be negative.
+	//nolint:gosec
 	_, _, err := procMouseBd.Call(uintptr(flagMove), uintptr(x), uintptr(y), uintptr(0), 0)
 
 	return normalizeErr(err)
