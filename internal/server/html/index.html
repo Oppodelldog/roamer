@@ -22,13 +22,15 @@
 <div id="app">
     <div id="roamer-list" v-bind:class="deckShellClass()" v-if="hasConfig">
         <div class="deck-topbar">
-            <button type="button" class="nav-button" v-bind:class="{'is-hidden':!showPage}" v-on:click.prevent="showPageSelection()">Back</button>
+            <button type="button" class="nav-button" v-bind:class="{'is-hidden':!showPage, 'is-remote-inline':remoteMode}" v-on:click.prevent="showPageSelection()">Back</button>
             <div v-bind:class="playbackPanelClass()">
-                <div class="status-pill" v-bind:class="{'is-online':connection.isConnected, 'is-offline':!connection.isConnected}">
-                    {{ connectionLabel() }}
-                </div>
+                <div class="connection-dot"
+                     v-bind:class="{'is-online':connection.isConnected, 'is-offline':!connection.isConnected}"
+                     v-bind:title="connectionLabel()"></div>
                 <div class="playback-copy">
-                    <div class="playback-label">{{ playbackStatusLabel() }}</div>
+                    <div class="playback-status-line">
+                        <span>{{ playbackStatusLabel() }}</span>
+                    </div>
                     <div class="playback-title">{{ activeMacroLabel() }}</div>
                     <div class="playback-error" v-if="playbackState.Error">{{ playbackState.Error }}</div>
                     <div class="timeline-panel" v-if="playbackTimeline.Visible">
@@ -187,9 +189,7 @@
                 </div>
 
                 <div id="roamer-page" class="slide deck-view" v-if="showPage">
-                    <div class="logoutput">
-                        <div v-for="logMessage in logMessages">{{ logMessage }}</div>
-                    </div>
+                    <button type="button" class="remote-page-back" v-if="remoteMode" v-on:click.prevent="showPageSelection()">Back</button>
                     <div class="hero-copy page-hero">
                         <h1>{{ currentPage().Title }}</h1>
                         <h2>{{ pageActionCount(currentPage()) }} configured macros</h2>

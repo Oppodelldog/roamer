@@ -146,10 +146,16 @@ button:disabled {
     text-align: left;
 }
 
-.playback-label {
+.playback-status-line {
+    display: flex;
+    align-items: center;
+    min-height: 16px;
+}
+
+.playback-status-line span {
     color: #cfd6cf;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 900;
     text-transform: uppercase;
 }
 
@@ -172,24 +178,24 @@ button:disabled {
     white-space: nowrap;
 }
 
-.status-pill {
+.connection-dot {
     flex: 0 0 auto;
-    min-width: 86px;
-    margin-right: 14px;
-    padding: 7px 10px;
-    border-radius: 999px;
-    color: #101312;
-    font-size: 12px;
-    font-weight: 800;
-    text-transform: uppercase;
+    width: 14px;
+    height: 14px;
+    margin-right: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
 }
 
-.status-pill.is-online {
+.connection-dot.is-online {
     background: #a8f0b0;
+    box-shadow: 0 0 0 4px rgba(168, 240, 176, 0.14), 0 0 18px rgba(168, 240, 176, 0.86);
 }
 
-.status-pill.is-offline {
+.connection-dot.is-offline {
     background: #f2b0a8;
+    box-shadow: 0 0 0 4px rgba(242, 176, 168, 0.14), 0 0 18px rgba(242, 176, 168, 0.72);
 }
 
 .nav-button,
@@ -399,6 +405,10 @@ button:disabled {
     font-weight: 900;
     text-transform: uppercase;
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+.remote-page-back {
+    display: none;
 }
 
 .remote-recorder-overlay {
@@ -1027,20 +1037,6 @@ h2 {
     display: none;
 }
 
-.logoutput {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    color: #111;
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-    padding: 10px;
-}
-
 .footer {
     position: fixed;
     left: 14px;
@@ -1240,6 +1236,10 @@ h2 {
         width: fit-content;
     }
 
+    .is-remote-mode .nav-button.is-remote-inline {
+        display: none;
+    }
+
     .top-controls {
         justify-content: stretch;
     }
@@ -1261,6 +1261,65 @@ h2 {
 
     .deck-view {
         padding: 236px 12px 86px;
+    }
+
+    .is-remote-mode .slide-container-horizontal {
+        height: 100dvh;
+    }
+
+    .is-remote-mode .deck-view {
+        height: 100dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .is-remote-mode .sequences {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: none;
+        overflow: visible;
+    }
+
+    .is-remote-mode .macro-action {
+        min-height: 82px;
+        padding: 14px 10px 12px 42px;
+        background-size: 24px;
+        background-position: 12px center;
+    }
+
+    .is-remote-mode .macro-action .caption {
+        overflow: hidden;
+        font-size: 13px;
+        line-height: 1.12;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .is-remote-mode .macro-state {
+        overflow: hidden;
+        max-width: 100%;
+        font-size: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .is-remote-mode .macro-meta {
+        display: none;
+    }
+
+    .is-remote-mode .remote-page-back {
+        display: block;
+        align-self: flex-start;
+        min-height: 38px;
+        margin: 0 0 16px;
+        padding: 9px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 8px;
+        background: rgba(14, 16, 17, 0.72);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     h1 {
@@ -1364,11 +1423,15 @@ h2 {
         flex-direction: column;
     }
 
-    .status-pill {
+    .connection-dot {
         margin-right: 0;
     }
 
     .deck-view {
+        padding-top: 276px;
+    }
+
+    .is-remote-mode .deck-view {
         padding-top: 276px;
     }
 

@@ -196,7 +196,8 @@ function initApp() {
             },
             deckShellClass: function () {
                 let classes = {
-                    'deck-shell': true
+                    'deck-shell': true,
+                    'is-remote-mode': this.remoteMode
                 }
 
                 classes[this.activeThemeClass()] = true
@@ -773,6 +774,18 @@ function initApp() {
                     return command.Id !== id
                 })
             },
+            expireActiveWaitPlaybackCommands: function () {
+                let waitCommandIds = []
+                for (let i = 0; i < this.playbackCommands.length; i++) {
+                    if (this.playbackCommands[i].IsWait) {
+                        waitCommandIds.push(this.playbackCommands[i].Id)
+                    }
+                }
+
+                for (let i = 0; i < waitCommandIds.length; i++) {
+                    this.removePlaybackCommand(waitCommandIds[i])
+                }
+            },
             startWaitCountdown: function (command, waitMs) {
                 let app = this
                 let endAt = Date.now() + waitMs
@@ -1128,6 +1141,7 @@ function initApp() {
                 if (!isRunning || !state.HasSequence) {
                     this.lastPlaybackStartKey = ""
                     this.playbackTimeline.Visible = false
+                    this.expireActiveWaitPlaybackCommands()
                 }
 
                 this.playbackState = state;
