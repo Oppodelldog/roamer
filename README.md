@@ -14,10 +14,21 @@ settings.
 * Some of those tasks require special preparation
 * Ensure to execute any of the following actions only with windows focused on the appropriate game.
 
-![Roamer - Overview](Galaxy-J7-1.png)
-![Roamer - Macro List](Galaxy-J7-2.png)
-![Roamer - Sound Settings](Galaxy-J7.png)
-![Roamer - Macro Editor](Galaxy-J7-3.png)
+## Screenshots
+
+### Phone
+
+![Roamer - Phone Overview](Galaxy-J7-1.png)
+![Roamer - Phone Macro List](Galaxy-J7-2.png)
+![Roamer - Phone Sound Settings](Galaxy-J7.png)
+![Roamer - Phone Macro Editor](Galaxy-J7-3.png)
+
+### Tablet landscape
+
+![Roamer - Tablet Landscape Overview](Roamer-Tablet-Landscape-Overview.png)
+![Roamer - Tablet Landscape Macro Deck](Roamer-Tablet-Landscape-Macro-Deck.png)
+![Roamer - Tablet Landscape Sound Settings](Roamer-Tablet-Landscape-Sound.png)
+![Roamer - Tablet Landscape Macro Editor](Roamer-Tablet-Landscape-Macro-Editor.png)
 
 This default configuration brings some samples for some games.
 
