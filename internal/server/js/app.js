@@ -529,12 +529,33 @@ function initApp() {
                 this.pageEditor = false;
                 this.macroEditor = false;
                 this.showSounds = false;
+                this.showDiagnostics = false
+                this.remoteQr.Open = false
                 this.showVerticalSlide = false;
                 this.showPage = false
                 this.currentPageId = null
                 this.applyTheme()
             },
+            closeToolPanels: function () {
+                this.remoteQr.Open = false
+                this.showDiagnostics = false
+                this.showSounds = false
+                this.soundLoading = false
+                this.macroEditor = false
+            },
             openRemoteQr: function () {
+                if (this.remoteQr.Open) {
+                    this.remoteQr.Open = false
+                    return
+                }
+
+                if (this.pageEditor) {
+                    savePages(this.config.Pages)
+                }
+
+                this.closeToolPanels()
+                this.showVerticalSlide = false
+                this.pageEditor = false
                 this.remoteQr.Open = true
                 if (this.remoteQr.Index >= this.remoteTargets().length) {
                     this.remoteQr.Index = 0
@@ -573,9 +594,8 @@ function initApp() {
                     savePages(this.config.Pages)
                 }
 
+                this.closeToolPanels()
                 this.showVerticalSlide = false
-                this.pageEditor = false
-                this.macroEditor = false
                 this.showSounds = true
                 this.soundLoading = true
                 querySoundSettings()
@@ -585,7 +605,19 @@ function initApp() {
                     return
                 }
 
-                this.showDiagnostics = !this.showDiagnostics
+                if (this.showDiagnostics) {
+                    this.showDiagnostics = false
+                    return
+                }
+
+                if (this.pageEditor) {
+                    savePages(this.config.Pages)
+                }
+
+                this.closeToolPanels()
+                this.showVerticalSlide = false
+                this.pageEditor = false
+                this.showDiagnostics = true
             },
             changeSoundSessionValue: function (idx) {
                 let id = this.soundSettings.Sessions[idx].Id
@@ -912,8 +944,8 @@ function initApp() {
                     savePages(this.config.Pages)
                 }
 
+                this.closeToolPanels()
                 this.showVerticalSlide = false
-                this.showSounds = false
                 this.pageEditor = false
                 this.macroEditor = true
             },
@@ -921,6 +953,8 @@ function initApp() {
                 this.showSounds = false;
                 this.macroEditor = false;
                 this.pageEditor = false;
+                this.showDiagnostics = false
+                this.remoteQr.Open = false
             },
             openVerticalSlide: function (target) {
                 this.clearVerticalSlide()

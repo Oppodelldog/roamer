@@ -318,48 +318,56 @@
             </div>
 
             <div id="page-edit" class="slide" v-if="pageEditor">
-                <h1>Edit Pages</h1>
-
-                <div id="actions-edit-pages">
-                    <div class="actions-edit-page" v-for="(page,id) in config.Pages">
-                        <div class="edit-page-vertical-container">
-                            <div class="input-container">
-                                <label for="txtPageTitleShort">Title in main menu:</label>
-                                <input id="txtPageTitleShort" type="text" v-model:value="page.TitleShort"/>
-                            </div>
-                            <div class="input-container">
-                                <label for="txtPageTitle">Title on page:</label>
-                                <input id="txtPageTitle" type="text" v-model:value="page.Title"/>
-                            </div>
-                            <div class="input-container">
-                                <label>Background image:</label>
-                                <input type="text" v-model:value="ensurePageTheme(page).BackgroundImage" v-on:input="applyTheme()"/>
-                            </div>
-                            <div class="theme-fields">
-                                <label>
-                                    Background
-                                    <input type="color" v-model:value="ensurePageTheme(page).BackgroundColor" v-on:input="applyTheme()"/>
-                                </label>
-                                <label>
-                                    Accent
-                                    <input type="color" v-model:value="ensurePageTheme(page).AccentColor" v-on:input="applyTheme()"/>
-                                </label>
-                                <label>
-                                    Card
-                                    <input type="color" v-model:value="ensurePageTheme(page).CardColor" v-on:input="applyTheme()"/>
-                                </label>
-                                <label>
-                                    Text
-                                    <input type="color" v-model:value="ensurePageTheme(page).CardTextColor" v-on:input="applyTheme()"/>
-                                </label>
-                            </div>
+                <div class="page-editor-panel">
+                    <div class="page-editor-header">
+                        <div>
+                            <h1>Edit Pages</h1>
+                            <span>Menu entries and themes</span>
                         </div>
-                        <button v-on:pointerup="removePage(id)"
-                                v-bind:class="{ delete: getPageDeletionStatus(id)===1 }">
-                            <span>{{ pageDeleteLabel(id) }}</span>
-                        </button>
+                        <button type="button" v-on:click.prevent="showPagesEditor()">Back</button>
                     </div>
-                    <button class="btNewPage" v-on:pointerup="newPage">New Page</button>
+
+                    <div id="actions-edit-pages">
+                        <div class="actions-edit-page" v-for="(page,id) in config.Pages">
+                            <div class="edit-page-vertical-container">
+                                <div class="input-container">
+                                    <label for="txtPageTitleShort">Title in main menu:</label>
+                                    <input id="txtPageTitleShort" type="text" v-model:value="page.TitleShort"/>
+                                </div>
+                                <div class="input-container">
+                                    <label for="txtPageTitle">Title on page:</label>
+                                    <input id="txtPageTitle" type="text" v-model:value="page.Title"/>
+                                </div>
+                                <div class="input-container">
+                                    <label>Background image:</label>
+                                    <input type="text" v-model:value="ensurePageTheme(page).BackgroundImage" v-on:input="applyTheme()"/>
+                                </div>
+                                <div class="theme-fields">
+                                    <label>
+                                        Background
+                                        <input type="color" v-model:value="ensurePageTheme(page).BackgroundColor" v-on:input="applyTheme()"/>
+                                    </label>
+                                    <label>
+                                        Accent
+                                        <input type="color" v-model:value="ensurePageTheme(page).AccentColor" v-on:input="applyTheme()"/>
+                                    </label>
+                                    <label>
+                                        Card
+                                        <input type="color" v-model:value="ensurePageTheme(page).CardColor" v-on:input="applyTheme()"/>
+                                    </label>
+                                    <label>
+                                        Text
+                                        <input type="color" v-model:value="ensurePageTheme(page).CardTextColor" v-on:input="applyTheme()"/>
+                                    </label>
+                                </div>
+                            </div>
+                            <button v-on:pointerup="removePage(id)"
+                                    v-bind:class="{ delete: getPageDeletionStatus(id)===1 }">
+                                <span>{{ pageDeleteLabel(id) }}</span>
+                            </button>
+                        </div>
+                        <button class="btNewPage" v-on:pointerup="newPage">New Page</button>
+                    </div>
                 </div>
             </div>
 
