@@ -101,7 +101,12 @@ type (
 		Kind  string
 	}
 	RemoteInfo struct {
-		Urls []string
+		Urls    []string
+		Targets []RemoteTarget
+	}
+	RemoteTarget struct {
+		Url    string
+		QrCode string
 	}
 )
 

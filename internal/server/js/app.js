@@ -10,8 +10,8 @@ function initApp() {
             hasConfig: false,
             config: null,
             remoteMode: window.location.pathname === "/remote",
-            remotePanel: false,
             remoteInfo: {Urls: []},
+            remoteQr: {Open: false, Index: 0},
             remoteRecorder: {Open: false, Name: "", Saving: false, Error: ""},
             showPage: false,
             showVerticalSlide: false,
@@ -111,6 +111,37 @@ function initApp() {
                 }
 
                 return [this.remoteUrl()]
+            },
+            remoteTargets: function () {
+                if (this.remoteInfo.Targets && this.remoteInfo.Targets.length > 0) {
+                    return this.remoteInfo.Targets
+                }
+
+                return this.remoteUrls().map(function (url) {
+                    return {Url: url, QrCode: ""}
+                })
+            },
+            activeRemoteTarget: function () {
+                let targets = this.remoteTargets()
+                let idx = Math.min(Math.max(this.remoteQr.Index, 0), targets.length - 1)
+
+                return targets[idx]
+            },
+            activeRemoteUrl: function () {
+                return this.activeRemoteTarget().Url
+            },
+            remoteQrPositionLabel: function () {
+                let targets = this.remoteTargets()
+                let idx = Math.min(Math.max(this.remoteQr.Index, 0), targets.length - 1)
+
+                return (idx + 1) + " / " + targets.length
+            },
+            remoteUrlHostLabel: function (url) {
+                try {
+                    return new URL(url).host
+                } catch (e) {
+                    return url
+                }
             },
             inputModeLabel: function () {
                 return this.inputMode.DryRun ? "Dry Run" : "Live"
@@ -413,6 +444,9 @@ function initApp() {
             },
             updateRemoteInfo: function (info) {
                 this.remoteInfo = info
+                if (this.remoteQr.Index >= this.remoteTargets().length) {
+                    this.remoteQr.Index = 0
+                }
             },
             toggleInputMode: function () {
                 setInputExecutionMode(!this.inputMode.DryRun)
@@ -499,8 +533,25 @@ function initApp() {
                 this.currentPageId = null
                 this.applyTheme()
             },
-            toggleRemotePanel: function () {
-                this.remotePanel = !this.remotePanel
+            openRemoteQr: function () {
+                this.remoteQr.Open = true
+                if (this.remoteQr.Index >= this.remoteTargets().length) {
+                    this.remoteQr.Index = 0
+                }
+            },
+            closeRemoteQr: function () {
+                this.remoteQr.Open = false
+            },
+            selectRemoteQr: function (idx) {
+                this.remoteQr.Index = idx
+            },
+            previousRemoteQr: function () {
+                let targets = this.remoteTargets()
+                this.remoteQr.Index = (this.remoteQr.Index + targets.length - 1) % targets.length
+            },
+            nextRemoteQr: function () {
+                let targets = this.remoteTargets()
+                this.remoteQr.Index = (this.remoteQr.Index + 1) % targets.length
             },
             showSoundSettings: function () {
                 if (this.remoteMode) {

@@ -64,17 +64,36 @@
         <div class="top-tools" v-if="!remoteMode">
             <button class="tool-button" v-if="!showPage || pageEditor" v-on:pointerup="showPagesEditor()">Pages</button>
             <button class="tool-button" v-if="showPage || macroEditor" v-bind:class="{'is-active':macroEditor}" v-on:pointerup="showMacroEditor()">Macros</button>
-            <button class="tool-button" v-bind:class="{'is-active':remotePanel}" v-on:pointerup="toggleRemotePanel()">Remote</button>
+            <button class="tool-button" v-bind:class="{'is-active':remoteQr.Open}" v-on:pointerup="openRemoteQr()">Remote QR</button>
             <button class="tool-button" v-bind:class="{'is-active':showDiagnostics}" v-on:pointerup="toggleDiagnostics()">Logs</button>
             <button class="tool-button" v-bind:class="{'is-active':showSounds}" v-on:pointerup="showSoundSettings()">Sound</button>
         </div>
 
-        <div class="remote-panel" v-if="remotePanel && !remoteMode">
-            <div class="remote-header">
-                <span>Remote</span>
-                <button v-on:pointerup="toggleRemotePanel()">Close</button>
+        <div class="remote-qr-overlay" v-if="remoteQr.Open && !remoteMode">
+            <div class="remote-qr-dialog">
+                <div class="remote-qr-header">
+                    <div>
+                        <span>Remote Access</span>
+                        <strong>{{ remoteQrPositionLabel() }}</strong>
+                    </div>
+                    <button type="button" v-on:pointerup="closeRemoteQr()">Close</button>
+                </div>
+                <div class="remote-qr-body">
+                    <button type="button" class="remote-qr-nav" v-bind:disabled="remoteTargets().length < 2" v-on:pointerup="previousRemoteQr()">Prev</button>
+                    <img class="remote-qr-code" v-bind:src="activeRemoteTarget().QrCode" v-bind:alt="activeRemoteUrl()">
+                    <button type="button" class="remote-qr-nav" v-bind:disabled="remoteTargets().length < 2" v-on:pointerup="nextRemoteQr()">Next</button>
+                </div>
+                <div class="remote-qr-url">{{ activeRemoteUrl() }}</div>
+                <div class="remote-qr-list">
+                    <button type="button"
+                            v-for="(target, idx) in remoteTargets()"
+                            v-bind:key="target.Url"
+                            v-bind:class="{'is-active':idx === remoteQr.Index}"
+                            v-on:pointerup="selectRemoteQr(idx)">
+                        {{ remoteUrlHostLabel(target.Url) }}
+                    </button>
+                </div>
             </div>
-            <div class="remote-url" v-for="url in remoteUrls()">{{ url }}</div>
         </div>
 
         <div class="remote-recorder-overlay" v-if="remoteMode && remoteRecorder.Open">

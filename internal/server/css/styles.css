@@ -280,31 +280,55 @@ button:disabled {
     backdrop-filter: blur(12px);
 }
 
-.remote-panel {
+.remote-qr-overlay {
     position: fixed;
-    right: 20px;
-    bottom: 76px;
-    z-index: 7;
-    width: min(440px, calc(100vw - 40px));
-    padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    border-radius: 8px;
-    background: rgba(9, 11, 12, 0.9);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
-    backdrop-filter: blur(12px);
+    inset: 0;
+    z-index: 18;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    background: rgba(4, 6, 7, 0.72);
+    backdrop-filter: blur(10px);
 }
 
-.remote-header {
+.remote-qr-dialog {
+    width: min(640px, 100%);
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 8px;
+    background: rgba(9, 11, 12, 0.94);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+.remote-qr-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+}
+
+.remote-qr-header div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.remote-qr-header span {
     font-size: 13px;
     font-weight: 900;
     text-transform: uppercase;
 }
 
-.remote-header button {
+.remote-qr-header strong {
+    color: #cfd6cf;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.remote-qr-header button,
+.remote-qr-nav,
+.remote-qr-list button {
     padding: 6px 10px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.12);
@@ -314,8 +338,31 @@ button:disabled {
     text-transform: uppercase;
 }
 
-.remote-url {
-    margin-top: 12px;
+.remote-qr-body {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) 74px;
+    gap: 14px;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.remote-qr-nav {
+    min-height: 48px;
+}
+
+.remote-qr-code {
+    width: min(320px, 58vw);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    padding: 14px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    object-fit: contain;
+}
+
+.remote-qr-url {
+    margin-top: 16px;
     padding: 10px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.08);
@@ -325,6 +372,19 @@ button:disabled {
     line-height: 1.35;
     overflow-wrap: anywhere;
     user-select: all;
+}
+
+.remote-qr-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.remote-qr-list button.is-active {
+    border: 1px solid var(--roamer-accent);
+    background: rgba(255, 227, 109, 0.18);
+    color: #fff;
 }
 
 .remote-new-macro {
@@ -1256,11 +1316,28 @@ h2 {
         max-height: calc(100vh - 300px);
     }
 
-    .remote-panel {
-        left: 12px;
-        right: 12px;
-        bottom: 72px;
-        width: auto;
+    .remote-qr-overlay {
+        align-items: flex-end;
+        padding: 12px;
+    }
+
+    .remote-qr-dialog {
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+    }
+
+    .remote-qr-body {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .remote-qr-code {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: min(300px, 76vw);
+    }
+
+    .remote-qr-nav {
+        grid-row: 2;
     }
 
     .diagnostics-grid {
