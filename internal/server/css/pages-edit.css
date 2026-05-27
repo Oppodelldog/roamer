@@ -1,14 +1,82 @@
-#actions-edit,
-#actions-edit-pages {
-    overflow-y: scroll;
+#page-edit {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 94px 20px 76px;
+}
+
+.page-editor-panel {
+    display: flex;
+    align-self: flex-end;
+    flex-direction: column;
+    width: min(780px, calc(100vw - 40px));
     height: 100%;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 8px;
+    background: rgba(7, 9, 10, 0.82);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(12px);
+}
+
+.page-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex: 0 0 auto;
+}
+
+.page-editor-header > div:first-child {
+    min-width: 0;
+    text-align: left;
+}
+
+#page-edit h1 {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.page-editor-header span {
+    display: block;
+    overflow: hidden;
+    margin-top: 4px;
+    color: #cbd4c9;
+    font-size: 12px;
+    font-weight: 900;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.page-editor-header button {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+#actions-edit-pages {
+    flex: 1 1 auto;
+    width: 100%;
+    max-height: none;
+    margin: 18px 0 0;
+    overflow-y: auto;
+    padding: 4px 4px 18px;
 }
 
 .actions-edit-page {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: stretch;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .edit-page-vertical-container {
@@ -18,28 +86,35 @@
 }
 
 .actions-edit-page + .actions-edit-page {
-    margin-top: 20px;
+    margin-top: 12px;
 }
 
 .actions-edit-page label {
-    display: inline-block;
-    width: 200px;
-    background-color: #88888869;
-    padding: 12px;
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    flex: 0 0 172px;
+    min-width: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #dce5da;
+    font-size: 12px;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 .actions-edit-page .input-container {
     display: flex;
-    justify-content: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 
 .actions-edit-page input {
-    min-width: 500px;
+    flex: 1;
+    min-width: 0;
     max-width: 100%;
-    font-size: 20px;
+    font-size: 16px;
     padding: 10px;
     border: 1px solid rgba(255, 255, 255, 0.26);
     border-radius: 6px;
@@ -59,9 +134,11 @@
 
 .theme-fields label {
     display: flex;
-    width: auto;
     flex-direction: column;
+    align-items: stretch;
+    flex: 1 1 auto;
     gap: 5px;
+    width: auto;
     color: #fff;
     font-size: 12px;
     text-transform: uppercase;
@@ -78,17 +155,25 @@
 }
 
 .btNewPage {
-    margin-top: 40px;
+    margin-top: 18px;
 }
 
-.actions-edit-page button {
-    width: 130px;
-    min-height: 44px;
+.actions-edit-page button,
+.btNewPage {
+    min-width: 86px;
+    padding: 10px 14px;
     border-radius: 8px;
     background: rgba(239, 243, 235, 0.94);
     color: #141714;
+    font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
+}
+
+.actions-edit-page button {
+    align-self: start;
+    width: 130px;
+    min-height: 44px;
 }
 
 .actions-edit-page button span {
@@ -105,9 +190,27 @@
 }
 
 @media (max-width: 760px) {
-    .actions-edit-page {
+    #page-edit {
+        padding: 236px 12px 72px;
+    }
+
+    .page-editor-panel {
+        align-self: stretch;
+        width: auto;
+        padding: 14px;
+    }
+
+    .page-editor-header {
+        align-items: flex-start;
         flex-direction: column;
-        align-items: stretch;
+    }
+
+    .page-editor-header button {
+        width: 100%;
+    }
+
+    .actions-edit-page {
+        grid-template-columns: 1fr;
     }
 
     .actions-edit-page .input-container {
@@ -115,6 +218,7 @@
     }
 
     .actions-edit-page label {
+        flex-basis: auto;
         width: 100%;
         font-size: 13px;
     }
@@ -131,5 +235,11 @@
 
     .actions-edit-page button {
         width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    #page-edit {
+        padding-top: 276px;
     }
 }
